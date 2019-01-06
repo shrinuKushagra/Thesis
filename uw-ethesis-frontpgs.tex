@@ -1,0 +1,219 @@
+\ifdefined\COMPLETE
+\else
+\documentclass[letterpaper,12pt,titlepage,oneside,final]{book}
+
+\usepackage{ifthen}
+\newboolean{PrintVersion}
+\setboolean{PrintVersion}{false} 
+
+\usepackage[pdftex]{graphicx} 
+\usepackage[pdftex,pagebackref=false]{hyperref} 
+
+\hypersetup{
+    plainpages=false,       
+    unicode=false,          
+    pdftoolbar=true,        
+    pdfmenubar=true,        
+    pdffitwindow=false,     
+    pdfstartview={FitH},    
+    pdftitle={Shrinu\ Kushagra\ Thesis},    
+    pdfauthor={Shrinu Kushagra}, 
+    pdfsubject={Clustering},  
+%    pdfkeywords={keyword1} {key2} {key3}, % list of keywords, and uncomment this line if desired
+    pdfnewwindow=true,      % links in new window
+    colorlinks=true,        % false: boxed links; true: colored links
+    linkcolor=blue,         % color of internal links
+    citecolor=green,        % color of links to bibliography
+    filecolor=magenta,      % color of file links
+    urlcolor=cyan           % color of external links
+}
+\ifthenelse{\boolean{PrintVersion}}{   % for improved print quality, change some hyperref options
+\hypersetup{	% override some previously defined hyperref options
+%    colorlinks,%
+    citecolor=black,%
+    filecolor=black,%
+    linkcolor=black,%
+    urlcolor=black}
+}{} % end of ifthenelse (no else)
+
+\setlength{\marginparwidth}{0pt}
+\setlength{\marginparsep}{0pt} 
+\setlength{\evensidemargin}{0.125in}
+\setlength{\oddsidemargin}{0.125in}
+\setlength{\textwidth}{6.375in} 
+\raggedbottom
+
+\setlength{\parskip}{\medskipamount}
+
+\renewcommand{\baselinestretch}{1} % this is the default line space setting
+
+\let\origdoublepage\cleardoublepage
+\newcommand{\clearemptydoublepage}{%
+  \clearpage{\pagestyle{empty}\origdoublepage}}
+\let\cleardoublepage\clearemptydoublepage
+
+
+\begin{document}
+\fi
+\pagestyle{empty}
+\pagenumbering{roman}
+
+\begin{titlepage}
+        \begin{center}
+        \vspace*{1.0cm}
+
+        \Huge
+        {\bf When is clustering easy? }
+
+        \vspace*{1.0cm}
+
+        \normalsize
+        by \\
+
+        \vspace*{1.0cm}
+
+        \Large
+        Shrinu Kushagra \\
+
+        \vspace*{3.0cm}
+
+        \normalsize
+        A thesis \\
+        presented to the University of Waterloo \\ 
+        in fulfillment of the \\
+        thesis requirement for the degree of \\
+        Doctor of Philosophy \\
+        in \\
+        Computer Science \\
+
+        \vspace*{2.0cm}
+
+        Waterloo, Ontario, Canada, 2019 \\
+
+        \vspace*{1.0cm}
+
+        \copyright\ Shrinu Kushagra 2019 \\
+        \end{center}
+\end{titlepage}
+
+\pagestyle{plain}
+\setcounter{page}{2}
+
+\cleardoublepage
+\begin{center}\textbf{Examining Committee Membership}\end{center}
+  \noindent
+The following served on the Examining Committee for this thesis. The decision of the Examining Committee is by majority vote.
+  \bigskip
+  
+  \noindent
+\begin{tabbing}
+Internal-External Member: \=  \kill % using longest text to define tab length
+External Examiner: \>  TBD \\ 
+\> Professor, Dept. of Philosophy of Zoology, University of Wallamaloo \\
+\end{tabbing} 
+  \bigskip
+  
+  \noindent
+\begin{tabbing}
+Internal-External Member: \=  \kill % using longest text to define tab length
+Supervisor(s): \> Shai Ben-David \\
+\> Professor, Dept. of Computer Science, University of Waterloo \\
+\end{tabbing}
+  \bigskip
+  
+  \noindent
+  \begin{tabbing}
+Internal-External Member: \=  \kill % using longest text to define tab length
+Internal Member: \> Yaoliang Yu \\
+\> Assistant Professor, Dept. of Computer Science, University of Waterloo \\
+\end{tabbing}
+  \bigskip
+  
+  \noindent
+\begin{tabbing}
+Internal-External Member: \=  \kill % using longest text to define tab length
+Internal-External Member: \> TBD \\
+\> Professor, Dept. of Philosophy, University of Waterloo \\
+\end{tabbing}
+  \bigskip
+  
+  \noindent
+\begin{tabbing}
+Internal-External Member: \=  \kill % using longest text to define tab length
+Other Member(s): \> Eric Blais \\
+\> Assistant Professor, Dept. of Computer Science, University of Waterloo \\
+\end{tabbing}
+
+\cleardoublepage
+
+\begin{center}\textbf{Statement of Contributions}\end{center}
+  \noindent
+This thesis consists of material all of which I authored or co-authored:  see Statement of
+Contributions included in the thesis. This is a true copy of the thesis, including any required final revisions, as accepted by my examiners.
+
+  \bigskip
+  
+  \noindent
+I understand that my thesis may be made electronically available to the public.
+
+\cleardoublepage
+
+\begin{center}\textbf{Abstract}\end{center}
+Clustering is an umbrella term used to describe many common unsupervised learning techniques. One common view or definition of clustering is that it aims to group together data instances which are similar while simultaneously separating the dissimilar instances. Grouping objects into cohesive subsets is a fundamental problem in science and nature. For example, a geneticist wants to find similar dna sequences from a huge list of dna sequences. Websites like facebook and google want to show similar ads to similar users; Movie streaming services like netflix want to suggest similar movies to similar users. The problem of clustering also arises in text analysis, data de-duplication and many more.  
+
+The task of clustering is challenging due to many factors. The most well-studied is the high computational cost. The clustering task can be viewed as an optimization problem where the goal is to minimize a certain cost function (like $k$-means cost or $k$-median cost). Not only are the minimization problems NP-Hard but often also NP-Hard to approximate within a constant factor. Other major issues in clustering are \emph{under-specificity} and \emph{noise-robustness}. In this thesis, we focus on tackling the two issues while simultaneously ensuring low (polynomial) computational cost. 
+
+Clustering is under-specified. Consider the problem of dividing a dataset of human faces into two groups. One solution requirement could be to group the faces by gender. Another solution requirement could be to group the faces by emotion. Different solution requirements need different approaches. In such situations, domain knowledge is needed to better define the clustering problem. We incorporate this by allowing the clustering algorithm to interact with an oracle (or a human expert). The algorithm can ask the oracle whether two points belong to the same or different cluster. The oracle responds by replying either `yes' or `no' to the same-cluster query. In a preliminary work, we show that even access to a small number of same-cluster queries makes an otherwise NP-Hard clustering problem computationally tractable. 
+
+Pursuing this direction further, we consider the problem of clustering for data de-duplication; detecting records which correspond to the same physical entity in a database. Consider a marketing agency which sends advertising content (via emails, pamphlets, phone calls etc.) to potential consumers. The database of potential consumers is built from various sources and likely to contain duplicate records. In such cases, it is important to not the send the same content to a potential consumer multiple times. The framework of correlation clustering is highly applicable to model this problem. We propose a correlation clustering  like framework model such record de-duplication problems. We show that access to a small number of same-cluster queries can help us solve the `restricted' version of correlation clustering. Rather surprisingly, other versions of correlation clustering \footnote{We refer to it as promise correlation clustering.} are intractable even when allowed to make a `large' (sub-linear in the size of the dataset) number of same-cluster queries. 
+
+The second line of research that this thesis explores is the issue of noise-robustness of clustering algorithms. Many of the common clustering tools (aim to) partition the data into cohesive groups. That is the groups or clusters share some between-cluster separation (the clustering community has introduced various notions of "clusterability" to capture this property). However, many real-world datasets, have on top of these cohesive subsets, a significant amount of points which are `unstructured'. We refer to these structureless points as noise. The addition of these noisy points makes it difficult to detect the cohesive structure of the remaining points. The exact definition of `structurelessness' varies depending on the type of structure the clustering algorithm is trying to detect. 
+
+In the first line of work, we define structurelessness as not having significantly large dense subsets. This definition is well suited to capture ``gray background" noise contrasting with cohesive subsets of the data that the clustering aims to detect. We provide an computationally efficient clustering algorithm that captures all possible meaningful clusterings of the dataset (outputs a hierarchical clustering tree such that all meaningful clusterings are contained as a pruning in that tree). In this case, a meaningful solution is one where the clusters are cohesive (defined formally by notions of clusterability) and where the noise satisfies the gray background assumption. 
+
+Pursuing this line of research, we consider a second case where there is no restriction on the noisy points except that they are `not too many'. That is the number of structureless points is small compared to the number of structured points. In this case, we develop a generic procedure that can transform any objective-based clustering algorithm into one that is robust to such noisy points. Our regularized transformation modifies any clustering objective function which outputs $k$ clusters to one that outputs $k+1$ clusters. The algorithm is now allowed to ‘discard’ a bunch of points into the extra ‘garbage’ or noise cluster by paying a constant regularization penalty. Using this technique, we develop efficient noise-robust versions of two common algorithms. We show that both these algorithms are able to output a meaningful solution (under different assumptions on the clusterability of the cohesive subsets, of course).    
+
+\cleardoublepage
+
+\begin{center}\textbf{Acknowledgements}\end{center}
+
+I would like to thank all the little people who made this thesis possible.
+\cleardoublepage
+
+\begin{center}\textbf{Dedication}\end{center}
+
+This is dedicated to the one I love.
+\cleardoublepage
+
+\renewcommand\contentsname{Table of Contents}
+\tableofcontents
+\cleardoublepage
+\phantomsection    % allows hyperref to link to the correct page
+
+% L I S T   O F   T A B L E S
+% ---------------------------
+\addcontentsline{toc}{chapter}{List of Tables}
+\listoftables
+\cleardoublepage
+\phantomsection		% allows hyperref to link to the correct page
+
+% L I S T   O F   F I G U R E S
+% -----------------------------
+\addcontentsline{toc}{chapter}{List of Figures}
+\listoffigures
+\cleardoublepage
+\phantomsection		% allows hyperref to link to the correct page
+
+% GLOSSARIES (Lists of definitions, abbreviations, symbols, etc. provided by the glossaries-extra package)
+% -----------------------------
+%\printglossaries
+%\cleardoublepage
+\phantomsection		% allows hyperref to link to the correct page
+
+% Change page numbering back to Arabic numerals
+\pagenumbering{arabic}
+
+\ifdefined\COMPLETE
+\else
+\end{document}
+\fi

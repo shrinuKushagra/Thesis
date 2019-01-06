@@ -1,0 +1,190 @@
+\def\COMPLETE{}
+\documentclass[letterpaper,12pt,titlepage,oneside,final]{book}
+ 
+\newcommand{\package}[1]{\textbf{#1}} 
+\newcommand{\cmmd}[1]{\textbackslash\texttt{#1}} 
+\newcommand{\href}[1]{#1} 
+\usepackage{ifthen}
+\newboolean{PrintVersion}
+\setboolean{PrintVersion}{false} 
+
+\usepackage{amsmath,amssymb,amstext,amsthm,mathtools} 
+\usepackage[pdftex]{graphicx} 
+\usepackage{thm-restate}
+
+\usepackage[pdftex,pagebackref=false]{hyperref} 
+\usepackage[boxruled]{algorithm2e}
+
+\usepackage[toc,page]{appendix}
+\usepackage[inline]{enumitem}
+\usepackage{bbm}
+
+\usepackage[labelformat=simple]{subcaption}
+\usepackage[export]{adjustbox}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes, calc, arrows, through, intersections, decorations.pathreplacing, patterns}
+
+\newcommand{\mc}{\mathcal}
+\newcommand{\mb}{\mathbf}
+\newcommand{\tr}{\text{Tr}}
+\newcommand{\diag}{\text{diag}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator{\vcdim}{VC-Dim}
+\DeclareMathOperator{\vol}{vol}
+
+\renewcommand\labelitemi{$\bullet$}
+\renewcommand{\labelitemii}{$\star$}
+\renewcommand\thesubfigure{(\alph{subfigure})}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{thrm}[theorem]{Theorem}
+\newtheorem{lem}[theorem]{Lemma}
+\newtheorem{smallLemma}{Claim}
+
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+\let\oldnl\nl
+\newcommand{\nonl}{\renewcommand{\nl}{\let\nl\oldnl}}
+\newcommand{\multlinecomment}[1]{\directlua{-- #1}}
+
+\hypersetup{
+    plainpages=false,       
+    unicode=false,          
+    pdftoolbar=true,        
+    pdfmenubar=true,        
+    pdffitwindow=false,     
+    pdfstartview={FitH},    
+    pdftitle={Shrinu\ Kushagra\ Thesis},    
+    pdfauthor={Shrinu Kushagra}, 
+    pdfsubject={Clustering},  
+%    pdfkeywords={keyword1} {key2} {key3}, % list of keywords, and uncomment this line if desired
+    pdfnewwindow=true,      % links in new window
+    colorlinks=true,        % false: boxed links; true: colored links
+    linkcolor=blue,         % color of internal links
+    citecolor=green,        % color of links to bibliography
+    filecolor=magenta,      % color of file links
+    urlcolor=cyan           % color of external links
+}
+\ifthenelse{\boolean{PrintVersion}}{   % for improved print quality, change some hyperref options
+\hypersetup{	% override some previously defined hyperref options
+%    colorlinks,%
+    citecolor=black,%
+    filecolor=black,%
+    linkcolor=black,%
+    urlcolor=black}
+}{} % end of ifthenelse (no else)
+
+\usepackage[automake,toc,abbreviations]{glossaries-extra} %
+\setlength{\marginparwidth}{0pt}
+\setlength{\marginparsep}{0pt} 
+\setlength{\evensidemargin}{0.125in}
+\setlength{\oddsidemargin}{0.125in}
+\setlength{\textwidth}{6.375in} 
+\raggedbottom
+
+\setlength{\parskip}{\medskipamount}
+
+\renewcommand{\baselinestretch}{1} % this is the default line space setting
+
+\let\origdoublepage\cleardoublepage
+\newcommand{\clearemptydoublepage}{%
+  \clearpage{\pagestyle{empty}\origdoublepage}}
+\let\cleardoublepage\clearemptydoublepage
+
+\newglossaryentry{computer}
+{
+name=computer,
+description={A programmable machine that receives input data,
+               stores and manipulates the data, and provides
+               formatted output}
+}
+
+% Nomenclature glossary entries -- New definitions, or unusual terminology
+\newglossary*{nomenclature}{Nomenclature}
+\newglossaryentry{dingledorf}
+{
+type=nomenclature,
+name=dingledorf,
+description={A person of supposed average intelligence who makes incredibly brainless misjudgments}
+}
+
+\newabbreviation{aaaaz}{AAAAZ}{American Association of Amature Astronomers and Zoologists}
+
+% List of Symbols
+\newglossary*{symbols}{List of Symbols}
+\newglossaryentry{rvec}
+{
+name={$\mathbf{v}$},
+sort={label},
+type=symbols,
+description={Random vector: a location in n-dimensional Cartesian space, where each dimensional component is determined by a random process}
+}
+ 
+\makeglossaries
+
+\begin{document}
+
+\input{uw-ethesis-frontpgs} 
+
+\chapter{Introduction}
+\label{chapter:introduction}
+\input{introduction}
+
+\chapter{Clustering with same-cluster queries}
+\label{chapter:activeClustering}
+\input{activeClustering}
+
+\chapter{Semi-supervised clustering for deduplication}
+\label{chapter:deDuplication}
+\input{deDuplicationPCC}
+\input{deDuplicationRCC}
+
+\chapter{Finding cluster structure amidst background noise}
+\label{chapter:clusteringNoise}
+\input{clusteringNoise}
+
+\chapter{Noise-robust clustering}
+\label{chapter:optimizationClustering}
+\input{optimizationClustering}
+
+\cleardoublepage 
+\phantomsection  
+
+\renewcommand*{\bibname}{References}
+
+\addcontentsline{toc}{chapter}{\textbf{References}}
+\bibliography{uw-ethesis}
+\bibliographystyle{plain}
+%\nocite{*}
+
+\appendix
+\chapter*{APPENDICES}
+\addcontentsline{toc}{chapter}{APPENDICES}
+%======================================================================
+\chapter[Active Clustering]{Active Clustering}
+\label{appendix:activeClustering}
+\input{appendixActiveClustering}
+
+\chapter[De-duplication]{De-duplication}
+\label{appendix:deDuplication}
+\input{appendixDeDuplication}
+
+\chapter[Clustering Noise]{Clustering Noise}
+\label{appendix:clusteringNoise}
+\input{appendixClusteringNoise}
+
+\chapter[Noise-robust Clustering]{Noise-robust Clustering}
+\label{appendix:optimizationClustering}
+\input{appendixOptimizationClustering}
+
+\chapter[Technical lemmas]{Technical lemmas}
+\label{appendix:technicalLemmas}
+\input{appendixLemma}
+
+
+\end{document}

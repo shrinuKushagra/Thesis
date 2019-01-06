@@ -1,0 +1,382 @@
+\ifdefined\COMPLETE
+\else
+\documentclass[12pt]{article}
+
+\usepackage{amsmath,amsthm,mathtools}
+\usepackage{graphicx}
+\usepackage{algorithm2e}
+\usepackage{thm-restate}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes, calc, arrows, through, intersections, decorations.pathreplacing, patterns}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{thrm}[theorem]{Theorem}
+\newtheorem{lem}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\newcommand{\mb}{\mathbf}
+\newcommand{\mc}{\mathcal}
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+\let\oldnl\nl
+\newcommand{\nonl}{\renewcommand{\nl}{\let\nl\oldnl}}
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\vcdim}{VC-Dim}
+
+\begin{document}
+\fi
+
+\section{Introduction}
+Record de-duplication is a central task in data cleaning in large data bases. Common practical examples include the detection of records referring to the same patient in large health data bases (different records might have been generated for same patient in different clinics or even in the same clinic at different times), detecting same person records in census data, detecting customer records, duplicate records of papers in Google Scholar and so on and so forth \cite{elmagarmid2007duplicate}, \cite{chu2016distributed}, \cite{ilyas2015trends}.
+
+Since the same-entity relation is reflexive symmetric and transitive, the sets of duplicate records can be viewed as clusters. Consequently, the record de-duplication task can be viewed as a clustering task. Such a clustering task has several characteristics that make it hard to address with common clustering tools; The number of ground truth clusters is unknown to the algorithm. Furthermore, one cannot a priory bias the algorithm towards a larger or a smaller number of clusters (unlike, say, facility location tasks in which it makes sense to trade off cluster cohesiveness with the number of clusters). This implies that attempts to use standard classification prediction learning tools to predict which pairs or records should be labelled `same-cluster' and which should be `different clusters' (D) are bound to fail - uniformly drawn samples of pairs are likely to be all labeled D and the resulting constant "all D" classifier will have negligible $0-1$ error over the set of pairs. On top of that all, there is no a priori geometry to the clusters structure, one cannot justify common simplifying assumptions like some stability of the clustering, some convexity of the larger-than-two sized clusters  or significant between-clusters margins.
+
+The framework of correlation clustering extends naturally to the data de-duplication problem. Given a complete graph $G$ vertices where each edge is labelled as a $1$ or a $0$, the goal is to cluster the vertices of the graph so as to correlate “as much as possible” to the edges of the graph. That is find a clustering so as to minimize the number of $0$ edges within a cluster plus the number of $1$ edges across different clusters (or correlation loss). An edge label $0$ indicates that the two records have been deemed to be different while $1$ indicates that the records are similar. However, finding the clustering with minimum correlation loss is known to be NP-Hard \cite{bansal2004correlation}. 
+
+One characteristic of record de-duplication which makes it different from other clustering tasks is the applicability of `human supervision'. For example, given two records from a medical database or two papers from DBLP or two citizens from a census data, it is fairly easy for a human to identify whether these records refer to the same physical entity. The framework of correlation clustering does not take this into account. Most prevalent approaches for data de-duplication are based on designing a similarity measure (or distance) over the records, such that records that are highly similar according to that measure are likely to be duplicate and records that measure as significantly dissimilar are likely to represent different entities. In other words, the edge labels are `close to' the underlying ground truth clustering. This is another aspect of data de-duplication which the current correlation clustering framework does not take into account. 
+  
+In this paper we offer a formal modelling of such record de-duplication tasks. Our framework is the same as correlation clustering but with the added \textit{promise} that the input graph edges $E$ is `close to' the optimal correlation clustering of the given dataset. We analyse the computational complexity of this problem and show that even under strong promise, correlation clustering is NP-Hard. Moreover, the problem remains NP-Hard even when we are allowed to make queries to a human expert (or an \textit{oracle}) as long as the number of queries is not too large (less than the number of points in the dataset). 
+
+Given these negative results, we propose a \textit{restricted} variant of correlation clustering. Here, instead of finding the best clustering from the class of all possible clusterings, the learning algorithm has to choose the best clustering from a given class $\mc F$ of clusterings. We offer an algorithmic approach (which uses the help of an oracle) with success guarantees for the restricted version. The `success guarantee' depends on the complexity of the class $\mc F$ (measured by $\vcdim(\mc F)$) as well as the `closeness' of the metric $d$ to the target clustering.  
+
+\subsection{Related Work}
+The most relevant work is the framework of correlation clustering developed by \cite{bansal2004correlation} that we discussed in the previous section. Other variations of correlation clustering have been considered. For example \cite{demaine2006correlation}, consider a problem where the edges can be labelled by a real number instead of just $0$ or $1$. Edges with large positive weights encourage those vertices to be in the same cluster while edges with large negative weights encourage those points to be in different clusters. They showed that the problem is NP-Hard and gave a $O(\log n)$ approximation to the weighted correlation clustering problem. \cite{charikar2005clustering} made several contributions to the correlation clustering problem. For the problem of minimizing the correlation clustering loss (for unweighted complete graphs), they gave an algorithm with factor $4$ approximation. They also proved that the minimization problem is APX-Hard. 
+
+More recently, \cite{ailon2018approximate} considered the problem of correlation clustering in the presence of an oracle. If the number of clusters $k$ is known, they proposed an algorithm which makes $O(k^{14} \log n)$ queries to the oracle and finds a $(1+\epsilon)$-approximation to the correlation clustering problem. They showed that the problem is NP-Hard to approximate with $o\big(\frac{k}{poly \log k}\big)$ queries to an oracle. In this work, we obtain similar results for the {promise correlation clustering} problem.
+
+Supervision in clustering has been addressed before. For example, \cite{kulis2009semi,basu2004probabilistic,basu2002semi} considered {\em link/don't-link} constraints. This is a form of non-interactive clustering where the algorithm gets as input a list of pairs which should be in the same cluster and a list pairs which should be in different clusters. \cite{balcan2008clustering} developed a framework of interactive clustering where the supervision is provided in the form of {\em split/merge} queries. The algorithm gives the current clustering to the oracle. The oracle responds by telling the which clusters to merge and which clusters to split. 
+
+In this work, we use the framework of same-cluster queries developed by \cite{ashtiani2016clustering}. At any given instant, the clustering algorithm asks the same-cluster oracle about two points in the dataset. The oracle replies by answering either `yes' or `no' depending upon whether the two points lie in the same or different clusters. 
+
+On de-duplication side, most prevalent are approaches that are based on designing a similarity measure (or distance) over the records, such that records that are highly similar according to that measure are likely to be duplicates and records that measure as significantly dissimilar are likely to represent different entities. For example, to handle duplicate records created due typographical mistakes, many character-based similarity metrics have been considered. Examples of such metrics include the edit or levenshtein distance \cite{levenshtein1966binary}, smith-waterman distance \cite{waterman1981identification} and jaro distance metric \cite{jaro1980unimatch}. Token-based similarity metrics try to handle rearrangement of words, for example \cite{monge1996field} and \cite{cohen1998integration}. Other techniques include phonetic-based metrics and numerical metrics (to handle numeric data). A nice overview of these methods can be found in \cite{elmagarmid2007duplicate}. 
+   
+While the above approaches relied on designing a good similarity metric, some works try to `learn' the distance function from a labelled training dataset of pairs of records. Examples of such works include \cite{cochinwala2001efficient} and \cite{bilenko2003adaptive}. Clustering for de-duplication has been mostly addressed in application oriented works. \cite{hernandez1995merge} assumes that the duplicate records are transitive. The clustering problem now reduces to finding the connected components in a graph. 
+
+\subsection{Outline}
+Section \ref{section:problemFormulation} introduces the relevant notation and definitions. In Section \ref{section:PCC}, we introduce our framework of Promise Correlation Clustering. In Section \ref{section:PCCNPHard}, we prove that PCC is NP-Hard. In Section \ref{section:PCCNPHardOracle} we prove that PCC is NP-Hard even under the presence of an oracle. In Section \ref{section:RCC}, we introduce our framework of Restricted Correlation Clustering (RCC). In Sections \ref{section:samplingNegative} and \ref{section:samplingPositive} we describe procedures for sampling different-cluster (negative) and same-cluster (positive) pairs. In Section \ref{section:sampleAndQueryComplexity}, we describe our semi-supervised algorithm for solving the RCC problem. We prove an upper bound on the number of labelled samples required to guarantee the success of our algorithm. We also upper bound the number of queries made to the same-cluster oracle. Section \ref{section:conclusion} concludes our work. All the missing proofs can be found in the supplementary section. 
+
+\section{Preliminaries}
+\label{section:problemFormulation}
+Given a finite domain $X$. A clustering $C$ of the set $X$ is a partition of the set $X$ into $k$ disjoint subsets, that is, $C = \{C_1, \ldots, C_k\}$. Denote by $m(C) = \max C_i$. Define $X^{[2]} = \{(x, y) : x \neq y\}$. In this paper, we view a clustering as a binary-valued function over the pairs of instances. That is, $C: X^{[2]} \rightarrow \{0, 1\}$ and $C(x, y) = 1$ if and only if $x, y$ are in the same $C$ cluster. 
+
+Given $G = (X, E)$, define $d_E(x, y) = 0$ if there exists an edge between $x, y$ and $d_E(x, y) = 1$ otherwise. 
+
+\begin{definition}[Correlation clustering for deduplication]\cite{bansal2004correlation}
+Given $G = (X, E)$, find a clustering $C$ which minimizes 
+\begin{align*}
+  &L_{d_E}(C) = NL_{d_E}(C) + PL_{d_E}(C), \text{ where}\\
+  &NL_{d_E}(C) = |\{(x, y): C(x, y) = 1 \text{ and } d_E(x, y) = 0\}|,\\ 
+  &PL_{d_E}(C) = |\{(x, y): C(x, y) = 0 \text{ and } d_E(x, y) = 1\}| \numberthis\label{eqn:correlationLoss}
+\end{align*}
+$L_{d_E}(C)$ is also referred to as the correlation loss. A weighted version of the loss function places weights of $w_1$ and $w_2$ on the two terms and is defined as 
+\begin{align}
+  &L_{d_E}^{w_1, w_2}(C) = w_1 NL_{d_E}(C) + w_2 PL_{d_E}(C)\label{eqn:weightedCorrelationLoss}
+\end{align}
+\end{definition}
+
+\begin{definition}[Informative metric]
+\label{defn:informativeMetric}
+Given $(X, d)$, a clustering $C^*$ and a parameter $\lambda$. We say that the metric $d$ is $(\alpha, \beta)$-informative w.r.t $C^*$ and $\lambda$ if
+\begin{align}
+	&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[d(x, y) > \lambda \enspace|\enspace C^*(x, y) = 1\big] \enspace \le \enspace \alpha \label{eqn:alphaInformative}\\
+	&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[C^*(x, y) = 1 \enspace|\enspace d(x, y) \le \lambda \big] \enspace \ge \enspace \beta \label{eqn:betaInformative}
+\end{align}
+Here $U^2$ is the uniform distribution over $X^{[2]}$. 
+\end{definition} 
+This definition says that most of the same-cluster (or positive) pairs are such that the distance between them is atmost $\lambda$. Also, atleast a $\beta$ fraction of all pairs with distance $\le \lambda$ belong to the same cluster. 
+
+To incorporate supervision into the clustering problem, we allow an algorithm to make \textit{same-cluster} queries to a $C^*$-oracle defined below.
+\begin{definition}[ Same-cluster oracle \cite{ashtiani2016clustering}]
+Given $X$. A same-cluster $C^*$-oracle receives a pair $x, y \in X$ as input and outputs $1$ if $x, y$ belong to the same-cluster according to $C^*$. Otherwise, it outputs $0$. 
+\end{definition}
+
+In the next section, we introduce our framework of \textit{promise correlation clustering} and discuss the computational complexity of the problem both in the absence and presence of an oracle.   
+
+\section{Promise Correlation Clustering}
+\label{section:PCC}
+
+\begin{definition}[Promise correlation clustering (PCC)]
+\label{defn:promiseCorrClustering}
+Given a clustering instance $G = (X, E)$. Let $C^*$ be such that
+\begin{align}
+  &C^* = \argmin_{C \in \mc F} \enspace L_{d_E}(C) \label{eqn:promiseCorrLoss}
+\end{align}
+where $\mc F$ is the set of all possible clusterings $C$ such that $m(C) \le M$. Given that $d_E$ is $(\alpha, \beta)$-informative. Find the clustering $C^*$. 
+\end{definition}
+When the edges $E$ correspond to a clustering $C$ then $\beta = 1$ and $\mu = 0$. We show in the subsequent sections that even for this `restricted' class of clusterings (when the size of the maximum cluster is atmost a constant $M$) and given the prior knowledge, PCC is still NP-Hard. Furthermore, PCC is NP-Hard even when we are allowed to make $o(|X|)$ queries to a $C^*$-oracle. 
+
+\subsection{PCC is NP-Hard}
+\label{section:PCCNPHard}
+\begin{figure*}[!ht]
+	\centering
+	\begin{tikzpicture}
+	  \node[circle,draw,minimum size=1mm,,fill=black,label=below:$x_{i1}$] at (0, 0){};
+	  \node[circle,draw,fill=black] at (0, 2){};
+	  \node[circle,draw,fill=black] at (-1, 1){};
+	  \node[circle,draw,fill=black] at (1, 1){};
+	  \node[circle,draw,fill=black] at (0, 3){};
+
+	  \node[circle,draw,fill=black] at (0, 5){};
+	  \node[circle,draw,fill=black] at (-1, 4){};
+	  \node[circle,draw,fill=black] at (1, 4){};
+	  \node[circle,draw,fill=black] at (0, 6){};
+			
+	  \node[circle,draw,fill=black] at (0, 9){};
+	  \node[circle,draw,fill=black] at (0, 11){};
+	  \node[circle,draw,fill=black] at (-1, 10){};
+	  \node[circle,draw,fill=black] at (1, 10){};
+	  \node[circle,draw,fill=black] at (0, 12.5){};
+	
+	  \draw[blue] (0, 0) -- (0, 2);
+	  \draw[blue] (0, 0) -- (-1, 1);
+	  \draw[blue] (0, 0) -- (1, 1);
+	  \draw (1, 1) -- (-1, 1);
+	  \draw (1, 1) -- (0, 2);
+	  \draw (-1, 1) -- (0, 2);
+	  \draw[red] (1, 1) -- (0, 3);
+	  \draw[red] (-1, 1) -- (0, 3);
+	  \draw[red] (0, 3) -- (0, 2);
+		
+	  \draw[blue] (0, 3) -- (0, 5);
+	  \draw[blue] (0, 3) -- (-1, 4);
+	  \draw[blue] (0, 3) -- (1, 4);
+	  \draw (1, 4) -- (-1, 4);
+	  \draw (1, 4) -- (0, 5);
+	  \draw (-1, 4) -- (0, 5);
+	  \draw[red] (1, 4) -- (0, 6);
+	  \draw[red] (-1, 4) -- (0, 6);
+	  \draw[red] (0, 6) -- (0, 5);
+	
+	  \draw[blue] (0, 9) -- (0, 11);
+	  \draw[blue] (0, 9) -- (-1, 10);
+	  \draw[blue] (0, 9) -- (1, 10);
+	  \draw (1, 10) -- (-1, 10);
+	  \draw (1, 10) -- (0, 11);
+	  \draw (-1, 10) -- (0, 11);
+	  \draw[red] (1, 10) -- (0, 12.5);
+	  \draw[red] (-1, 10) -- (0, 12.5);
+	  \draw[red] (0, 12.5) -- (0, 11);
+	  	
+	  \node[circle,draw,minimum size=1mm,,fill=black,label=below:$x_{i2}$] at (3, 0){};
+	  \node[circle,draw,fill=black] at (3, 2){};
+	  \node[circle,draw,fill=black] at (2.5, 1){};
+	  \node[circle,draw,fill=black] at (3.5, 1){};
+	  \node[circle,draw,fill=black] at (3, 3){};
+	
+	  \node[circle,draw,fill=black] at (3, 5){};
+	  \node[circle,draw,fill=black] at (2.5, 4){};
+	  \node[circle,draw,fill=black] at (3.5, 4){};
+	  \node[circle,draw,fill=black] at (3, 6){};
+		
+	  \node[circle,draw,fill=black] at (3, 9){};
+	  \node[circle,draw,fill=black] at (3, 11){};
+	  \node[circle,draw,fill=black] at (2.5, 10){};
+	  \node[circle,draw,fill=black] at (3.5, 10){};
+	  \node[circle,draw,fill=black] at (3, 12){};
+	  		
+	  \draw[blue] (3, 0) -- (3, 2);
+	  \draw[blue] (3, 0) -- (2.5, 1);
+	  \draw[blue] (3, 0) -- (3.5, 1);
+	  \draw (3.5, 1) -- (2.5, 1);
+	  \draw (3.5, 1) -- (3, 2);
+	  \draw (2.5, 1) -- (3, 2);
+	  \draw[red] (2.5, 1) -- (3, 3);
+	  \draw[red] (3.5, 1) -- (3, 3);
+	  \draw[red] (3, 3) -- (3, 2);
+	  
+	  \draw[blue] (3, 3) -- (3, 5);
+	  \draw[blue] (3, 3) -- (2.5, 4);
+	  \draw[blue] (3, 3) -- (3.5, 4);
+	  \draw (3.5, 4) -- (2.5, 4);
+	  \draw (3.5, 4) -- (3, 5);
+	  \draw (2.5, 4) -- (3, 5);
+	  \draw[red] (3.5, 4) -- (3, 6);
+	  \draw[red] (2.5, 4) -- (3, 6);
+	  \draw[red] (3, 6) -- (3, 5);
+	  
+	  \draw[blue] (3, 9) -- (3, 11);
+	  \draw[blue] (3, 9) -- (2.5, 10);
+	  \draw[blue] (3, 9) -- (3.5, 10);
+	  \draw (3.5, 10) -- (2.5, 10);
+	  \draw (3.5, 10) -- (3, 11);
+	  \draw (2.5, 10) -- (3, 11);
+	  \draw[red] (3.5, 10) -- (3, 12);
+	  \draw[red] (2.5, 10) -- (3, 12);
+	  \draw[red] (3, 12) -- (3, 11);
+	  
+	  \node[circle,draw,minimum size=1mm,,fill=black,label=below:$x_{i3}$] at (5, 0){};
+	  \node[circle,draw,fill=black] at (5, 2){};
+	  \node[circle,draw,fill=black] at (4.5, 1){};
+	  \node[circle,draw,fill=black] at (5.5, 1){};
+	  \node[circle,draw,fill=black] at (5, 3){};
+	
+	  \node[circle,draw,fill=black] at (5, 5){};
+	  \node[circle,draw,fill=black] at (4.5, 4){};
+	  \node[circle,draw,fill=black] at (5.5, 4){};
+	  \node[circle,draw,fill=black] at (5, 6){};
+		
+	  \node[circle,draw,fill=black] at (5, 9){};
+	  \node[circle,draw,fill=black] at (5, 11){};
+	  \node[circle,draw,fill=black] at (4.5, 10){};
+	  \node[circle,draw,fill=black] at (5.5, 10){};
+	  \node[circle,draw,fill=black] at (5, 12){};
+	  		
+	  \draw[blue] (5, 0) -- (5, 2);
+	  \draw[blue] (5, 0) -- (4.5, 1);
+	  \draw[blue] (5, 0) -- (5.5, 1);
+	  \draw (5.5, 1) -- (4.5, 1);
+	  \draw (5.5, 1) -- (5, 2);
+	  \draw (4.5, 1) -- (5, 2);
+	  \draw[red] (5.5, 1) -- (5, 3);
+	  \draw[red] (4.5, 1) -- (5, 3);
+	  \draw[red] (5, 3) -- (5, 2);
+	  
+	  \draw[blue] (5, 3) -- (5, 5);
+	  \draw[blue] (5, 3) -- (4.5, 4);
+	  \draw[blue] (5, 3) -- (5.5, 4);
+	  \draw (5.5, 4) -- (4.5, 4);
+	  \draw (5.5, 4) -- (5, 5);
+	  \draw (4.5, 4) -- (5, 5);
+	  \draw[red] (5.5, 4) -- (5, 6);
+	  \draw[red] (4.5, 4) -- (5, 6);
+	  \draw[red] (5, 6) -- (5, 5);
+	  
+	  \draw[blue] (5, 9) -- (5, 11);
+	  \draw[blue] (5, 9) -- (4.5, 10);
+	  \draw[blue] (5, 9) -- (5.5, 10);
+	  \draw (5.5, 10) -- (4.5, 10);
+	  \draw (5.5, 10) -- (5, 11);
+	  \draw (4.5, 10) -- (5, 11);
+	  \draw[red] (5.5, 10) -- (5, 12);
+	  \draw[red] (4.5, 10) -- (5, 12);
+	  \draw[red] (5, 12) -- (5, 11);
+	  
+	  \node[circle,draw,minimum size=1mm,label=below:$r_{1}$,fill=black] at (8, 0){};
+	  \node[circle,draw,fill=black] at (8, 2){};
+	  \node[circle,draw,fill=black] at (7, 1){};
+	  \node[circle,draw,fill=black] at (9, 1){};
+	  \node[circle,draw,fill=black] at (8, 3){};
+
+	  \node[circle,draw,fill=black] at (8, 5){};
+	  \node[circle,draw,fill=black] at (7, 4){};
+	  \node[circle,draw,fill=black] at (9, 4){};
+	  \node[circle,draw,fill=black] at (8, 6){};
+			
+	  \node[circle,draw,fill=black] at (8, 9){};
+	  \node[circle,draw,fill=black] at (8, 11){};
+	  \node[circle,draw,fill=black] at (7, 10){};
+	  \node[circle,draw,fill=black] at (9, 10){};
+	  \node[circle,draw,fill=black] at (8, 12.5){};
+	
+	  \draw[blue] (8, 0) -- (8, 2);
+	  \draw[blue] (8, 0) -- (7, 1);
+	  \draw[blue] (8, 0) -- (9, 1);
+	  \draw (9, 1) -- (7, 1);
+	  \draw (9, 1) -- (8, 2);
+	  \draw (7, 1) -- (8, 2);
+	  \draw[red] (9, 1) -- (8, 3);
+	  \draw[red] (7, 1) -- (8, 3);
+	  \draw[red] (8, 3) -- (8, 2);
+		
+	  \draw[blue] (8, 3) -- (8, 5);
+	  \draw[blue] (8, 3) -- (7, 4);
+	  \draw[blue] (8, 3) -- (9, 4);
+	  \draw (9, 4) -- (7, 4);
+	  \draw (9, 4) -- (8, 5);
+	  \draw (7, 4) -- (8, 5);
+	  \draw[red] (9, 4) -- (8, 6);
+	  \draw[red] (7, 4) -- (8, 6);
+	  \draw[red] (8, 6) -- (8, 5);
+	
+	  \draw[blue] (8, 9) -- (8, 11);
+	  \draw[blue] (8, 9) -- (7, 10);
+	  \draw[blue] (8, 9) -- (9, 10);
+	  \draw (9, 10) -- (7, 10);
+	  \draw (9, 10) -- (8, 11);
+	  \draw (7, 10) -- (8, 11);
+	  \draw[red] (9, 10) -- (8, 12.5);
+	  \draw[red] (7, 10) -- (8, 12.5);
+	  \draw[red] (8, 12.5) -- (8, 11);
+	
+	  \draw[blue] (0, 12.5) -- (8, 12.5);
+	  \draw[blue] (0, 12.5) -- (5, 12);
+	  \draw[blue] (0, 12.5) -- (3, 12);
+	  \draw[blue] (3, 12) -- (5, 12);
+	  \draw[blue] (3, 12) -- (8, 12.5);
+	  \draw[blue] (5, 12) -- (8, 12.5);
+	  
+	  \path (0, 9) -- (0, 6) node [black, font=\Huge, midway, sloped] {$\dots$};
+	  \path (3, 9) -- (3, 6) node [black, font=\Huge, midway, sloped] {$\dots$};
+	  \path (5, 9) -- (5, 6) node [black, font=\Huge, midway, sloped] {$\dots$};
+	  \path (8, 9) -- (8, 6) node [black, font=\Huge, midway, sloped] {$\dots$};
+	  
+	  \draw [decorate,decoration={brace,amplitude=10pt},xshift=-4pt,yshift=0pt]
+(-1,0) -- (-1,3) node [black,midway,xshift=-0.6cm] 
+{\footnotesize $B_1$};
+	  \draw [decorate,decoration={brace,amplitude=10pt},xshift=-4pt,yshift=0pt]
+(-1,3) -- (-1,6) node [black,midway,xshift=-0.6cm] 
+{\footnotesize $B_2$};
+	  \draw [decorate,decoration={brace,amplitude=10pt},xshift=-4pt,yshift=0pt]
+(-1,9) -- (-1,12.5) node [black,midway,xshift=-0.6cm] 
+{\footnotesize $B_t$};
+
+	\end{tikzpicture}
+\caption{Part of graph $G$ constructed for the subset $S_i =  \{x_{i1}, x_{i2}, x_{i3}\}$. The graph is constructed by local replacement when for $p = 4$. If $S_i$ is included in the exact cover then the edges colored black and the edges colored blue represent the corresponding clustering of this part of the graph $G$. If $S_i$ is not included in the exact cover then the edges colored red and the edges colored black represent the clustering of this part of the graph.}
+\label{fig:X3CNPHard}
+\end{figure*}
+
+\begin{theorem}
+Finding the optimal solution to the Promise Correlation Clustering problem is NP-Hard for all $M \ge 3$ and for $\alpha = 0$ and $\beta = \frac{1}{2}$.  
+\end{theorem}
+
+\noindent To prove the result, we will use a reduction from exact cover by $3$-sets problem which is known to be NP-Hard.
+
+(X3C) Given a universe of elements $U = \{x_1, \ldots, x_{3q}\}$ and a collections of subsets $S = \{S_1, \ldots, S_m\}$. Each $S_i \subset U$ and contains exactly three elements. Does there exist $S' \subseteq S$ such that each element of $U$ occurs exactly once in $S'$?
+
+This decision problem is known to be NP-Hard. We will now reduce an instance of X3C to the promise correlation clustering problem. For each three set $S_i = \{x_{i1}, x_{i2}, x_{i3}\}$, we construct a replacement gadget as described in Fig. \ref{fig:X3CNPHard}. The gadget is similar to the one used in the proof of partition into triangles problem. However, instead of triangles the graph is `made of' cliques of size $p$. 
+
+
+
+Given an instance of X3C, we construct $G = (V, E)$ using local replacement described in Fig. \ref{fig:X3CNPHard}. Let $A$ be an algorithm which solves the promise problem described in Eqn. \ref{eqn:promiseCorrLoss}. Then, we can use this algorithm to decide exact cover by three sets as follows.
+
+If $A$ outputs a clustering $C$ such that all the clusters have size exactly $p$ and $E_C$ makes no negative errors w.r.t $E$ (that is $\mu(E_C) = 0$) then output YES. Otherwise, output NO. Next, we will prove that this procedure decides X3C. 
+
+Let there exists an exact cover for the X3C instance. Let $C$ be the clustering corresponding to the exact cover. That is, the edges colored blue and black correspond to this clustering and the corresponding vertices are in the same cluster (Fig. \ref{fig:X3CNPHard}). Note that this clustering makes no negative errors. Furthermore, each point is in a cluster of size exactly $p$. Thus, the positive error corresponding to any vertex is the degree of that vertex minus $p-1$. Since, the size of a cluster is atmost $p$, this is the minimum possible positive error for any vertex. Hence, any other clustering strictly makes more positive errors than $C$. 
+
+It is easy to see from the construction that if $A$ finds a clustering which has no negative errors and all the clusters have size $p$, then this corresponds to exact cover of the X3C instance and hence we output YES. If this does not happen then there does not exist any exact cover for $(U, S)$. This is because if there was an exact cover then the corresponding clustering would satisfy our condition. Thus, $A$ decides X3C. Since, X3C is NP-Hard, no polynomial time algorithm $A$ exists unless $P = NP$.
+
+In the construction, for each clause, we have $p^2 t + (p - 3)$ vertices and a vertex for each of the variables. Therefore, $|V| = m (p^2 t + (p-3)) + 3q$ and $|E| = pt({p \choose 2}+p-1) + {p \choose 2}$.  Consider a clustering $C$ which places all the $x_i$'s  and $r_i$'s in singleton clusters and places rest of the points in clusters of size $p$. For $t \ge 2$,
+\begin{align*}
+  \beta &= \frac{pt{p \choose 2}}{pt({p \choose 2}+p-1) + {p \choose 2}} = \frac{1}{1 + \frac{2}{p} + \frac{1}{pt}} > \frac{1}{2} \text{ and }\alpha = 0
+\end{align*} 
+
+\subsection{Hardness of PCC in the presence of an oracle}
+\label{section:PCCNPHardOracle}
+In the previous sections, we have shown that the PCC problem is NP-Hard without queries. It is trivial to see that by making $\beta |X|$ queries to the same-cluster oracle allows us to solve (in polynomial time) the Promise Correlation Clustering problem for all $M$ and $\alpha = 0$. In this section, we prove that the linear dependence on $n = |X|$ is tight. We prove that if the exponential time hypothesis (ETH) holds then any algorithm that runs in polynomial time makes atleast $\Omega(n)$ same-cluster queries.
+
+\begin{theorem}
+Given that the Exponential Time Hypothesis (ETH) holds then any algorithm for the Promise Correlation Clustering problem  that runs in polynomial time makes $\Omega(|X|)$ same-cluster queries for all $M \ge 3$ and for $\alpha = 0$ and $\beta = \frac{1}{2}$. 
+\end{theorem}
+
+\noindent Below, we give a proof sketch but a detailed proof is in the supplementary material. The exponential time hypothesis says that any solver for $3$-SAT runs in $2^{o(m)}$ time (where $m$ is the number of clauses in the $3$-SAT formula). We use a reduction from $3$-SAT to 3DM to X3C to show that the exact cover by 3-sets (X3C) problem also can't be solved in $2^{o(m)}$ time (if ETH holds). Then, using the reduction from the previous section implies that PCC also can't be solved in $2^{o(n)}$ time. Thus, any query based algorithm for PCC needs to make atleast $\Omega(n)$ queries where $n = |X|$ is the number of vertices in the graph. 
+
+\begin{definition}[3-SAT].\\
+Input: A boolean formulae $\phi$ in 3CNF with $n$ literals and $m$ clauses. Each clause has exactly three literals. \\
+Output: YES if $\phi$ is satisfiable, NO otherwise. 
+\end{definition}
+
+\noindent\textbf{Exponential Time Hypothesis}\\
+There does not exist an algorithm which decides 3-SAT  and runs in $2^{o(m)}$ time.
+
+\noindent To prove that (X3C) is NP-Hard, the standard We will reduce 3-SAT to 3-dimensional matching problem. 3DM is already known to be NP-Hard. However, the standard reduction of 3-SAT to 3DM constructs a set with number of matchings in $\Theta(m^2 n^2)$. Hence, using the standard reduction, the exponential time hypothesis would imply there does not exist an algorithm for 3DM which runs in $\Omega(m^\frac{1}{4})$. Our reduction is based on the standard reduction. However, we make some clever optimizations especially in the way we encode the clauses. This improves the lower bound to $\Omega(m)$.
+
+Using the above result, we immediately get an $\Omega(2^m)$ lower bound on the run-time of X3C. Now, using the same reduction of X3C to PCC as in Section \ref{subsection:PCCNPHard}, gives the same lower bound of $\Omega(n)$ on the running time of PCC. 
+
+For the sake of contradiction, let us assume that there exists an algorithm which solves PCC in polynomial time by making $o(n)$ same-cluster queries ($n$ is the number of vertices). Then by simulating all possible answers for the oracle, we get a non-query algorithm which solves PCC in $2^{o(n)}$. Hence, no such query algorithm exists. 
+
+\ifdefined\COMPLETE
+\else
+\end{document}
+\fi
