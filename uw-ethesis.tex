@@ -15,6 +15,7 @@
 \usepackage[pdftex,pagebackref=false]{hyperref} 
 \usepackage[boxruled]{algorithm2e}
 
+\usepackage{chngcntr}
 \usepackage[toc,page]{appendix}
 \usepackage[inline]{enumitem}
 \usepackage{bbm}
@@ -127,8 +128,14 @@ description={Random vector: a location in n-dimensional Cartesian space, where e
  
 \makeglossaries
 
-\begin{document}
+\AtBeginEnvironment{subappendices}{%
+\chapter*{Appendices}
+\addcontentsline{toc}{chapter}{\hspace{0.09in}Appendices}
+\counterwithin{figure}{section}
+\counterwithin{table}{section}
+}
 
+\begin{document}
 \input{uw-ethesis-frontpgs} 
 
 \chapter{Introduction}
@@ -138,19 +145,31 @@ description={Random vector: a location in n-dimensional Cartesian space, where e
 \chapter{Clustering with same-cluster queries}
 \label{chapter:activeClustering}
 \input{activeClustering}
+\begin{subappendices}
+\input{appendixActiveClustering}
+\end{subappendices}
 
 \chapter{Semi-supervised clustering for deduplication}
 \label{chapter:deDuplication}
 \input{deDuplicationPCC}
 \input{deDuplicationRCC}
+\begin{subappendices}
+\input{appendixDeDuplication}
+\end{subappendices}
 
 \chapter{Finding cluster structure amidst background noise}
 \label{chapter:clusteringNoise}
 \input{clusteringNoise}
+\begin{subappendices}
+\input{appendixClusteringNoise}
+\end{subappendices}
 
 \chapter{Noise-robust clustering}
 \label{chapter:optimizationClustering}
 \input{optimizationClustering}
+\begin{subappendices}
+\input{appendixOptimizationClustering}
+\end{subappendices}
 
 \cleardoublepage 
 \phantomsection  
@@ -166,22 +185,6 @@ description={Random vector: a location in n-dimensional Cartesian space, where e
 \chapter*{APPENDICES}
 \addcontentsline{toc}{chapter}{APPENDICES}
 %======================================================================
-\chapter[Active Clustering]{Active Clustering}
-\label{appendix:activeClustering}
-\input{appendixActiveClustering}
-
-\chapter[De-duplication]{De-duplication}
-\label{appendix:deDuplication}
-\input{appendixDeDuplication}
-
-\chapter[Clustering Noise]{Clustering Noise}
-\label{appendix:clusteringNoise}
-\input{appendixClusteringNoise}
-
-\chapter[Noise-robust Clustering]{Noise-robust Clustering}
-\label{appendix:optimizationClustering}
-\input{appendixOptimizationClustering}
-
 \chapter[Technical lemmas]{Technical lemmas}
 \label{appendix:technicalLemmas}
 \input{appendixLemma}

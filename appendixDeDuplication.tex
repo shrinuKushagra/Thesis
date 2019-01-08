@@ -140,6 +140,33 @@ Hence, from the discussion in this section, we know that X3C is not only NP-Hard
 
 For the sake of contradiction, let us assume that there exists an algorithm which solves PCC in polynomial time by making $o(n)$ same-cluster queries ($n$ is the number of vertices). Then by simulating all possible answers for the oracle, we get a non-query algorithm which solves PCC in $2^{o(n)}$. However, combining Cor. \ref{cor:X3CLowerBound} with the reduction of X3C to PCC, we get that any algorithm that solves PCC takes $\Omega(2^n)$. Hence, no such query algorithm exists. 
 
+\section{Sampling positive pairs for general metrics}
+
+\weightedPosApproxUniform*
+\begin{proof}
+Let $K = \{(x, y):d(x, y)\le \lambda\}$ and  $D$ be a distribution over $K$ defined by $D(x, y) := \frac{|S_x|}{\sum_{x'} |S_{x'}|} . \frac{1}{|S_x|} = \frac{U^2(x,y)}{U^2(K)}$. Let $K^+ = \{(x, y) : d(x, y) \le \lambda$ and $C^*(x, y) = 1\}$. Let $T$ be the distribution induced by $\mc P_{11}$. It's easy to see that for $(x, y) \not\in K^+$, $T(x, y) = 0$. For $(x, y) \in K^+$, let $D(x, y) = p$ and $D(K^+) = q$. Then, $T(x, y) = p + (1-q)p + \ldots = \frac{p}{q} = \frac{D(x, y)}{D(K^+)} = \frac{U^2(x, y)}{U^2(K^+)}$. Using Defn. \ref{defn:informativeMetric}, we know that 
+\begin{align*}
+  &1-\alpha \enspace \le \underset{(x, y) \sim U^2}{\mb P} [d(x, y) \le \lambda \enspace|\enspace C^*(x, y) = 1] \\
+  &= \frac{\underset{(x, y) \sim U^2}{\mb P} [ d(x, y) \le \lambda, C^*(x, y) = 1]}{\underset{(x, y) \sim U^2}{\mb P} [C^*(x, y) = 1]} = \frac{U^2(K^+)}{U^2(X^{[2]+})}\numberthis\label{eqn:wtIneq}
+\end{align*}
+Now, we will use the above inequality to prove our result. 
+\begin{flalign*}
+  &\underset{(x, y) \sim T}{\mb P}\enspace \big[ h(x, y) = 0 ] = \underset{(x, y)\in K^+}{\sum} T(x, y) \mb 1_{h(x, y) = 0}\\
+  & =\underset{(x, y) \in K^+}{\sum} \frac{U^2(x, y)}{U^2(K^+)} \mb 1_{h(x, y) = 0} \le\enspace \frac{1}{1-\alpha}\underset{(x, y) \in K^+}{\sum} \frac{U^2(x, y)}{U^2(X^{[2]+})}  \mb 1_{h = 0}\\
+  & \le (1+2\alpha)\underset{(x, y) \in X^2_+}{\sum} P^+(x, y) \mb 1_{h(x, y) = 0}&\\
+  &=\enspace (1+2\alpha)\underset{(x, y) \sim P^+}{\mb P}\enspace \big[ h(x, y) = 0 ]&
+\end{flalign*}
+Now, for the other direction, we have that 
+\begin{align*}
+  &\underset{(x, y) \sim P^+}{\mb P}\enspace \big[ h(x, y) = 0 ] = \underset{(x, y):X^{[2]+}}{\sum} P^+(x, y) \mb 1_{h(x, y) = 0} \\
+  &= \underset{ (x, y) \in K^+}{\sum} \frac{U^2(x, y)}{U^2(X^{[2]+})} \mb 1_{h(x, y) = 0} + \underset{(x, y)\in X^2_+ \setminus K^+}{\sum} \frac{U^2(x, y)}{U^2(X^{[2]+})} \mb 1_{h=0}\\
+  & \le \underset{ (x, y) \in K^+}{\sum} \frac{U^2(x, y)}{U^2(K^+)} \mb 1_{h(x, y) = 0}  + \underset{(x, y) \in X^{[2]+} \setminus K^+}{\sum} \frac{U^2(x, y)}{U^2(X^{[2]+})} \mb 1_{h = 0}\\
+  & \le \underset{(x, y) \sim T}{\mb P}\enspace \big[ h(x, y) = 0 ] + \underset{(x, y)\in X^{[2]+} \setminus K^+}{\sum} \frac{U^2(x, y)}{U^2(X^{[2]+})}\\
+  &  \enspace\le\enspace  \underset{(x, y) \sim T}{\mb P}\enspace \big[ h(x, y) = 0 ] + \alpha
+\end{align*}
+Hence, we have shown that both the directions hold and this completes the proof of the lemma. Note that this shows that our sampling procedure approximates the distribution $P^+$. It is easy to see that pre-computing $S_x$ for all $x$ takes $|X|^2$ time. Once the pre-computation is done, the sampling can be done in constant time.
+\end{proof}
+
 \section{Locality Sensitive Hashing}
 \label{section:A-LSH}
 The technique of locality sensitive hashing was introduced by \cite{gionis1999similarity} to solve the problem of approximate nearest neighbour search. The LSH-based hashing schemes try to put similar points into the same bucket. Hence, to search for points which are `similar' to a given point $x \in X$, one only needs to search within the same hash bucket instead of searching within the whole set $X$. Next, we describe a generic hashing based algorithm. 
@@ -212,21 +239,7 @@ For the second part, consider the case when $d(x, y) > \lambda'$ where $\lambda'
 Now, the only thing that remains to be shown is that we can choose an integer $r$ satisfying the conditions of the theorem. Consider the function $f(x) = -\frac{1}{2x} - \frac{1}{\ln(1-x)}$. Using elementary analysis, we see that for $x \rightarrow 0, f(x) \rightarrow \infty$. Infact, for $x \le 0.32, f(x) > 1$. Hence, for $\lambda \le 0.32$, $r$ satisfying the conditions of the theorem exists.
 \end{proof}
 
-\section{Proofs of theorems and lemmas}
-\begin{restatable}{lem}{weightedNegUniform}
-\label{lemma:weightedNegUniform}
-Given $X$ and a $C^*$-oracle. The procedure $\mc P_0$ samples a pair $(x, y)$ according to the distribution $P^-$.
-\end{restatable}
-\begin{proof}
-Refer to Lemma 11 in \cite{kushagra2018semisupervised}.
-\end{proof}
-
-\begin{restatable}{lem}{negQueries}
-\label{lemma:negQueries}Given set $X$ and a $C^*$-oracle. Let $X$ be $\gamma$-skewed. Let $q$ be the number of same-cluster queries made by $\mc P_0$ to the $C^*$-oracle. Then, $\mb E[q] \le \frac{1}{1-\gamma}$.
-\end{restatable}
-\begin{proof}
-Refer to Lemma 12 in \cite{kushagra2018semisupervised}.
-\end{proof}
+\section{Sampling positive pairs for LSHable metrics}
 
 \posDistribution*
 \begin{proof}

@@ -63,7 +63,7 @@ One strategy to estimate $L_{P^+}(C)$ (and $L_{P^-}$) could be the following. Sa
 
 The main problem in this approach is that the distributions $P^+$ and $P^-$ are unknown (as the target clustering $C^*$ is not known). In Section \ref{section:samplingRCC}, we discuss two approaches which (approximately) sample according to these distributions. Then in Section \ref{section:sampleAndQueryComplexity}, we show how these sampling procedures can be used to estimate $L_{C^*}$ for all the clusterings in our class $\mc F$.
 
-\section{Sampling for Restricted Correlation Clustering}
+\section{Sampling for RCC}
 \label{section:samplingRCC}
 We first describe the procedure $\mc P_0$ which samples according to $P^-$. Then we describe the procedure $\mc P_1$ which samples approximately according to the distribution $P^+$. 
 
@@ -86,14 +86,73 @@ We first describe the procedure $\mc P_0$ which samples according to $P^-$. Then
 	}
 }
 \end{algorithm}
-The procedure samples a pair uniformly at random. Then using the oracle it checks if the sampled pair is negative and terminates if such a pair is found. If not then the process is repeated again. It is an easy exercise (proof in appendix Lemma \ref{lemma:weightedNegUniform}) to see that the procedure $\mc P_0$ samples a pair according to the distribution $P^-$. From the algorithm description it is clear that to sample one negative pair we might need to make more than one query to the $C^*$-oracle. However, since the number of negative pairs is much greater than the number of positive pairs ($\gamma$-skewed) the number of `wasted' queries to the oracle is small. The proof of this result is in the appendix (Lemma \ref{lemma:negQueries}).
-   
-\subsection{Sampling positive pairs}
+The procedure samples a pair uniformly at random. Then using the oracle it checks if the sampled pair is negative and terminates if such a pair is found. If not then the process is repeated again. 
+
+\begin{restatable}{lem}{weightedNegUniform}
+\label{lemma:weightedNegUniform}
+Given $X$ and a $C^*$-oracle. The procedure $\mc P_0$ samples a pair $(x, y)$ according to the distribution $P^-$.
+\end{restatable}
+\begin{proof}
+The probability that a negative pair is sampled during a trial is $U^2(X^{[2]-}) =: q$. Fix a negative pair $(x, y)$ and let $U^2(x, y) = p$. Hence, the probability that the pair $(x, y)$ is sampled $= p + (1-q)p + (1-q)^2p + \ldots = p\sum_{i=0}^\infty (1-q)^i = \frac{p}{q} = \frac{U^2(x, y)}{U^2(X^{[2]-})} = P^-(x, y)$.
+\end{proof}
+
+\noindent Note that to sample one negative pair, procedure $\mc P_0$ might need to ask more than one same-cluster query. However, since our input $X$ is $\gamma$-skewed, we `expect' the number of `extra' queries to be `small'. 
+
+\begin{restatable}{lem}{negQueries}
+\label{lemma:negQueries}Given set $X$ and a $C^*$-oracle. Let $X$ be $\gamma$-skewed and Let $q$ be the number of same-cluster queries made by $\mc P_0$ to the $C^*$-oracle. Then, $\mb E[q] \le \frac{1}{1-\gamma}$.
+\end{restatable}
+\begin{proof}
+Let $p$ denote the probability that a negative pair is sampled during an iteration. We know that $p \ge (1 - \gamma)$. Let $q$ be a random variable denoting the number of iterations (or trials) before a negative pair is sampled. Then, $q$ is a geometric random variable. $\mb E[q] = \frac{1}{p} \le \frac{1}{1-\gamma}$.
+\end{proof}
+
+Lemma \ref{lemma:negQueries} shows that for $\gamma < \frac{1}{2}$, to sample a negative pair, procedure $\mc P_0$ makes atmost two queries to the oracle in expectation. Moreover, the number of queries is tight around the mean. Note that this sampling strategy is not useful for positive pairs. This is because the fraction of positive pairs in the dataset is small. Hence, to sample a single positive pair we would need to make `many' same-cluster queries. 
+
+\subsection{Sampling positive pairs for general metrics}
+\label{section:samplingPositive}
+
+Given a clustering instance $(X, d)$. Assume that the metric $d$ is $(\alpha, \beta)$-informative w.r.t target $C^*$ and parameter $\lambda$. This means that `most' of the positive pairs are within distance $\lambda$. Our sampling strategy is to ``construct" a set $K = \{(x, y) \in X^2: d(x, y) \le \lambda\}$ and then sample uniformly from this set. We will prove that this procedure approximates $P^+$. 
+
+The sampling algorithm is described in Alg. \ref{alg:weightedPosPairs}. In the pre-compute stage, for all points $x$ we construct its set of `neighbours' ($S_x$). We then choose a point with probability proportional to the size of its neighbour-set and then choose the second point uniformly at random from amongst its neighbours. This guarantees that we sample uniformly from the set $K$.  
+
+\RestyleAlgo{ruled}
+\SetAlgoNoLine
+\LinesNumbered
+\begin{algorithm}
+\label{alg:weightedPosPairs}
+\caption{Sampling procedure $\mc P_{11}$ for positive pairs (general metrics)}
+\Indp\KwIn{A set $X$, a $C^*$-oracle and a parameter $\lambda$.}
+\KwOut{One pair $(x, y) \in X^{[2]}$ such that $\mc C^*(x, y) = 1$}
+\vspace{0.1in}\textbf{Pre-compute:} For all $x \in X$, compute $S_x := \{y: d(x, y) \le \lambda\}$.\\
+
+\vspace{0.1in} \While{TRUE}{
+Sample $x \in X$ with probability $\propto |S_x|$. \label{algLine:size}\\
+Sample $y$ uniformly at random from $S_x$. \label{algLine:sample}\\
+\If {$\mc C^*(x, y) = 1$}{\label{algLine:oracleP21}
+	Output $(x, y)$.
+	}
+}
+\end{algorithm}
+
+\begin{restatable}{lem}{weightedPosApproxUniform}
+\label{lemma:weightedPosApproxUniform}
+Given set $(X, d)$, a $C^*$-oracle and parameter $\lambda$. Let $d$ be $(\alpha, \beta)$-informative w.r.t $\lambda$ and $C^*$.  Then the sampling procedure $\mc P_{11}$ induces a distribution $T$ over $X^{[2]}$ such that for any labelling function $h$ over $X^{[2]}$ we have that $$\Big|\underset{(x, y) \sim P^+}{\mb P}\enspace \big[ h(x, y) = 0 ] - \underset{(x, y) \sim T}{\mb P}\enspace \big[ h(x, y) = 0 ]\Big|  \enspace \le \enspace 2\alpha.$$ 
+\end{restatable}
+
+
+\noindent Note that to sample one positive pair, procedure $\mc P_{11}$ might need to ask more than one same-cluster query. However, since the metric $d$ is $\beta$-informative, we `expect' the number of `extra' queries to be `small'. 
+
+\begin{restatable}{lem}{posQueries}
+\label{lemma:posQueries}
+Given set $(X, d)$, a $C^*$-oracle and a parameter $\lambda$. Let $d$ be $\beta$-informative w.r.t $\lambda$ and let $q$ be the number of same-cluster queries made by $\mc P_{11}$ to the $C^*$-oracle. Then, $\mb E[q] \le \frac{1}{\beta}$.
+\end{restatable}
+\begin{proof}
+Let $p$ denote the probability that a positive pair is sampled during an iteration. We know that $p \ge \beta$. Let $q$ be a random variable denoting the number of iterations (or trials) before a positive pair is sampled. Then, $q$ is a geometric random variable. $\mb E[q] = \frac{1}{p} \le \frac{1}{\beta}$.
+\end{proof}
+
+\subsection{Sampling positive pairs for LSHable metrics}
 \label{section:samplingPositiveLSHable}
 
-We now discuss our procedure $\mc P_1$ which approximates the distribution $P^+$. We show that the procedure samples according to a distribution $T$ which has the following property. The loss $L_{T}$ (Defn. \ref{defn:normalizedCorrelationLoss}) and the loss $L_{P^+}$ for any clustering are close to one another. Hence, estimating the loss of a clustering w.r.t the distribution $\mc T$ also gives an estimate of the loss of that clustering w.r.t $P^+$. Now, we discuss the details of the sampling procedure. 
-
-Our metric $d$ is $(\alpha, \beta)$-informative w.r.t the target clustering $C^*$. That is, amongst all pairs with distance $\lambda$ atleast $\beta$-fraction are positive. A naive sampling strategy is the following. Construct a set $K = \{(x, y): d(x, y) \le \lambda\}$ and then sample uniformly from the set $K$ till a positive sample is found. Since most of the positive pairs have distance $\le \lambda$, this sampling procedure approximates $P^+$ (the uniform distribution over the set of true positives). However, constructing the set $K$ requires $\Theta(|X|^2)$ time. This makes the sampling procedure impractical for many situations. In this section, we will use techniques from locality sensitive hashing (LSH) combined with rejection sampling to develop a sampling procedure $\mc P_1$. We will show that $\mc P_1$ needs only linear pre-processing time (to build the hash maps) and outputs a positive pair sampled approximately according to $P^+$.\\
+The strategy in the previous section was to construct a set $K = \{(x, y): d(x, y) \le \lambda\}$ and then sample uniformly from the set $K$ till a positive sample is found. Since most of the positive pairs have distance $\le \lambda$, this sampling procedure approximates $P^+$ (the uniform distribution over the set of true positives). However, constructing the set $K$ requires $\Theta(|X|^2)$ time. In this section, we show that if the metric $d$ has some additional structure (is hashable) then we can reduce the pre-processing time to $O(|X|)$. We develop a sampling procedure $\mc P_{1}$ using techniques from locality sensitive hashing (LSH) combined with rejection sampling. We will show that $\mc P_1$ needs only linear pre-processing time (to build the hash maps) and outputs a positive pair sampled approximately according to $P^+$.\\
 
 \noindent\textit{Locality Sensitive Hashing (LSH)}
 
@@ -280,15 +339,18 @@ $$\vcdim({\mc F}) \le g(s)$$ where $g(s)$ is the smallest integer $n$ such that 
 
 \section{Efficient ERM Learner for hierarchical clustering trees}
 \label{section:efficientERM}
-\begin{algorithm}
+
+\RestyleAlgo{ruled}
+\SetAlgoNoLine
+\LinesNumbered
+\SetNlSkip{-0.4em}
+\begin{algorithm}[h]
 \caption{ERM approach for a hierarchical clustering tree}
 \label{alg:ERMTrees}
-\Indp\KwIn{A set $X$, a set $ S \subseteq X^2$ labelled according to $C^*$. Let $S_u = \{x: (x, y) \text{ or }  (y, x) \in S\}$. Given a clustering tree $T$ on $S_u$.}
-\KwOut{A clustering $\hat C \in T$ which implements the ERM approach over $T$.}
+\Indp\KwIn{A set $X$, a set $ S \subseteq X^2$ labelled according to $C^*$. Given a clustering tree $T$ on $S_u = \{x: (x, y) \text{ or }  (y, x) \in S\}$.}
+\KwOut{A clustering $\hat C \in T$ which implements ERM over $T$.}
 
-\vspace{0.1in} For every node $\nu$, let $nl(\nu)$ be the leaves which are descendants of $\nu$. For a leaf node $\nu$, $nl(\nu) = \{\nu\}$. \\
-Let $\mu_1 = \mu|S_-|$ and $\mu_2 = (1-\mu)|S_+|$. Let $$e(\nu) = \argmin_{C \in T_{\nu}} \mu_1|S_+|\hat P(C) + \mu_2|S_-|\hat N(C)$$ where $T_{\nu}$ is the tree $T$ restricted to the descendants of $\nu$. Let $a(\nu) = \mu_1|S_+|\hat P(C) + \mu_2|S_-|\hat N(C)$ where $C$ is the clustering which assigns all the descendants of $\nu$ to a single cluster. \\
-Initialize $e(\nu) = a(\nu) = 0$ for all the leaf nodes $\nu$. \\
+\vspace{0.1in} Initialize $e(\nu) = a(\nu) = 0$ for all the leaf nodes $\nu$. \\
 \For{all non-leaf nodes $\nu$ (in a bottom-up manner)}{\label{algLine:forNode}
 Let $\nu_l$ be left sub-tree and $\nu_r$ the right sub-tree.\\
 Initialize $s_a = d_a = 0$.\\
@@ -310,8 +372,9 @@ $e(\nu) = \min \{e(\nu_l)+e(\nu_r)+s_a, a(\nu)\}$ \label{algLine:best}
 
 Alg. \ref{alg:ERM} described the general ERM approach to find the `best' clustering for any class $\mc F$ of clusterings. Consider the case when $\mc F = \{C_1, \ldots, C_s\}$ (a finite list of clusterings). Then to implement Alg. \ref{alg:ERM}, we first sample a set $S \subseteq X^2$ and then compute the error of each clustering on this set $S$. Computing the error of a clustering on $S$ takes $\Theta(|S|)$ time. Hence, for finite $\mc F$, the ERM approach can be implemented in time $\Theta(|\mc F| |S|)$. 
 
-Now, let's focus on the case when $\mc F = \{T_1, \ldots, T_s\}$ (a finite set of clustering trees). Each tree $T_i$ can contain exponentially many clusterings. Hence, it is not clear if we can still implement the ERM approach in polynomial-time. Consider the problem of implementing the ERM approach when $\mc F = \{T\}$. The goal is to find the pruning in the tree which minimizes the loss $\hat L$. Given tree $T$, the clustering with the smallest loss is either the clustering which assigns all the points to a single cluster or the clustering with the best loss in $T_l$ (left subtree) concatenated with the clustering with the best loss in $T_r$ (right subtree). We describe our bottom-up approach in Alg. \ref{alg:ERMTrees}. Its easy to see that the running time of the approach is $\Theta(|S|^2)$. 
-\input{experiments}
+Now, let's focus on the case when $\mc F = \{T_1, \ldots, T_s\}$ (a finite set of clustering trees). Each tree $T_i$ can contain exponentially many clusterings. Hence, it is not clear if we can still implement the ERM approach in polynomial-time. Consider the problem of implementing the ERM approach when $\mc F = \{T\}$. The goal is to find the pruning in the tree which minimizes the loss $\hat L$. Given tree $T$, the clustering with the smallest loss is either the clustering which assigns all the points to a single cluster or the clustering with the best loss in $T_l$ (left subtree) concatenated with the clustering with the best loss in $T_r$ (right subtree). Before we describe our approach lets introduce a bit of notation.
+
+For every node $\nu$ in the hierarchical clustering tree, let $nl(\nu)$ be the leaves which are descendants of $\nu$. For a leaf node $\nu$, $nl(\nu) = \{\nu\}$. Let $\mu_1 = \mu|S_-|$ and $\mu_2 = (1-\mu)|S_+|$. Let $$e(\nu) = \argmin_{C \in T_{\nu}} \mu_1|S_+|\hat P(C) + \mu_2|S_-|\hat N(C)$$ where $T_{\nu}$ is the tree $T$ restricted to the descendants of $\nu$. Let $a(\nu) = \mu_1|S_+|\hat P(C) + \mu_2|S_-|\hat N(C)$ where $C$ is the clustering which assigns all the descendants of $\nu$ to a single cluster. We are now ready tp describe our bottom-up approach in Alg. \ref{alg:ERMTrees}. Its easy to see that the running time of the approach is $\Theta(|S|^2)$. 
 
 \ifdefined\COMPLETE
 \else

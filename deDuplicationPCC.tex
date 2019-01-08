@@ -28,20 +28,20 @@
 \begin{document}
 \fi
 
-\section{Introduction}
-Record de-duplication is a central task in data cleaning in large data bases. Common practical examples include the detection of records referring to the same patient in large health data bases (different records might have been generated for same patient in different clinics or even in the same clinic at different times), detecting same person records in census data, detecting customer records, duplicate records of papers in Google Scholar and so on and so forth \cite{elmagarmid2007duplicate}, \cite{chu2016distributed}, \cite{ilyas2015trends}.
+Modern businesses generate a tremendous amount of data which are stored in large databases. These datasets are then used to make many critical decisions. Therefore, ensuring the quality of these datasets becomes extremely important. As the data accumulates from multiple sources over time, many errors creep into the data. For example, many records end up having duplicate entries. Record de-duplication is a central task in managing large scale databases. The goal is to detect records in a database that correspond to the same real word entity. 
+%Some examples of such tasks are: detecting duplicate records in a health-care dataset, duplicate customer records, duplicate publication records (in say Google Scholar) are other common examples of de-duplication tasks.
 
-Since the same-entity relation is reflexive symmetric and transitive, the sets of duplicate records can be viewed as clusters. Consequently, the record de-duplication task can be viewed as a clustering task. Such a clustering task has several characteristics that make it hard to address with common clustering tools; The number of ground truth clusters is unknown to the algorithm. Furthermore, one cannot a priory bias the algorithm towards a larger or a smaller number of clusters (unlike, say, facility location tasks in which it makes sense to trade off cluster cohesiveness with the number of clusters). This implies that attempts to use standard classification prediction learning tools to predict which pairs or records should be labelled `same-cluster' and which should be `different clusters' (D) are bound to fail - uniformly drawn samples of pairs are likely to be all labeled D and the resulting constant "all D" classifier will have negligible $0-1$ error over the set of pairs. On top of that all, there is no a priori geometry to the clusters structure, one cannot justify common simplifying assumptions like some stability of the clustering, some convexity of the larger-than-two sized clusters  or significant between-clusters margins.
+The problem of data de-duplication can be viewed as a clustering task. Here, the goal is to put records corresponding to the same physical entity in the same cluster while separating the records corresponding to different entities into different clusters. Clustering for de-duplication has many characteristics which are different from standard clustering problems. Many popular clustering algorithms like $k$-means or $k$-median receive as input the value $k$, that is the number of clusters to output. This information is unknown in de-duplication applications. In any dataset, the number of different-cluster pairs (i.e. different entity pairs) is order of magnitude greater than the number of positive or same-cluster pairs (i.e. same entity pairs). Hence, common machine learning tools of classification prediction (learning a binary classifier over the set of pairs of instances) do not automatically transfer to this domain as the dataset is heavily skewed towards the negative pairs. 
 
-The framework of correlation clustering extends naturally to the data de-duplication problem. Given a complete graph $G$ vertices where each edge is labelled as a $1$ or a $0$, the goal is to cluster the vertices of the graph so as to correlate “as much as possible” to the edges of the graph. That is find a clustering so as to minimize the number of $0$ edges within a cluster plus the number of $1$ edges across different clusters (or correlation loss). An edge label $0$ indicates that the two records have been deemed to be different while $1$ indicates that the records are similar. However, finding the clustering with minimum correlation loss is known to be NP-Hard \cite{bansal2004correlation}. 
+The framework of correlation clustering is very natural for modelling the problem of data de-duplication \cite{bansal2004correlation}. Here, de-duplication is viewed as an optimization problem over graphs. More formally, given a dataset $X$ and a complete graph $G$ over the set. The edges of the graph are labelled $0$ or $1$. An edge label of zero indicates that the corresponding vertices have been deemed to be in different cluster while an edge label of one indicates that the corresponding vertices should be in the same cluster. The motivation for edge labelling is the following. Often the practitioner can design a pairwise similarity function over the pairs of points. The pairs whose similarity is above a certain threshold are deemed as positive (or same-cluster) and the remaining pairs are deemed to be negative (or different-cluster). Sometimes, the similarity metric is also learned from training data. 
 
-One characteristic of record de-duplication which makes it different from other clustering tasks is the applicability of `human supervision'. For example, given two records from a medical database or two papers from DBLP or two citizens from a census data, it is fairly easy for a human to identify whether these records refer to the same physical entity. The framework of correlation clustering does not take this into account. Most prevalent approaches for data de-duplication are based on designing a similarity measure (or distance) over the records, such that records that are highly similar according to that measure are likely to be duplicate and records that measure as significantly dissimilar are likely to represent different entities. In other words, the edge labels are `close to' the underlying ground truth clustering. This is another aspect of data de-duplication which the current correlation clustering framework does not take into account. 
+Given the graph, the goal of correlation clustering is to find a clustering of the dataset which correlates `as much as possible' with the given edges. In other words, find a clustering which minimizes the correlation loss w.r.t the given edges. Correlation loss is defined as the sum of the number of zero edges within a cluster plus the number of one edges across different clusters. However, solving this optimization problem is NP-Hard \cite{bansal2004correlation}. 
   
-In this paper we offer a formal modelling of such record de-duplication tasks. Our framework is the same as correlation clustering but with the added \textit{promise} that the input graph edges $E$ is `close to' the optimal correlation clustering of the given dataset. We analyse the computational complexity of this problem and show that even under strong promise, correlation clustering is NP-Hard. Moreover, the problem remains NP-Hard even when we are allowed to make queries to a human expert (or an \textit{oracle}) as long as the number of queries is not too large (less than the number of points in the dataset). 
+In this paper we offer a formal modelling of such record de-duplication tasks. Our framework is the same as correlation clustering but with the added \textit{promise} that the input graph edges $E$ is `close to' the optimal correlation clustering of the given dataset. We analyse the computational complexity of this problem and show that even under strong promise, correlation clustering is NP-Hard. Moreover, the problem remains NP-Hard (assuming the ETH hypothesis) even when we are allowed to make queries to a human expert (or an \textit{oracle}) as long as the number of queries is not too large (sub-linear in the number of points in the dataset). 
 
-Given these negative results, we propose a \textit{restricted} variant of correlation clustering. Here, instead of finding the best clustering from the class of all possible clusterings, the learning algorithm has to choose the best clustering from a given class $\mc F$ of clusterings. We offer an algorithmic approach (which uses the help of an oracle) with success guarantees for the restricted version. The `success guarantee' depends on the complexity of the class $\mc F$ (measured by $\vcdim(\mc F)$) as well as the `closeness' of the metric $d$ to the target clustering.  
+Given these negative results, we introduce the framework of restricted correlation clustering (RCC). This framework has two important differences from the standard (and promise) correlation clustering formulation. Firstly, the optimization problem is restricted over a given class $\mc F$ of clusterings. Secondly, the goal is to find a clustering which correlates as much as possible with the unknown target (or ground truth) clustering $C^*$. That is, $C^*$ is the clustering where only records corresponding to same entity are in the same cluster. We offer an algorithmic approach (which uses the help of an oracle) with success guarantees for the restricted version. The `success guarantee' depends on the complexity of the class $\mc F$ (measured by $\vcdim(\mc F)$) as well as the `closeness' of the distance (or similarity) metric $d$ to the target clustering.
 
-\subsection{Related Work}
+\section{Related Work}
 The most relevant work is the framework of correlation clustering developed by \cite{bansal2004correlation} that we discussed in the previous section. Other variations of correlation clustering have been considered. For example \cite{demaine2006correlation}, consider a problem where the edges can be labelled by a real number instead of just $0$ or $1$. Edges with large positive weights encourage those vertices to be in the same cluster while edges with large negative weights encourage those points to be in different clusters. They showed that the problem is NP-Hard and gave a $O(\log n)$ approximation to the weighted correlation clustering problem. \cite{charikar2005clustering} made several contributions to the correlation clustering problem. For the problem of minimizing the correlation clustering loss (for unweighted complete graphs), they gave an algorithm with factor $4$ approximation. They also proved that the minimization problem is APX-Hard. 
 
 More recently, \cite{ailon2018approximate} considered the problem of correlation clustering in the presence of an oracle. If the number of clusters $k$ is known, they proposed an algorithm which makes $O(k^{14} \log n)$ queries to the oracle and finds a $(1+\epsilon)$-approximation to the correlation clustering problem. They showed that the problem is NP-Hard to approximate with $o\big(\frac{k}{poly \log k}\big)$ queries to an oracle. In this work, we obtain similar results for the {promise correlation clustering} problem.
@@ -54,38 +54,63 @@ On de-duplication side, most prevalent are approaches that are based on designin
    
 While the above approaches relied on designing a good similarity metric, some works try to `learn' the distance function from a labelled training dataset of pairs of records. Examples of such works include \cite{cochinwala2001efficient} and \cite{bilenko2003adaptive}. Clustering for de-duplication has been mostly addressed in application oriented works. \cite{hernandez1995merge} assumes that the duplicate records are transitive. The clustering problem now reduces to finding the connected components in a graph. 
 
-\subsection{Outline}
-Section \ref{section:problemFormulation} introduces the relevant notation and definitions. In Section \ref{section:PCC}, we introduce our framework of Promise Correlation Clustering. In Section \ref{section:PCCNPHard}, we prove that PCC is NP-Hard. In Section \ref{section:PCCNPHardOracle} we prove that PCC is NP-Hard even under the presence of an oracle. In Section \ref{section:RCC}, we introduce our framework of Restricted Correlation Clustering (RCC). In Sections \ref{section:samplingNegative} and \ref{section:samplingPositive} we describe procedures for sampling different-cluster (negative) and same-cluster (positive) pairs. In Section \ref{section:sampleAndQueryComplexity}, we describe our semi-supervised algorithm for solving the RCC problem. We prove an upper bound on the number of labelled samples required to guarantee the success of our algorithm. We also upper bound the number of queries made to the same-cluster oracle. Section \ref{section:conclusion} concludes our work. All the missing proofs can be found in the supplementary section. 
-
 \section{Preliminaries}
 \label{section:problemFormulation}
-Given a finite domain $X$. A clustering $C$ of the set $X$ is a partition of the set $X$ into $k$ disjoint subsets, that is, $C = \{C_1, \ldots, C_k\}$. Denote by $m(C) = \max C_i$. Define $X^{[2]} = \{(x, y) : x \neq y\}$. In this paper, we view a clustering as a binary-valued function over the pairs of instances. That is, $C: X^{[2]} \rightarrow \{0, 1\}$ and $C(x, y) = 1$ if and only if $x, y$ are in the same $C$ cluster. 
+Given $X$, a clustering $C$ of the set $X$ partitions it into $k$ disjoint subsets or clusters. The clustering $C$ can also be viewed as a $\{0, 1\}$-function over the domain $X^{[2]} := \{(x_1, x_2) : x_1 \neq x_2\}$. Here, $C(x_1, x_2) = 1$ iff $x_1, x_2$ belong to the same cluster according to $C$.
 
-Given $G = (X, E)$, define $d_E(x, y) = 0$ if there exists an edge between $x, y$ and $d_E(x, y) = 1$ otherwise. 
+We allow a clustering algorithm to make queries to a human oracle in the following way. 
+\begin{definition}[ Same-cluster oracle \cite{ashtiani2016clustering}]
+Given a set $X$ and an unknown target clustering $C^*$. A same-cluster $C^*$-oracle receives a pair $(x_1, x_2) \in X^{[2]}$ as input and outputs $1$ if and only if $x_1, x_2$ belong to the same cluster according to $C^*$. 
+\end{definition}
+From the perspective of de-duplication, a same-cluster oracle receives two records $x_1$ and $x_2$. The oracle returns $1$ if $x_1$ and $x_2$ correspond to the same real-world entity. Otherwise, the oracle responds $0$.
 
-\begin{definition}[Correlation clustering for deduplication]\cite{bansal2004correlation}
-Given $G = (X, E)$, find a clustering $C$ which minimizes 
-\begin{align*}
-  &L_{d_E}(C) = NL_{d_E}(C) + PL_{d_E}(C), \text{ where}\\
-  &NL_{d_E}(C) = |\{(x, y): C(x, y) = 1 \text{ and } d_E(x, y) = 0\}|,\\ 
-  &PL_{d_E}(C) = |\{(x, y): C(x, y) = 0 \text{ and } d_E(x, y) = 1\}| \numberthis\label{eqn:correlationLoss}
+\begin{definition}[Correlation loss\cite{bansal2004correlation}]
+\label{defn:correlationLoss}
+Given graph $G = (X, E)$ where $X$ is the set of vertices (the given dataset to be clustered) and $E$ is the set of edges. The correlation loss of a clustering $C$ w.r.t the edges $E$ is defined as \begin{align*}
+  &corrL_{E}(C) = corrN_{E}(C) + corrP_{E}(C), \text{ where}\\
+  corrN_{E}(C) &= |\{(x, y): C(x, y) = 1 \text{ and } E(x, y) = 0\}|,\\ 
+  corrP_{E}(C) &= |\{(x, y): C(x, y) = 0 \text{ and } E(x, y) = 1\}| \numberthis\label{eqn:correlationLoss}
 \end{align*}
-$L_{d_E}(C)$ is also referred to as the correlation loss. A weighted version of the loss function places weights of $w_1$ and $w_2$ on the two terms and is defined as 
+A weighted version of the loss function places weights of $w_1$ and $w_2$ on the two terms and is defined as 
 \begin{align}
-  &L_{d_E}^{w_1, w_2}(C) = w_1 NL_{d_E}(C) + w_2 PL_{d_E}(C)\label{eqn:weightedCorrelationLoss}
+  &corrL_{E}^{w_1, w_2}(C) = w_1 \thinspace corrN_{E}(C) + w_2 \thinspace corrP_{E}(C)\label{eqn:weightedCorrelationLoss}
 \end{align}
 \end{definition}
 
-\begin{definition}[Informative metric]
-\label{defn:informativeMetric}
-Given $(X, d)$, a clustering $C^*$ and a parameter $\lambda$. We say that the metric $d$ is $(\alpha, \beta)$-informative w.r.t $C^*$ and $\lambda$ if
+The goal of correlation clustering is to find a clustering which minimizes the (weighted) correlation loss. For our purposes, it is more relevant to consider a loss function which takes values in the range $[0, 1]$. Also, we consider the correlation loss w.r.t a target clustering $C^*$ rather than the edges $E$.
+
+\begin{definition}[Normalized correlation loss\cite{kushagra2018semisupervised}]
+\label{defn:normalizedCorrelationLoss}
+Given domain $X$ and a target clustering $C^*$. The loss of a clustering $C$ w.r.t the target $C^*$ is defined as
+\begin{align*}
+  L_{C^*}(C) &= \enspace  \mu \enspace L_{P^+}(C) \enspace+\enspace (1-\mu) \enspace L_{P^-}(C), \text{ where} \\
+  &L_{P^+}(C) = \underset{(x, y) \sim P^+}{\mb P} \big[ C(x, y) = 0 ],\\
+  & L_{P^-}(C) = \underset{(x, y) \sim P^-}{\mb P} \big[ C(x, y) = 1] \numberthis\label{eqn:RCCV2}
+\end{align*}
+where $P^+$ is the uniform distribution over $X^{[2]}_+ = \{(x, y) : C^*(x, y) = 1\}$ and $P^-$ is the uniform distribution over $X^{[2]}_- = \{(x, y): C^*(x, y) = 0\}$. 
+\end{definition}
+The normalized correlation loss measures two quantities for the clustering $C$. The first is the fraction of the true positive pairs that $C$ gets wrong (or loss over the positive pairs). The second is the fraction of true negative pairs that $C$ gets wrong (or the loss over the negative pairs). It then obtains a weighted sum of the two losses. 
+  
+Lets observe the relation between Defns. \ref{defn:correlationLoss} and \ref{defn:normalizedCorrelationLoss}. Define $\gamma_0 := \mb P[C^*(x, y) = 1]$, that is the probability of true positive (or same-cluster pairs) in the dataset. Using the notation of Defn. \ref{defn:correlationLoss}, we see that $corrP_{C^*}(C) = \gamma_0|X^{[2]}| L_{P^+}(C)$ and $corrN_{C^*}(C) = (1-\gamma_0)|X^{[2]}| L_{P^-}(C)$. Normalising by $|X^{[2]}|$ and choosing $\mu = \frac{w_2 \gamma_0}{w_1 (1-\gamma_0) + w_2 \gamma_0}$ gives us the normalized version of the loss function.
+
+\begin{definition}[Informative metric \cite{kushagra2018semisupervised}]
+Given a metric space $(X, d)$, a target clustering $C^*$ and a parameter $\lambda$. We say that the metric $d$ is $(\alpha, \beta)$-informative w.r.t $C^*$ and $\lambda$ if
 \begin{align}
 	&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[d(x, y) > \lambda \enspace|\enspace C^*(x, y) = 1\big] \enspace \le \enspace \alpha \label{eqn:alphaInformative}\\
 	&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[C^*(x, y) = 1 \enspace|\enspace d(x, y) \le \lambda \big] \enspace \ge \enspace \beta \label{eqn:betaInformative}
 \end{align}
 Here $U^2$ is the uniform distribution over $X^{[2]}$. 
 \end{definition} 
-This definition says that most of the same-cluster (or positive) pairs are such that the distance between them is atmost $\lambda$. Also, atleast a $\beta$ fraction of all pairs with distance $\le \lambda$ belong to the same cluster. 
+In deduplication applications, often the distance function is such that pairs with distance within a certain threshold are likely to be in the same cluster. The definition of an informative metric formalizes this intuition. It says that most of the true positive pairs have a distance of atmost $\lambda$ between them. Also, amongst all pairs with distance $\le \lambda$, atleast a $\beta$ fraction of them belong to the same cluster. 
+
+\begin{definition}[$\gamma$-skewed] 
+\label{defn:gammaskewed} 
+Given $X$ and a target clustering $C^*$. We say that $X$ is $\gamma$-skewed w.r.t $C^*$ if 
+\begin{align*}
+	&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[\enspace C^*(x, y) = 1 \big] \enspace \le \enspace \gamma
+\end{align*}
+\end{definition}
+In de-duplication applications, most of the pairs are negative (or belong to different clusters). The above definition states this property formally. We are now ready to introduce the framework of \textit{restricted correlation clustering}. 
 
 To incorporate supervision into the clustering problem, we allow an algorithm to make \textit{same-cluster} queries to a $C^*$-oracle defined below.
 \begin{definition}[ Same-cluster oracle \cite{ashtiani2016clustering}]
@@ -101,9 +126,9 @@ In the next section, we introduce our framework of \textit{promise correlation c
 \label{defn:promiseCorrClustering}
 Given a clustering instance $G = (X, E)$. Let $C^*$ be such that
 \begin{align}
-  &C^* = \argmin_{C \in \mc F} \enspace L_{d_E}(C) \label{eqn:promiseCorrLoss}
+  &C^* = \argmin_{C \in \mc F} \enspace L_{E}(C) \label{eqn:promiseCorrLoss}
 \end{align}
-where $\mc F$ is the set of all possible clusterings $C$ such that $m(C) \le M$. Given that $d_E$ is $(\alpha, \beta)$-informative. Find the clustering $C^*$. 
+where $\mc F$ is the set of all possible clusterings $C$ such that $m(C) \le M$. Let $d_E$ be the metric defined by $d_E(x, y) = 1$ iff $(x, y) \in E$ and $0$ otherwise. Given that the metric $d_E$ is $(\alpha, \beta)$-informative. Find the clustering $C^*$. 
 \end{definition}
 When the edges $E$ correspond to a clustering $C$ then $\beta = 1$ and $\mu = 0$. We show in the subsequent sections that even for this `restricted' class of clusterings (when the size of the maximum cluster is atmost a constant $M$) and given the prior knowledge, PCC is still NP-Hard. Furthermore, PCC is NP-Hard even when we are allowed to make $o(|X|)$ queries to a $C^*$-oracle. 
 

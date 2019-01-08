@@ -1,5 +1,4 @@
-\section{Proof of theorems and lemmas}
-\subsection{Hardness of regularised $k$-means}
+\section{Hardness of regularised $k$-means}
 \label{a-section:hardness}
 \begin{theorem}
 \label{a-theorem:hardFork1Fixed}
@@ -73,7 +72,7 @@ Let $\lambda' = \sqrt{n^3(4\lambda - 2m(\mc X))} > 0$, and define a new Euclidea
 Hence, we see that GRM is equivalent to FRM which is NP-Hard.
 \end{proof}
 
-\subsection{The regularised $k$-means algorithm}
+\section{The regularised $k$-means algorithm}
 \label{a-section:heuristic}
  
 \subsubsection{Equivalence of regularised $k$-means with $0,1$-SDP}
@@ -198,7 +197,7 @@ Repeating this process $k$ times, we get that $Z$ can be decomposed into $k$ non
 which is the same as the cost of the regularised $k$-means objective. Hence, from a feasible solution of (\ref{eqn:modifiedkmeans}), we can obtain a feasible solution of the 0-1 SDP of same cost.
 \end{proof}
 
-\subsection{Tightness of the SDP based algorithm}
+\section{Tightness of the SDP based algorithm}
 \begin{equation*}
 	\textbf{0-1 SDP} 
 	\begin{cases}
@@ -378,7 +377,7 @@ $$\delta > 1 + \sqrt{1+\frac{2\theta\rho k}{d}\Big(1+\frac{1}{\log N}\Big)^2}$$
 where $\rho = \frac{N}{nk}$ and $ n := \min_{i\in[k]} |B_i|$ and $\theta = \mb E[\|x_{pi}-\mu_p\|] < 1$, then there exists a constant $c > 0$ such that with probability at least $1 - 2d\exp(\frac{-cN\theta}{d\log^2N})$ the $k$-means SDP finds the intended cluster solution  $\mc C^* = \{B_1, \ldots, B_k\}$.
 \end{theorem}
 
-\subsection{Tightness of the regularised SDP based algorithm}
+\section{Tightness of the regularised SDP based algorithm}
 \begin{equation*}
 	\textbf{0-1 SDP} 
 	\begin{cases}
@@ -597,7 +596,7 @@ Given a clustering instance $\mc X \subset \mb R^l$ and $k$. Let $\mc X : = \mc 
 then there exists a constant $c_2 > 0$ such that with probability at least $1-\delta - 2d\exp(\frac{-c_2|I|\theta}{d\log^2|I|})$ the regularised $k$-means SDP finds the intended cluster solution  $\mc C^* = \{C_1, \ldots, C_k, \mc N_2\}$ where $B_i \subseteq C_i$ when given $\mc X$ and $\delta^2+2\delta \ge \lambda \ge (\delta-1)^2 + 1$ as input.
 \end{theorem}
 
-\subsection{Tightness of the regularised LP based algorithm}
+\section{Tightness of the regularised LP based algorithm}
 \begin{equation*}
   \begin{split}
 	\textbf{IP}\\
@@ -722,18 +721,18 @@ then the regularised $k$-means LP finds the intended cluster solution  $\mc C^* 
 \begin{figure}[t]
   \label{a-figure:simulation}
   \centering
-  \includegraphics[width=\textwidth]{figures/optimizationClustering/deltaLambda.png}
-  \includegraphics[width=\textwidth]{figures/optimizationClustering/deltaD.png}
+  \includegraphics[width=0.45\textwidth]{figures/optimizationClustering/deltaLambda.png}
+  \includegraphics[width=0.45\textwidth]{figures/optimizationClustering/deltaD.png}
   \caption{Heatmap showing the probability of success of the $k$-means regularised sdp algorithm. Lighter color indicates probability closer to one while darker indicates probability closer to zero.}
 \end{figure}
 \begin{figure}
-  \includegraphics[width=\textwidth]{figures/optimizationClustering/deltaK.png}
-  \includegraphics[width=\textwidth]{figures/optimizationClustering/deltaM.png}
+  \includegraphics[width=0.45\textwidth]{figures/optimizationClustering/deltaK.png}
+  \includegraphics[width=0.45\textwidth]{figures/optimizationClustering/deltaM.png}
   \caption{Heatmap showing the probability of success of the $k$-means regularised sdp algorithm. Lighter color indicates probability closer to one while darker indicates probability closer to zero.$m$ denotes the number of noisy points while $n$ denotes the number of points in the smallest cluster.}
 \end{figure}
 \begin{figure}
-  \includegraphics[width=\textwidth]{figures/optimizationClustering/deltan.png}
-  \includegraphics[width=\textwidth]{figures/optimizationClustering/nM.png}
+  \includegraphics[width=0.45\textwidth]{figures/optimizationClustering/deltan.png}
+  \includegraphics[width=0.45\textwidth]{figures/optimizationClustering/nM.png}
   \caption{Heatmap showing the probability of success of the $k$-means regularised sdp algorithm. Lighter color indicates probability closer to one while darker indicates probability closer to zero. $m$ denotes the number of noisy points while $n$ denotes the number of points in the smallest cluster.}  
 \end{figure}
 
