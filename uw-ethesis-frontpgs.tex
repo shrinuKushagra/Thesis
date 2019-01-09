@@ -63,7 +63,7 @@
         \vspace*{1.0cm}
 
         \Huge
-        {\bf When is clustering easy? }
+        {\bf Theoretical foundations for efficient clustering}
 
         \vspace*{1.0cm}
 
@@ -108,8 +108,8 @@ The following served on the Examining Committee for this thesis. The decision of
   \noindent
 \begin{tabbing}
 Internal-External Member: \=  \kill % using longest text to define tab length
-External Examiner: \>  TBD \\ 
-\> Professor, Dept. of Philosophy of Zoology, University of Wallamaloo \\
+External Examiner: \>  Sanjoy Dasgupta \\ 
+\> Professor, Computer Science and Engineering\\ \> University of California, San Diego \\
 \end{tabbing} 
   \bigskip
   
@@ -148,8 +148,7 @@ Other Member(s): \> Eric Blais \\
 
 \begin{center}\textbf{Statement of Contributions}\end{center}
   \noindent
-This thesis consists of material all of which I authored or co-authored:  see Statement of
-Contributions included in the thesis. This is a true copy of the thesis, including any required final revisions, as accepted by my examiners.
+This thesis consists of material all of which I authored or co-authored. Chapter \ref{chapter:activeClustering} is based on a joint work with Hassan Ashtiani and Shai Ben-David \cite{ashtiani2016clustering}. Chapter \ref{chapter:deduplication} is based on a joint work with Ihab Ilyas and Shai Ben-David. At the time of writing this thesis, the material covered in this chapter has not been published. But is going to appear in AISTATS'19 and ICDE'19. Chapter \ref{chapter:clusteringNoise} is based on a joint work with Samira Samadi and Shai Ben-David \cite{kushagra2016finding}. Chapter \ref{chapter:optimizationClustering} is based on a joint work with Yaoliang Yu and Shai Ben-David. At the time of writing this thesis, this work is still under submission at a conference. However, an arxiv version has been made available \cite{kushagra2017provably}. 
 
   \bigskip
   
@@ -159,13 +158,13 @@ I understand that my thesis may be made electronically available to the public.
 \cleardoublepage
 
 \begin{center}\textbf{Abstract}\end{center}
-Clustering is an umbrella term used to describe many common unsupervised learning techniques. One common view or definition of clustering is that it aims to group together data instances which are similar while simultaneously separating the dissimilar instances. Grouping objects into cohesive subsets is a fundamental problem in science and nature. For example, a geneticist wants to find similar dna sequences from a huge list of dna sequences. Websites like facebook and google want to show similar ads to similar users; Movie streaming services like netflix want to suggest similar movies to similar users. The problem of clustering also arises in text analysis, data de-duplication and many more.  
+Clustering is an umbrella term used to describe many common unsupervised learning techniques. One common view or definition of clustering is that it aims to group together data instances which are similar while simultaneously separating the dissimilar instances. Grouping objects into cohesive subsets is a fundamental problem in science and nature. We can find this problem in a variety of domains. Some examples include user segmentation, market analysis, dna sequencing, text analysis, image segmentation, data de-duplication and many more.  
 
-The task of clustering is challenging due to many factors. The most well-studied is the high computational cost. The clustering task can be viewed as an optimization problem where the goal is to minimize a certain cost function (like $k$-means cost or $k$-median cost). Not only are the minimization problems NP-Hard but often also NP-Hard to approximate within a constant factor. Other major issues in clustering are \emph{under-specificity} and \emph{noise-robustness}. In this thesis, we focus on tackling the two issues while simultaneously ensuring low (polynomial) computational cost. 
+The task of clustering is challenging due to many factors. The most well-studied is the high computational cost. The clustering task can be viewed as an optimization problem where the goal is to minimize a certain cost function (like $k$-means cost or $k$-median cost). Not only are the minimization problems NP-Hard but often also NP-Hard to approximate (within a constant factor). There are two other major issues in clustering, namely \emph{under-specificity} and \emph{noise-robustness}. While some works have focussed on the issue of noise robustness of clustering algorithms, the problem of under-specificity has not received the adequate attention of the research community. The focus of this thesis is tackling these two issues while simultaneously ensuring low (polynomial) computational cost. 
 
 Clustering is under-specified. Consider the problem of dividing a dataset of human faces into two groups. One solution requirement could be to group the faces by gender. Another solution requirement could be to group the faces by emotion. Different solution requirements need different approaches. In such situations, domain knowledge is needed to better define the clustering problem. We incorporate this by allowing the clustering algorithm to interact with an oracle (or a human expert). The algorithm can ask the oracle whether two points belong to the same or different cluster. The oracle responds by replying either `yes' or `no' to the same-cluster query. In a preliminary work, we show that even access to a small number of same-cluster queries makes an otherwise NP-Hard clustering problem computationally tractable. 
 
-Pursuing this direction further, we consider the problem of clustering for data de-duplication; detecting records which correspond to the same physical entity in a database. Consider a marketing agency which sends advertising content (via emails, pamphlets, phone calls etc.) to potential consumers. The database of potential consumers is built from various sources and likely to contain duplicate records. In such cases, it is important to not the send the same content to a potential consumer multiple times. The framework of correlation clustering is highly applicable to model this problem. We propose a correlation clustering  like framework model such record de-duplication problems. We show that access to a small number of same-cluster queries can help us solve the `restricted' version of correlation clustering. Rather surprisingly, other versions of correlation clustering \footnote{We refer to it as promise correlation clustering.} are intractable even when allowed to make a `large' (sub-linear in the size of the dataset) number of same-cluster queries. 
+Pursuing this direction further, we consider the problem of clustering for data de-duplication; detecting records which correspond to the same physical entity in a database. Consider a marketing agency which sends advertising content (via emails, pamphlets, phone calls etc.) to potential consumers. The database of potential consumers is built from various sources and likely to contain duplicate records. In such cases, it is important to not the send the same content to a potential consumer multiple times. The framework of correlation clustering is highly applicable to model this problem. We propose a correlation clustering  like framework to model such record de-duplication problems. We show that access to a small number of same-cluster queries can help us solve the `restricted' version of correlation clustering. Rather surprisingly, more relaxed versions of correlation clustering \footnote{We refer to it as promise correlation clustering.} are intractable even when allowed to make a `large' (sub-linear in the size of the dataset) number of same-cluster queries. 
 
 The second line of research that this thesis explores is the issue of noise-robustness of clustering algorithms. Many of the common clustering tools (aim to) partition the data into cohesive groups. That is the groups or clusters share some between-cluster separation (the clustering community has introduced various notions of "clusterability" to capture this property). However, many real-world datasets, have on top of these cohesive subsets, a significant amount of points which are `unstructured'. We refer to these structureless points as noise. The addition of these noisy points makes it difficult to detect the cohesive structure of the remaining points. The exact definition of `structurelessness' varies depending on the type of structure the clustering algorithm is trying to detect. 
 
