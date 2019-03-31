@@ -1,1 +1,14 @@
 *.pdf
+*glg
+*glo
+*glg-ar
+*out
+*log
+*gls
+*toc
+*loc
+*aux
+*lof
+*abr
+*ist
+*lot
