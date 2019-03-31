@@ -16,6 +16,7 @@
 \usepackage{marvosym}
 \usepackage{tikz}
 \setbeamertemplate{items}[circle]
+\setbeamercovered{transparent}
 
 \usetheme{Madrid}
 \newcommand{\mc}{\mathcal}
@@ -33,11 +34,11 @@
   \tikz[baseline=(n.base)]\node(n)[beameritem]{#1};%
 }
 
-\title[Clustering for de-dup]{Semi-supervised clustering for de-duplication}
+\title[Efficient Clustering]{Theoretical foundations for efficient clustering}
 
-\author[Kushagra]{
+\author[S. Kushagra]{
 Shrinu Kushagra\\
-\vspace{30pt}Joint work with\\ Hemant Saxena, Ihab Ilyas and Shai Ben-David\\
+\vspace{30pt}Ph.D Thesis Presentation\\
 University of Waterloo
 }
 \date{\today}
@@ -55,6 +56,151 @@ University of Waterloo
 
 \begin{frame}
   \titlepage
+\end{frame}
+
+\begin{frame}{What is clustering?}
+	Given: $X$\\
+	\vspace{10pt}Partition it into $k$ subsets .$$C = \{C_1, \ldots, C_k\}$$
+	\begin{itemize}
+		\item Similar points share a cluster.
+		\item Dis-similar points are separated.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}<1>[label=clusteringChallenges]{Challenges in clustering}
+	\begin{enumerate}
+		\onslide<1> \item Computational complexity
+		\onslide<2> \vspace{20pt}\item  Under-specificity
+		\onslide<3>\vspace{20pt}\item Noise robustness
+	\end{enumerate}
+\end{frame}
+
+\begin{frame}{Computational cost}
+	Common approach to clustering
+	\begin{itemize}
+		\item Associate cost with each partition of the set.
+		\item Find partition with minimum cost.
+	\end{itemize}
+
+	\vspace{20pt}$k$-means is NP-Hard.
+	\begin{itemize}
+		\item NP-Hard for $k=2$ \alert{[Dasgupta `08]}
+		\vspace{0pt}\item NP-Hard in the plane. \alert{[Vattani `09]}
+		\vspace{0pt}\item NP-Hard to approximate within $(1+\epsilon)$ \alert{[Awasthi et. al `15]}
+	\end{itemize} 
+	
+	\vspace{20pt}$k$-median is NP-Hard \alert{[Megiddo, Supowit `84]}.
+	\begin{itemize}
+		\vspace{0pt}\item $(3+\epsilon)$-approximation is known. \alert{[Arya et. al `04]}
+	\end{itemize}		
+\end{frame}
+
+\begin{frame}<2>[label=clusteringChallenges]{Challenges in clustering}
+	\begin{enumerate}
+		\onslide<1> \item Computational complexity
+		\onslide<2> \vspace{20pt}\item  Under-specificity
+		\onslide<3>\vspace{20pt}\item Noise robustness
+	\end{enumerate}
+\end{frame}
+
+\begin{frame}{Under-specificity in clustering}
+	
+	Requirements from clustering algorithms\\
+	\vspace{10pt}
+	\begin{block}{}
+		\begin{itemize}
+			\item Similar points together
+			\item Dis-similar points separated
+		\end{itemize}
+	\end{block}
+	
+	\vspace{10pt}\alert{Conflicting}
+	\begin{center}
+	\includegraphics[trim={100 650 30 120},clip,width=0.8\textwidth]{figures/conflictingReq.pdf}
+	\end{center}
+\end{frame}
+
+\begin{frame}{Example}
+	Given $X \in \mb R^2$ and $k = 2$
+	\begin{center}
+	\begin{figure}
+	\includegraphics[trim={0 0 0 20},clip,width=0.4\textwidth]{figures/slX.png}
+	\includegraphics[trim={0 0 0 20},clip,width=0.4\textwidth]{figures/kmeansX.png}
+	\caption{Single-linkage on our example dataset (Left). $k$-means on our example dataset (Right)}
+	\end{figure}
+	\end{center}
+\end{frame}
+
+\begin{frame}{Different algorithms have different considerations}
+	
+	Single-linkage\\
+	\begin{itemize}
+		\item Similar points together, dis-similar can end up together.
+	\end{itemize}
+	
+	\vspace{10pt}$k$-means\\
+	\begin{itemize}
+		\item Separate dissimilar points, similar can be separated. 
+	\end{itemize}
+	
+	 \vspace{20pt}\alert{Model selection problem:} How to prefer one choice over the other?
+\end{frame}
+
+\begin{frame}<3>[label=clusteringChallenges]{Challenges in clustering}
+	\begin{enumerate}
+		\onslide<1> \item Computational complexity
+		\onslide<2> \vspace{20pt}\item  Under-specificity
+		\onslide<3>\vspace{20pt}\item Noise robustness
+	\end{enumerate}
+\end{frame}
+
+\begin{frame}{Noise-robustness}
+	
+	Clustering definition revisited.
+	\begin{block}{}
+		\begin{itemize}
+			\item Similar points together
+			\item Dis-similar points separated
+		\end{itemize}
+	\end{block}
+	
+	\vspace{30pt}Makes sense when data has cohesive structure.
+	\begin{itemize}
+		\vspace{10pt}\item Subsets which are \textcolor{blue}{well-separated}.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Noise-robustness}
+	Real world data
+	\begin{itemize}
+		\vspace{10pt}\item Well-clustered subset
+		\vspace{5pt}\item Unstructured part
+	\end{itemize}
+	
+	\vspace{25pt}How to detect structure in the presence of noise?
+\end{frame}
+
+\begin{frame}{Summary: Challenges in clustering}
+	\begin{enumerate}
+		\item Computational complexity
+		\vspace{20pt}\item  Under-specificity
+		\vspace{20pt}\item Noise robustness
+	\end{enumerate}
+\end{frame}
+
+\begin{frame}<1>{Outline}
+	First part
+	\vspace{10pt}\begin{block}{}
+	\mynum{2} Under-specificity \alert{and} \\\vspace{10pt}\mynum{1} Computational complexity
+	\end{block}
+		
+	\onslide<2>\vspace{35pt}Second part
+	\vspace{10pt}\begin{block}{}
+	\mynum{3} Noise-robustness \alert{and} \\\vspace{10pt}\mynum{1} Computational complexity
+	\end{block}		
+\end{frame}
+
+\begin{frame}
 \end{frame}
 
 \begin{frame}{What is data de-duplication?}
