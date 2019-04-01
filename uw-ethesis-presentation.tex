@@ -9,7 +9,7 @@
 % package/program, I grant the extra permission to freely copy and
 % modify this file as you see fit and even to delete this copyright
 % notice. 
-
+\def\ACCOMPLETE{}
 \documentclass{beamer}
 \usepackage{color}
 \usepackage{graphicx}
@@ -200,13 +200,153 @@ University of Waterloo
 	\end{block}		
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Dealing with under-specificity}
+
+	Incorporating domain knowledge into the clustering problem\\	
+	\begin{itemize}
+		\vspace{10pt} \item Must/cannot link constraints \alert{[Basu et. al `02]}\\
+		\vspace{10pt} \item Demonstration-based clustering \alert{[Ashtiani, Ben-David `15]}\\
+		\vspace{10pt} \item Merge/split queries \alert{[Balcan, Blum `08]}
+	\end{itemize}
 \end{frame}
 
-\begin{frame}{What is data de-duplication?}
-	Consider a database $X$ with records (or rows) $r_1, \ldots, r_n$\\
-    \vspace{20pt}``Detect'' records which correspond to the same real-world entity. \\
-    \vspace{30pt}Central task in \textit{cleaning} large databases.
+\begin{frame}{Our approach}
+	
+	{\color{blue}Same-cluster query}\\
+    \vspace{20pt}Given a clustering $C^*$ of set $X$\\
+    \vspace{5pt}Ask same-cluster queries to a $C^*$-oracle\\
+    $$C^*(x_1, x_2) = \left\{
+	\begin{array}{ll}
+		\mbox{true }  & \mbox{if } x_1 \overset{C^*}{\sim} x_2   \\
+		\mbox{false } & otherwise 
+	\end{array}
+\right. $$
+\end{frame}
+
+\begin{frame}{Center-based clustering with same-cluster queries}
+	\begin{itemize}
+		\item Joint work with Hassan Ashtiani and Shai Ben-David
+		\vspace{20pt} \item In proceedings of \alert{NeurIPS'16}.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Problem Setting}
+	Input: $X \subseteq \mb R^d$
+	\begin{itemize} 
+   		\vspace{10pt}\item Learner can make same-cluster queries to $C^*$-oracle
+		\vspace{10pt}\item Oracle's clustering is ``nice".     
+	\end{itemize}
+	\vspace{20pt} {\color{blue}Goal}: Recover the oracle's clustering $C^* = \{C_1^*, \ldots, C_k^*\}$
+\end{frame}
+
+\begin{frame}{$\gamma$-margin niceness}
+	Cluster-center is closer to its own points than to points outside.
+	\vspace{1cm}\begin{figure}        
+            \centering\includegraphics[trim= 400 470 400 150, scale=0.5]{figures/gammaMargin.pdf}
+    \end{figure} 
+    \begin{block}{}
+		For all $i$, for all $x \in C_i$ and for all $y \not\in C_i$
+		$$\gamma d(x, \mu_i) < d(y, \mu_i)$$	
+	\end{block}  
+\end{frame}
+
+\begin{frame}{Sidenote: Results under margin assumption (no queries)}
+  Given: $X$ and $k$\\
+  \vspace{10pt}Optimal solution to the desired objective function satisfies $\gamma$-margin.
+
+	\vspace{20pt}\begin{table}[]
+	\centering
+	%\caption{My caption}
+	\label{my-label}
+	\begin{tabular}{lll|lll|}
+	& $k$-means &  &  &    & \begin{tabular}[c]{@{}l@{}}Poly-time solvable for $\gamma \ge 3$\\ NP-Hard for $\gamma < 3$\end{tabular} \\\\
+	\hline\\
+	& $k$-median &  &  &  & \begin{tabular}[c]{@{}l@{}}Poly-time solvable for $\gamma \ge 2$\\ NP-Hard for $\gamma < 2$\end{tabular}
+	\end{tabular}
+	\end{table}
+\end{frame}
+
+\begin{frame}{Problem Setting}
+	Input: $X \subseteq R^d$
+	\begin{itemize} 
+   		\vspace{10pt}\item Learner can make same-cluster queries to $C^*$-oracle
+		\vspace{10pt}\item $C^*$ satisfies $\gamma$-margin
+		\vspace{10pt}\item $\mu_i^*$ is  the center of mass of $C_i^*$
+	\end{itemize}
+	\vspace{20pt} {\color{blue}Goal}: Recover the oracle's clustering $C^* = \{C_1^*, \ldots, C_k^*\}$
+\end{frame}
+
+\begin{frame}{Clustering with queries}
+  \begin{block}{The algorithm}
+	\vspace{10pt}
+	1. Estimate center
+	\begin{itemize}
+		\item Query uniformly till we have ``enough'' points from one cluster
+    \end{itemize}  
+	\vspace{10pt}
+	2. Compute radius
+	\begin{itemize}
+	  \item Binary search to find the ``radius"
+    \end{itemize}  
+	\vspace{10pt}
+	3. Delete and repeat
+  \end{block}
+\end{frame}
+
+\begin{frame}{Results}
+
+	\begin{block}{Positive result with queries}
+		\vspace{10pt}For $\gamma > 1$, our algorithm finds $C^*$ (with high probability) and 
+		\begin{itemize}
+		\vspace{10pt}\item Runs in $O(kn\log n)$ time.
+        \vspace{10pt}\item Makes $O(k^2\log k + k\log n)$ same-cluster queries.
+		\end{itemize}
+	\end{block}
+	
+	\vspace{20pt}Query complexity: Logarithmic\\
+	\vspace{10pt}Any target clustering $C^*$ as long the niceness conditions are satisfied. 
+\end{frame}
+
+\begin{frame}{$k$-means revisited}
+	\vspace{-20pt}Input: $X \subseteq \mb R^d$ and $k$.
+	\vspace{-10pt}$$C^* = \argmin_{C} \sum_{i=1}^k \sum_{x \in C_i} \|x - \mu_i\|^2$$
+	\vspace{10pt}Given that $C^*$ satisfies $\gamma$-margin\\
+	
+	\vspace{10pt}\begin{block}{Theorem}
+	Euclidean $k$-means is NP-hard even when the optimal solution satisfies the $\gamma$-margin property for $\gamma < 1.84$
+	\end{block}
+	
+	\vspace{20pt} Can efficiently find the optimal using $O(k\log n)$ queries for $\gamma > 1$
+\end{frame}
+
+\begin{frame}{Hardness result}
+	\begin{itemize}
+		\item Reduction from exact cover by $3$-sets ($X3C$)
+		\item Hard for $k = \Theta(n^\epsilon)$ and $d = 2$.
+		\item Similar ideas as in \alert{[Vattani'09]}
+	\end{itemize}
+	
+	\begin{figure}
+		\centering
+		\includegraphics[trim=0 0 0 0,scale=0.5]{figures/hardnessFig.png}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{Key Takeaways}
+	
+	\begin{itemize}
+		\item Same-cluster queries tackle under-specificity.
+		\vspace{30pt}\item NP-Hard problem becomes {\color{blue}tractable with few queries}. 
+	\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Correlation clustering with same-cluster queries}
+	\begin{itemize}
+		\item Joint work with Shai Ben-David and Ihab Ilyas.
+		\vspace{20pt}\item Experiments and hashing based algorithms are joint work with Hemant Saxena.		
+		\vspace{20pt} \item In proceedings of \alert{AISTATS'19} and \alert{ICDE'19}.
+	\end{itemize}
 \end{frame}
 
 \begin{frame}{De-duplication}

@@ -33,7 +33,7 @@ An important notion of niceness of data for clustering is $\alpha$-center proxim
 
 \begin{definition}[$\alpha$-center proximity \cite{awasthi2012center}]
 \label{defn:alphacp}
-Let $(\mc X, d)$ be a clustering instance in some metric space $M$, and let $k$ be the number of clusters. We say that a center-based clustering $\mc C_{\mc X} = \{C_1, \ldots, C_k\}$ induced by centers $c_1, \ldots, c_k \in M$ satisfies the $\alpha$-center proximity property (with respect to  $\mc X$ and $k$) if the following holds 
+Let $(\mc X, d)$ be a clustering instance in some metric space $M$, and let $k$ be the number of clusters. We say that a center-based clustering $\mc C = \{C_1, \ldots, C_k\}$ induced by centers $c_1, \ldots, c_k \in M$ satisfies the $\alpha$-center proximity property (with respect to  $\mc X$ and $k$) if the following holds 
 $$\forall x \in C_i, i\neq j, \alpha d(x, c_i) < d(x, c_j)$$
 \end{definition}
 
@@ -74,7 +74,7 @@ We will show that using the same techniques one can prove upper and lower bounds
 \cline{2-3}
 \multicolumn{1}{l|}{}                                                                     & \multicolumn{1}{l|}{Euclidean} & \multicolumn{1}{l|}{General Metric}                                                                         \\ \hline
 \multicolumn{1}{|l|}{\begin{tabular}[c]{@{}l@{}}Centers \\ from data\end{tabular}}        & \multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}Upper bound : 2 (Thm. \ref{thm:upperCenterData})\\ Lower bound : ? \end{tabular}}    &       \multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}Upper bound : 2 (Thm. \ref{thm:upperCenterData})\\ Lower bound : 2 (Thm. \ref{thm:lowerCenterData})\end{tabular}}           \\ \hline
-\multicolumn{1}{|l|}{\begin{tabular}[c]{@{}l@{}}Unrestricted \\Centers \end{tabular}} & \multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}Upper bound : 3 (Thm. \ref{thm:upperCenterMetric})\\ Lower bound : 1.84 (Thm. \ref{thm:gammaLower})\\ \end{tabular}}         & \multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}Upper bound : 3 (Thm. \ref{thm:upperCenterMetric})\\ Lower bound : 3 (Thm. \ref{thm:lowerCenterMetric})\\ Awasthi\end{tabular}} \\ \hline
+\multicolumn{1}{|l|}{\begin{tabular}[c]{@{}l@{}}Unrestricted \\Centers \end{tabular}} & \multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}Upper bound : 3 (Thm. \ref{thm:upperCenterMetric})\\ Lower bound : 1.84 (Thm. \ref{thm:gammaLower})\\ \end{tabular}}         & \multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}Upper bound : 3 (Thm. \ref{thm:upperCenterMetric})\\ Lower bound : 3 (Thm. \ref{thm:lowerCenterMetric})\end{tabular}} \\ \hline
                                                                                           &                       &    
 \label{table:gammamargin}                                                                                                                                                                                                 
 \end{tabular}
