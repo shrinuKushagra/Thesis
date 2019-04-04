@@ -368,14 +368,20 @@ University of Waterloo
 \end{frame}
 
 \begin{frame}{Correlation clustering (CC) for de-duplication}
-	Input: Graph $G = (V, E)$. Edges are labelled $1$ and $0$\\
-    \vspace{20pt}Find a clustering which minimizes
+	Input: $X$\\
+	Metric: $d$ over $X^2$\\
+	\begin{itemize}
+		\item User designed (prior knowledge of domain) 
+		\item Learned from labelled data.
+	\end{itemize}
+	 
+	\vspace{20pt}Graph $G = (X, E)$. \\
+    \vspace{10pt}Find a clustering which minimizes
     
     \begin{center}
     \textcolor{blue}{\# zero edges within a cluster + \# one edges\\ across different clusters}
     \end{center}
     
-    \vspace{20pt}Edge labelling can be \textit{inferred} from a distance metric $d$ over $X^2$.
 \end{frame}
 
 \begin{frame}{CC framework: Missing pieces}
@@ -388,8 +394,7 @@ University of Waterloo
 	\onslide<2->
 	\vspace{20pt}Applicability of human supervision
 	\begin{itemize}
-    	\vspace{10pt}\item Given two records $r_1$ and $r_2$, do they correspond to the same or different real-world entity?.\\
-    	\item Such \textit{same-cluster} queries can be answered by a human with a high degree of accuracy.
+    	\vspace{10pt}\item Given two records $r_1$ and $r_2$, do they correspond to the same or different real-world entity?.
 	\end{itemize}
 \end{frame}
 
@@ -403,18 +408,28 @@ University of Waterloo
 	  &C^* = \argmin_{C \in \mc F} \enspace \text{correlation-loss}_{E}(C) \label{eqn:promiseCorrLoss}
 	\end{align*}
 	
-	where $\mc F$ is the set of all possible clusterings $C$ such that maximum size of a cluster of any clustering in $\mc F$ is atmost $M$. 
+	\vspace{-10pt}\begin{itemize}
+		\item $\mc F$ is the set of all possible clusterings $C$ such that $m(C) \le M$.
+		\item $E$ is $(\alpha, \beta)$-informative
+	\end{itemize}		
 	\end{block}
 	
-	\begin{block}{Given}
-		$E$ is $(\alpha, \beta)$-informative
+	\begin{block}{$(\alpha, \beta)$-informative}
+		
 		\vspace{-10pt}\begin{align*}
-			&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[ (x, y) \not\in E \enspace|\enspace C^*(x, y) = 1\big] \enspace \le \enspace \alpha \\
-			&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[C^*(x, y) = 1 \enspace|\enspace (x, y) \in E \big] \enspace \ge \enspace \beta 
+			&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[ d(x, y) > \lambda \enspace|\enspace C^*(x, y) = 1\big] \enspace \le \enspace \alpha \\
+			&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[C^*(x, y) = 1 \enspace|\enspace d(x, y) \le \lambda \big] \enspace \ge \enspace \beta 
 		\end{align*}
 	\end{block}	
 \end{frame}
 
+\begin{frame}{Goals}
+
+	\begin{itemize}
+		\item Analyse the computation complexity of PCC.
+		\vspace{30pt}\item In the presence of oracle, also analyse the query complexity.
+	\end{itemize}	 
+\end{frame}
 
 \begin{frame}{PCC is NP-Hard}
 	\begin{block}{Theorem}
@@ -422,12 +437,12 @@ University of Waterloo
 	\end{block}
 	
 	\onslide<2->
-	\vspace{10pt}Reduction from Exact Cover by $3$-sets (X3C).
+	\vspace{20pt}
 	\begin{itemize}
-		\vspace{10pt}\item Given a universe of elements $ U= \{x_1 , \ldots, x_{3q} \}$.
-		\item A collections of subsets $S = \{S_1 , \ldots, S_m \}$. Each $S_i \subset U$ and $|S_i| = 3$
-		\item Does there exist $S' \subseteq S$ such that each element of $U$ occurs
-exactly once in $S'$ ?
+		\item Reduction from Exact Cover by $3$-sets (X3C).\\
+		\vspace{10pt}\item Similar gadget as reduction of X3C to Partition into Triangles (PIT) problem.
+		\vspace{10pt}\item Using an optimization algorithm to solve the decision problem.  
+
 	\end{itemize}
 \end{frame}
 
@@ -446,44 +461,42 @@ exactly once in $S'$ ?
 	\end{columns}
 
 	
-	\vspace{10pt}\begin{itemize}
+	\vspace{20pt}\begin{itemize}
 		\item If $A$ outputs a clustering such that all clusters have size $M$ and no negative erros, then output YES.
-		\item Else NO.
+		\vspace{10pt}\item Else NO.
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{CC framework: Missing pieces}
-	Two options
-	\begin{enumerate}
-		\item Adding information ``stored" in the the edges $E$
-		\vspace{10pt}\item Adding human supervision
-	\end{enumerate}
-	
-	\vspace{20pt}Proved that
-	\begin{enumerate}
-		\item alone doesn't help (just proved)
-		\vspace{10pt}\item alone doesn't help (proved by others)
-	\end{enumerate}
-	
-	\vspace{20pt}How about \mynum{1} and \mynum{2}?
+\begin{frame}{Goals}
+	Analyse the computation complexity of PCC.
+	\begin{itemize}
+		\vspace{10pt}\item NP-Hard.
+	\end{itemize}	 
+	\vspace{30pt}Analyse the computation complexity of PCC in the presence of an oracle.
+	\begin{itemize}
+		\vspace{10pt}\item Easy with $|X|^2$ queries.
+		\vspace{10pt}\item If $\alpha = 0$ then easy with $O(\beta|X|)$ queries.
+	\end{itemize}
 \end{frame}
 
 \begin{frame}{Hardness of PCC in the presence of an oracle}
 	\begin{block}{Theorem}
 		Given that the Exponential Time Hypothesis (ETH) holds. Any algorithm for PCC that runs in polynomial time makes $\Omega(|X|)$ same-cluster queries for all $M \ge 3$ and for $\alpha = 0$ and $\beta = \frac{1}{2}$. 
 	\end{block}
-	
 	\onslide<2->
 	\vspace{20pt}Strategy: Any algorithm for PCC takes $2^{\Omega(n)}$ time.
 	\begin{itemize}
-		\item Any algorithm for X3C or equivalently 3DM takes $2^{\Omega(m)}$ time.
+		\vspace{10pt}\item Any algorithm for X3C or equivalently 3DM takes $2^{\Omega(m)}$ time.
 	\end{itemize}
-	
-	\begin{block}{3DM}
-		\textbf{Input}: Sets $W, X$ and $Y$ and a set of matches $M \subseteq W \times X \times Y$ of size $m$.  \\
-		\textbf{Output}: YES if there exists $M' \subseteq M$ such that each element of $W, X, Y$ appears exactly once in $M'$. \\
-		NO otherwise. 
-	\end{block}
+\end{frame}
+
+\begin{frame}{3SAT to 3DM}
+	Classical constructions are `inefficient'.\\
+	\begin{itemize}
+	\vspace{10pt}\item \alert{[Johnson and Garey'79]} proof translates to $2^{\Omega(m^{0.25})}$ lower bound for 3DM.
+	\end{itemize}
+	\vspace{20pt}Ideas similar to \alert{[Charikar, Guruswami, Wirth'04]}.\\
+	\vspace{20pt}Linear reduction of independent interest.	
 \end{frame}
 
 \begin{frame}{Hardness: Linear reduction of 3SAT to 3DM}
@@ -509,7 +522,16 @@ exactly once in $S'$ ?
 	\end{itemize}
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Goals}
+	Computation complexity of PCC.
+	\begin{itemize}
+		\vspace{10pt}\item NP-Hard.
+	\end{itemize}	 
+	\vspace{10pt}Computation complexity in the presence of an oracle.
+	\begin{itemize}
+		\vspace{10pt}\item Hard for $o(|X|)$ queries.
+	\end{itemize}
+
     \Huge{
     \begin{center}
     	Disappointing !!\\
@@ -533,20 +555,34 @@ exactly once in $S'$ ?
 	\end{itemize}
 \end{frame}
 
+\begin{frame}{Goals}
+	\begin{itemize}
+		\item Analyse computational and query complexity.
+		\vspace{30pt}\item $\mc F = \{T_1, \ldots, T_s\}$ as a running example.\\
+		\vspace{10pt}$T_i$ is a clustering tree.
+	\end{itemize}
+\end{frame}
+
 \begin{frame}{Problem formulation: Attempt 1}
-	Input: $G = (X, E)$ and a class of clusterings $\mc F$\\
+	Input: $X$\\
+	Metric: $d$ over $X^2$.\\
+	A class of clusterings: $\mc F$\\
+	
+	\vspace{20pt}Construct $G = (X, E)$, 
 	
 	\vspace{10pt}Output: 
 	\vspace{-10pt}\begin{align*}
 	  &\hat C = \argmin_{C \in \mc F} \enspace \text{correlation-loss}_{E}(C)
 	\end{align*}
-	
-	\onslide<2>
-	Solution: 
+\end{frame}
+
+\begin{frame}{Computationally easy}	
+	Iterate over clusterings in $\mc F$		
 	\begin{itemize}
-		\item Iterate over clusterings in $\mc F$		
-		\item Choose the one with smallest loss.
+		\vspace{10pt}\item Bottom-up traversal when $\mc F = $ trees.
 	\end{itemize}
+	\vspace{30pt}Choose the one with smallest loss.
+	
 \end{frame}
 
 
@@ -585,6 +621,21 @@ exactly once in $S'$ ?
 	\vspace{20pt}Uniform sampling doesn't work\\
 	\vspace{10pt}Make use of informative metric $d$
 \end{frame}
+
+\begin{frame}{Goals}
+	Computational complexity
+	\begin{itemize}
+		\vspace{10pt}\item Depends on the number of sampled points
+		\vspace{10pt}\item Iterate over (or bottom-up traversal) over $\mc F$.
+	\end{itemize}
+	
+	\vspace{30pt}Query complexity
+	\begin{itemize}
+		\vspace{10pt}\item Depends on the number of sampled points
+	\end{itemize}
+	
+\end{frame}
+
 
 \begin{frame}{Sampling negative pairs}
 	
@@ -625,16 +676,55 @@ exactly once in $S'$ ?
 			\item Makes $\frac{1}{\beta}$ queries to the oracle in expectation. 
 		\end{itemize}			
 	\end{block}
+	\vspace{20pt}\alert{$\Theta(n^2)$} time to construct set $K$.		
+\end{frame}
+
+\begin{frame}{Locality Sensitive Hashing}
+	Use LSH to `approximately construct' set $K$.
 	
+	\vspace{20pt}Generic LSH scheme for input $X$:
+	\begin{itemize}
+		\vspace{10pt}\item Obtain $s$ different partitions of $X$.
+		\vspace{10pt}\item Output $ B := \{P_1, \ldots, P_s\} = \{B_{ij} : 1\le i\le s, 1\le j \le |P_i|\}$
+	\end{itemize}
+	
+	\vspace{20pt} 
+	\begin{block}{Guarentee (informal)} 
+		Most of the similar points ($d(x, y) \le \lambda$) are co-located in atleast one of the blocks $B_{ij}$ with high probability. 
+	\end{block}
+\end{frame}
+
+\begin{frame}{Sampling for LSH-able metrics}
+	\textcolor{blue}{Basic Idea}\\
+	Sample (with two-step rejection) uniformly at random from the blocks $B$.
+	\begin{itemize}
+		\vspace{5pt}\item Reject with probability $= 1 - 1/$ \#blocks in which the pair occur together
+		\vspace{5pt}\item Reject if the oracle says NO
+	\end{itemize} 
+\end{frame}
+
+\begin{frame}{Sampling positive pairs for LSH-able metrics}
+	\begin{block}{Results}
+		The above procedure
+		\begin{itemize}
+			\item Samples a pair according to distribution $T$ which approximates $P^+$ (with high probability).
+			\begin{align*}
+  &\Big|\underset{(x, y) \sim P^+}{\mb P} \big[ C(x, y) = 0 ] -\underset{(x, y) \sim T}{\mb P} \big[ C(x, y) = 0 ] \Big| \le 2\alpha + \zeta  + \nu
+  			\end{align*} 
+			$\zeta$ depends on quality of the hashing and $\nu$ is a term that controls the probability. 
+			\item Makes $O(\frac{1}{\beta})$ queries to the oracle in expectation. 
+		\end{itemize}			
+	\end{block}
 \end{frame}
 
 \begin{frame}{Recap}
-Procedure to sample $m_+$ positive pairs.\\
-\vspace{20pt}Procedure to sample $m_-$ negative pairs.\\
-\vspace{20pt}Estimate the loss from this sample.
+	Procedure to sample $m_+$ positive pairs.\\
+
+	\vspace{20pt}Procedure to sample $m_-$ negative pairs.\\
+	\vspace{20pt}Estimate the loss from this sample.
 \end{frame}
 
-\begin{frame}{Positive result}
+\begin{frame}{Main result}
 	\begin{block}{Sample complexity}
 		If the number of positive and negative samples   
 		\vspace{-10pt}\begin{align*}
@@ -643,8 +733,10 @@ Procedure to sample $m_+$ positive pairs.\\
 		then with probability atleast $1-\delta$, we have that $$L_{C^*}(\hat C) \enspace\le\enspace \min_{\mc C \in \mc F} L_{C^*}(C) + 3\alpha + \epsilon$$
 	\end{block}
 	
-	\vspace{20pt}If we see enough samples then the loss of our clustering is close to the minimizer.\\
-	\vspace{10pt}Independent of the size of the set $X$.
+	\begin{itemize}
+		\vspace{20pt}\item If we see enough samples then the loss of our clustering is close to the minimizer.\\
+		\vspace{10pt} \item Independent of the size of the set $X$.
+	\end{itemize}		
 \end{frame}
 
 \begin{frame}{Positive result: Queries}
@@ -652,7 +744,10 @@ Procedure to sample $m_+$ positive pairs.\\
 		With `high probability' the number of same-cluster queries $q$ made is  
 		\vspace{-10pt}$$q \le (1+\nu)\bigg(\frac{m_-}{(1-\gamma)} + \frac{m_+}{\beta}\bigg)$$
 	\end{block}
-	\vspace{20pt} The number of wasted queries is small.  
+	\begin{itemize}
+		\vspace{20pt} \item The number of wasted queries is small.
+		\vspace{20pt} \item The number of queries depends only on the complexity of $\mc F$ and is independent of $|X|$.  
+	\end{itemize}
 \end{frame}
 
 \begin{frame}{VC-Dimension of common classes}
@@ -660,10 +755,40 @@ Procedure to sample $m_+$ positive pairs.\\
 		Let $\mc F = \{T_1, \ldots, T_s\}$ be a class of hierarchical clustering trees. Then 
 		$$\vcdim({\mc F}) \le g(s)$$ where $g(s)$ is the smallest integer $n$ such that $\frac{\sqrt n!}{\lfloor \sqrt n/2 \rfloor! \enspace 2^{\lfloor \sqrt n/2 \rfloor}} \ge s $
 	\end{block}
+	
+	\begin{itemize}
+		\vspace{30pt}\item $\vcdim(T)$ is upper bounded by a constant.
+		\vspace{10pt}\item Using standard theorems that would imply $\vcdim(\mc F) \le O(s)$
+		\vspace{10pt}\item This result shows $o(\log s)$ upper bound.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Key takeaways}
+	For common classes of clusterings, 
+	\begin{itemize}
+		\vspace{30pt}\item ERM-based approach can solve the RCC problem efficiently. 
+		\vspace{15pt}\item Query complexity of RCC depends on the complexity of $\mc F$.
+	\end{itemize}
 \end{frame}
 
 \begin{frame}
     \Huge{\centerline{Thank You!}}
+\end{frame}
+
+\begin{frame}{CC framework: Missing pieces}
+	Two options
+	\begin{enumerate}
+		\item Adding information ``stored" in the the edges $E$
+		\vspace{10pt}\item Adding human supervision
+	\end{enumerate}
+	
+	\vspace{20pt}Proved that
+	\begin{enumerate}
+		\item alone doesn't help (just proved)
+		\vspace{10pt}\item alone doesn't help (proved by others)
+	\end{enumerate}
+	
+	\vspace{20pt}How about \mynum{1} and \mynum{2}?
 \end{frame}
 
 %----------------------------------------
@@ -675,30 +800,7 @@ Procedure to sample $m_+$ positive pairs.\\
 \section<presentation>*{\appendixname}
 \subsection<presentation>*{For Further Reading}
 
-%\begin{frame}[allowframebreaks]
-  %\frametitle<presentation>{For Further Reading}
-   % 
-  %\begin{thebibliography}{10}
-    
-  %\beamertemplatebookbibitems
-  % Start with overview books.
 
-  %\bibitem{Author1990}
-   % A.~Author.
-    %\newblock {\em Handbook of Everything}.
-    %\newblock Some Press, 1990.
- 
-    
-  %\beamertemplatearticlebibitems
-  % Followed by interesting articles. Keep the list short. 
-
-  %\bibitem{Someone2000}
-   % S.~Someone.
-    %\newblock On this and that.
-    %\newblock {\em Journal of This and That}, 2(1):50--100,
-    %2000.
-  %\end{thebibliography}
-%\end{frame}
 
 \end{document}
 
