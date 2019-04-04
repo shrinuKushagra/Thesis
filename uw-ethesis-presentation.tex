@@ -341,7 +341,7 @@ University of Waterloo
 \end{frame}
 
 
-\begin{frame}{Correlation clustering with same-cluster queries}
+\begin{frame}{Data de-duplication with same-cluster queries}
 	\begin{itemize}
 		\item Joint work with Shai Ben-David and Ihab Ilyas.
 		\vspace{20pt}\item Experiments and hashing based algorithms are joint work with Hemant Saxena.		
@@ -351,21 +351,12 @@ University of Waterloo
 
 \begin{frame}{De-duplication}
 	\onslide<1->
-    Detecting records could mean.
-    \begin{itemize}
-    	\item Output a list of pairs where each pair is a duplicate.
-    \end{itemize}
-    
-    \onslide<2->
-    \vspace{20pt}Our view is to output
-    $$C = \{C_1, \ldots, C_k \}$$
-    where $C_i \cap C_j = \phi$ and $\cup C_i = X$.
+    Given a database $X$. \\
+    \vspace{10pt}Detect records which correspond to the same real-world entity.
     
     \vspace{30pt}Output a clustering of $X$.
-    \begin{itemize}
-    	\item Records corresponding to the same entity share a cluster.
-    	\item Records corresponding to different entities are separated.
-    \end{itemize}
+    $$C = \{C_1, \ldots, C_k \}$$
+    where $C_i \cap C_j = \phi$ and $\cup C_i = X$.
 \end{frame}
 
 \begin{frame}{Clustering for de-duplication}

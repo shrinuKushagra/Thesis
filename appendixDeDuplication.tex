@@ -142,7 +142,7 @@ For the sake of contradiction, let us assume that there exists an algorithm whic
 
 \section{Sampling positive pairs for general metrics}
 
-\weightedPosApproxUniform*
+\posDistribution*
 \begin{proof}
 Let $K = \{(x, y):d(x, y)\le \lambda\}$ and  $D$ be a distribution over $K$ defined by $D(x, y) := \frac{|S_x|}{\sum_{x'} |S_{x'}|} . \frac{1}{|S_x|} = \frac{U^2(x,y)}{U^2(K)}$. Let $K^+ = \{(x, y) : d(x, y) \le \lambda$ and $C^*(x, y) = 1\}$. Let $T$ be the distribution induced by $\mc P_{11}$. It's easy to see that for $(x, y) \not\in K^+$, $T(x, y) = 0$. For $(x, y) \in K^+$, let $D(x, y) = p$ and $D(K^+) = q$. Then, $T(x, y) = p + (1-q)p + \ldots = \frac{p}{q} = \frac{D(x, y)}{D(K^+)} = \frac{U^2(x, y)}{U^2(K^+)}$. Using Defn. \ref{defn:informativeMetric}, we know that 
 \begin{align*}
@@ -241,7 +241,7 @@ Now, the only thing that remains to be shown is that we can choose an integer $r
 
 \section{Sampling positive pairs for LSHable metrics}
 
-\posDistribution*
+\posDistributionLSH*
 \begin{proof}
 Let $Q := \{(x, y): b(x, y) = 1\} = \{(x, y) \in B^2: B \in \mc B\}$. Let $K = \{(x, y): d(x, y) \le \lambda\}$, let $K_Q = K\cap Q$, let $K^+ := \{(x, y) \in K: C^*(x, y) = 1\}$ and finally let $K_Q^+ = \{(x, y) \in K_Q : C^*(x, y) = 1\}$. Note that the choice of $Q$ depends upon the hashing algorithm $\mc A$. However, after the pre-compute stage, the set $Q$ is fixed and the sampling procedure samples from the set $Q$. Our procedure works in four steps. 
 \begin{enumerate}[noitemsep,label=\textbf{S.\arabic*}]
@@ -258,15 +258,9 @@ Let $Q := \{(x, y): b(x, y) = 1\} = \{(x, y) \in B^2: B \in \mc B\}$. Let $K = \
    \begin{align*}
     &D_2(x, y) = \frac{\frac{1}{\sum_{B' \in \mc B}|B'|^2}}{\sum_{(x', y') \in Q}\frac{1}{\sum_{B' \in \mc B}|B'|^2}} = \frac{1}{|Q|}
   \end{align*}
-  \item We reject the sampled point if $(x, y) \not\in K_Q$. In this step, we induce a distribution $D_3$ on $K_Q$. It is easy to see that
-  \begin{align*}
-    &D_3(x, y) = \frac{1}{|K_Q|}
-  \end{align*}
-  \item \label{item:D4} Next, we reject the sampled point if $(x, y) \not\in K_Q^+$. After this step, we induce a distribution $D_4$ on $K^+_Q$.
-  \begin{align*}
-    &T(x, y) := D_4(x, y) = \frac{1}{|K_Q^+|}
-  \end{align*}
-  Another observation, which will be useful later in the proof is that for any $(x, y) \in K^+$, $\mb P[(x, y) \in K_Q^+] > 1-\delta$ (Thm. \ref{thm:similarInSame}). Hence, using multiplicative chernoff's bounds we get that, $\mb P\big[|K_Q^+| > (1-\nu)|K^+|(1-\delta)\big] \ge 1- \exp\Big(\frac{-\nu^2 (1-\delta) |K^+|}{2}\Big)$ 
+  \item We reject the sampled point if $(x, y) \not\in K_Q$. In this step, we induce a distribution $D_3$ on $K_Q$. It is easy to see that $D_3(x, y) = \frac{1}{|K_Q|}$
+  \item \label{item:D4} Next, we reject the sampled point if $(x, y) \not\in K_Q^+$. After this step, we induce a distribution $D_4$ on $K^+_Q$. $T(x, y) := D_4(x, y) = \frac{1}{|K_Q^+|}$\\
+  Another observation, which will be useful later in the proof is that for any $(x, y) \in K^+$, $\mb P[(x, y) \not\in K_Q^+] < \delta$ (Thm. \ref{thm:similarInSame}). Hence, hoeffding's inequality we get that, $\mb P\big[|K^+\setminus K_Q^+| < (\delta+\nu)|K^+|\big] \ge 1- \exp(-2\nu^2 |K^+|^2)$ 
 \end{enumerate}
 Next, we will show that the distribution $T$ is an approximation of $P^+$. First, observe that $\mc X$ satisfies $\mu$-nazdeek property. Hence, we get that 
 \begin{align*}
@@ -277,32 +271,32 @@ Now, let $h$ be any labelling function over $\mc X^2$.
   &\underset{(x, y) \sim T}{\mb P} [C(x, y) = 0] = \frac{1}{|K_Q^+|}\sum_{(x, y) \in K^+_Q} \mb 1_{[C(x, y) = 0]}\\
   & \le \frac{1}{|K_Q^+|}\sum_{(x, y) \in X^+_2} \mb 1_{[C(x, y) = 0]}
 \end{align*}
-Now, with probability atleast $1- \exp(\frac{-\nu^2 (1-\delta) |K^+|}{2}) \ge 1 - \exp(\frac{-\nu^2 (1-\delta)(1-\nu) |X^2_+|}{2}) $ over the randomness in $\mc A$, we have that $|K_Q^+| > (1-\nu)(1-\delta)|K^+|$. Substituting this in the above equation gives
+Now, with probability atleast $1- \exp(-2\nu^2 |K^+|^2) \ge 1- \exp(-2\nu^2 (1-\alpha)^2|X^2_+|^2)$ over the randomness in $\mc A$, we have that $|K_Q^+| > (1-\nu - \delta)|K^+|$. Substituting this in the above equation gives
 \begin{align*}
   &\underset{(x, y) \sim T}{\mb P} [C(x, y) = 0]  \le \frac{1}{(1-\nu)(1-\delta)|K^+|}\sum_{(x, y) \in X^2_+} \mb 1_{[C(x, y) = 0]}\\
-  &\le \frac{1}{(1-\nu)(1-\delta)(1-\alpha)|X^2_+|}\sum_{(x, y) \in X^+_2} \mb 1_{[C(x, y) = 0]} \\
-  &= \frac{\underset{(x, y) \sim P^+}{\mb P} [C(x, y) = 0]}{(1-\nu)(1-\delta)(1-\alpha)}
+  %&\le \frac{1}{(1-\nu)(1-\delta)(1-\alpha)|X^2_+|}\sum_{(x, y) \in X^+_2} \mb 1_{[C(x, y) = 0]} \\
+  &\le \frac{\underset{(x, y) \sim P^+}{\mb P} [C(x, y) = 0]}{(1-\nu -\delta)(1-\alpha)}
 \end{align*}
 Now for the other direction, we have that
 \begin{align*}
   &\underset{(x, y) \sim P^+}{\mb P} [C(x, y) = 0] = \frac{1}{|X_+^2|}\sum_{(x, y) \in X^2_+} \mb 1_{[C(x, y) = 0]}\\
   &\le \frac{1}{|K_Q^+|}\sum_{(x, y) \in K^+_Q} \mb 1_{[C(x, y) = 0]} + \frac{|X^2_+ \setminus K^+_Q|}{|X_+^2|} \\
-  &= \underset{(x, y) \sim T}{\mb P} [C(x, y) = 0] + \frac{|X^2_+ \setminus K^+_Q|}{|X_+^2|}\\
-  &\le \underset{(x, y) \sim T}{\mb P} [C(x, y) = 0] + [1 - (1-\nu)(1-\delta)(1-\alpha)]
+  &\le \underset{(x, y) \sim T}{\mb P} [C(x, y) = 0] + \frac{|X^2_+ \setminus K^+|}{|X_+^2|} + \frac{|K^+ \setminus K^+_Q|}{|K^+|} \\
+  &\le \underset{(x, y) \sim T}{\mb P} [C(x, y) = 0] + \alpha + \nu + \delta
 \end{align*}
-Now choosing, $\delta = \frac{\epsilon}{2}$, $\nu = \frac{\delta}{1-\delta}$ gives the result of the theorem.
+Now choosing, $\delta = \epsilon$ gives the result of the theorem.
 \end{proof}
 
-\posQueries*
+\posQueriesLSH*
 \begin{proof}
-Let $K, Q, K^+, K_Q$ and $K_Q^+$ be as defined in the proof of Thm. \ref{thm:posDistribution}. Also, let the distributions $D_1, D_2, D_3$ and $D_4$ be as defined in the same theorem. Also, from the analysis in bullet \ref{item:D4} in Thm. \ref{thm:posDistribution} with probability atleast $1 - \exp\Big(\frac{-\epsilon^2(1-\alpha)|X^2_+|}{8}\Big)$ we have that $\frac{|K_Q^+|}{|K^+|} \ge (1-\epsilon)$. Now, we have that $\mc X$ satisfies $\beta$-balanced property. Hence,
+Let $K, Q, K^+, K_Q$ and $K_Q^+$ be as defined in the proof of Thm. \ref{thm:posDistribution}. Also, let the distributions $D_1, D_2, D_3$ and $D_4$ be as defined in the same theorem. Also, from the analysis in bullet \ref{item:D4} in Thm. \ref{thm:posDistribution} with probability atleast $1 - \exp(-2\nu^2(1-\alpha)^2|X^2_+|^2)$ we have that $\frac{|K_Q^+|}{|K^+|} \ge (1-\nu-\epsilon)$. Now, we have that $X$ satisfies $\beta$-balanced property. Hence,
 \begin{align*}
   &\beta \le \mb P[h^*(x, y) = 1 | d(x, y) \le \lambda] = \frac{|K^+|}{|K|} \le \frac{|K^+|}{|K_Q|}
 \end{align*}
-Combining this we get that $\frac{|K_Q^+|}{|K_Q|} \ge \frac{\beta|K_Q^+|}{|K^+|} \ge (1-\epsilon)\beta$. Thus, given that a same-cluster query is made the probability $p$ that it succeeds is atleast $(1-\epsilon)\beta$. 
+Combining this we get that $\frac{|K_Q^+|}{|K_Q|} \ge \frac{\beta|K_Q^+|}{|K^+|} \ge (1-\nu-\epsilon)\beta$. Thus, given that a same-cluster query is made, the probability $p$ that it succeeds is atleast $(1-\nu-\epsilon)\beta$.
 \end{proof}
 
-\posRuntime*
+\posRuntimeLSH*
 \begin{proof}
 Using Thm. \ref{thm:hashTimeComplexity}, we know that one iteration of the pre-compute stage of $\mc P_1$ runs in $O(n r s m(\mc B)) = O(n\log \big(\frac{2}{\epsilon}\big)\frac{-1}{\log(1-\lambda)} m(\mc B)) = O(n)$. Next, we analyse the time taken to sample one point.  
 
@@ -316,13 +310,66 @@ Using multiplicative chernoff's bounds, we get that $\mb P[|K_Q^+| > (1-\nu)|K^+
   &\mb P\bigg[\frac{|K^+_Q|}{|(K^+_Q)^c \cap Q|} > \frac{(1-\nu)|K^+|(1-\delta)}{(1+\nu)(|K'|+|K_1|+|K_2|\delta')} \bigg] \\
   &\ge 1 - \exp\Big(\frac{-\nu^2 (1-\delta) |K^+|}{2}\Big) - \exp\Big(\frac{-\nu^2 \delta' |K_2|}{3}\Big)
 \end{align*}
-From the assumptions in the theorem, we get that $|K_1| \le \rho_1|K|$. Now, $|K'| = |K| - |K^+| \le (1-\beta)|K|$. Now, let $\nu = \frac{\delta}{1-\delta}$ then we get that $\frac{(1-\nu)|K^+|(1-\delta)}{(1+\nu)(|K'|+|K_1|+|K|\rho_2)} \ge \frac{(1-3\delta)\beta}{1-\beta + \rho_1 + \rho_2} \ge \frac{(1-2\epsilon)\beta}{1-\beta + \rho_1 + \rho_2}$. Define $\eta := \frac{(1-2\epsilon)\beta}{1 + \rho_1 + \rho_2}$. Then we get that,
+From the assumptions in the theorem, we get that $|K_1| \le \rho_1|K|$. Now, $|K'| = |K| - |K^+| \le (1-\beta)|K|$. Hence, $\frac{(1-\nu)|K^+|(1-\delta)}{(1+\nu)(|K'|+|K_1|+|K|\rho_2)} \ge \frac{(1-\nu)(1-\delta)\beta}{(1+\nu)(1-\beta + \rho_1 + \rho_2)}$. Define $\eta := \frac{(1-\nu)(1-\delta)\beta}{(1+\nu)(1 + \rho_1 + \rho_2)}$. Then we get that,
 \begin{align*}
-  \mb P\bigg[\frac{|K^+_Q|}{|Q|} > \eta\bigg] &\ge 1- \exp\Big(\frac{- \delta^2 |K^+|}{(1-\delta)}\Big)- \exp\Big(\frac{-\delta^2\rho_2 |K|}{(1-\delta)^2}\Big) =: \eta'
+  \mb P\bigg[\frac{|K^+_Q|}{|Q|} > \frac{\eta}{\eta+1}\bigg] &\ge 1- \exp\Big(\frac{- \delta^2 |K^+|}{(1-\delta)}\Big) \\
+  &- \exp\Big(\frac{-\delta^2\rho_2 |K|}{(1-\delta)^2}\Big) =: \eta'
 \end{align*}
 Hence, we see that with probability atleast $\eta'$ over the randomness in the hashing procedure $p_2 \ge \eta$.   
 \end{enumerate}
-Using all the above, we get that $p \ge \frac{\eta}{s}$. Recall that, $p$ is the probability that the current iteration terminates. Thus, expected number of iterations to sample one point is $\le \frac{s}{\eta}$. Note that the one iteration takes $\Theta(s)$ time (computing $|a(x, y)|$). Hence the expected time to sample one point is  $\le \frac{s^2}{\eta}$
+Using all the above, we get that $p \ge \frac{\eta}{(\eta+1)s}$. Recall that, $p$ is the probability that the current iteration terminates. Thus, expected number of iterations to sample one point is $\le \frac{s}{\eta}$. Note that the one iteration takes $\Theta(s)$ time (computing $|a(x, y)|$). The expected time to sample one point is  $\le s^2(1 + \frac{1}{\eta})$ 
+\end{proof}
+
+\section{Sample and query complexity of RCC using $\mc P_{12}$}
+\begin{restatable}{thrm}{sampleComplexityLSH}
+Given metric space $(X, d)$, a class of clusterings $\mc F$ of $X$ and a threshold parameter $\lambda$. Given $\epsilon, \delta \in (0, 1)$ and a $C^*$-oracle. Let $d$ be $(\alpha, \beta)$-informative w.r.t $C^*$ and $\lambda$ and let $X$ satisfy $\gamma$-skewed property. Let $\mc A$ be the ERM-based approach as described in Alg. \ref{alg:ERM} (where the LSH-based scheme is $\zeta$-tight) and $\hat C$ be the output of $\mc A$. If  
+\label{thm:sampleComplexityLSH}
+\begin{align}
+  &m_-, m_+ \enspace \ge a\frac{\vcdim({\mc F}) + \log(\frac{2}{\delta})}{\epsilon^2} 
+\end{align}
+where $a$ is a global constant then with probability atleast $1-\delta - \exp\big(\frac{-2\nu^2(1-\alpha)^2|X_2^+|^2}{49}\big)$ (over the randomness in $\mc A$), we have that $$L_{C^*}(\hat C) \enspace\le\enspace \min_{\mc C \in \mc F} L_{C^*}(C) + 3\alpha + \zeta + \epsilon + \nu$$
+\end{restatable}
+\begin{proof}
+Let $T_0$ be the distribution induced by $\mc P_0$ and $T_1$ be the distribution induced by $\mc P_1$. Using Thm. \ref{thm:uniformConvergence}, we know that if $m_+ > a\frac{\vcdim({\mc F}) + \log(\frac{1}{\delta})}{\epsilon^2}$ then with probability atleast $1-\delta - e^{-2\nu^2(1-\alpha)^2|X_2^+|^2}$, we have that for all $C$
+\begin{align*}
+  &|\hat P(C) - \underset{(x,y) \sim T_1}{\mb P}[C(x, y) = 0]| \le \epsilon\\
+  \implies &\hat P(C) \le \epsilon + (1+2\nu)(1+2\alpha)L_{P^+}(C) \enspace\text{ and}\\
+  &L_{P^+}(C) - \epsilon - \alpha -\zeta - \nu \le \hat P(C) \numberthis \label{eqn:eHatLSH}
+\end{align*}
+Note that we obtain upper and lower bounds for $\underset{(x,y) \sim T_1}{\mb P}[h(x, y) = 0]$ using Thm. \ref{thm:posDistributionLSH}. Similarly, if $m_- > a\frac{\vcdim({\mc F}) + \log(\frac{1}{\delta})}{\epsilon^2}$, then with probability atleast $1-\delta$, we have that for all $h$,
+\begin{align*}
+  &|\hat N(C) - \underset{(x,y) \sim T_0}{\mb P}[C(x, y) = 1]| \le \epsilon\\
+  \implies &\hat N(C) \le \epsilon + L_{P^-}(C) \enspace\text{ and } L_{P^-}(C) -\epsilon \le \hat N(C) \numberthis\label{eqn:gHatLSH}
+\end{align*}
+
+\noindent Combining Eqns. \ref{eqn:eHatLSH} and \ref{eqn:gHatLSH}, we get that with probability atleast $1-2\delta-e^{-2\nu^2(1-\alpha)^2|X_2^+|^2}$, we have that for all $C \in {\mc F}$
+\begin{align*}
+  \hat L(C) &\le \mu [\epsilon + (1+2\nu)(1+2\alpha)L_{P^+}(C)]\\
+  &+ (1-\mu)(\epsilon + L_{P^-}(C))\\
+  &\le L_{C^*}(C) + \epsilon + 2\alpha + 2\nu + 4\alpha\nu\\
+  \text{And} \enspace \hat L(C) &\ge \mu(L_{P^+}(h) -\epsilon - \alpha - \nu-\zeta) + (1-\mu)(L_{P^-}(h) - \epsilon) \\
+  &\ge L_{C^*}(C) - \epsilon - \alpha - \nu - \zeta
+\end{align*}
+Now, let $\hat C$ be the output of $\mc A$ and let $\hat C^*$ be $\argmin_{C \in {\mc F}} L_{C^*}(C)$. Then, we have that
+\begin{align*}
+  L_{C^*}(\hat C) &\le \hat L(\hat C) + \alpha + \epsilon + \nu +\zeta \le \hat L(\hat C^*) + \alpha + \epsilon + \nu +\zeta\\
+  &\le L_{C^*}(\hat C^*) + 2\epsilon + 3\alpha + 3\nu + 4\alpha\nu + \zeta
+\end{align*}
+
+Choosing $\epsilon = \frac{\epsilon}{2}$ and $\delta = \frac{\delta}{2}$ and $\nu = \frac{\nu}{7}$ throughout gives the result of the theorem,
+and this completes the proof of the theorem.
+\end{proof}
+
+Finally, we analyse the query complexity of our approach. That is the number of queries that our algorithm makes to the $C^*$-oracle. Our algorithm makes queries during the sampling procedure. We see that to sample $m_-$ negative and $m_+$ positive pairs the number of queries is `close' to $m_+ + m_-$ with very high probability. Thus, the number of `wasted' queries is small.  
+
+\begin{restatable}{thrm}{queryComplexityLSH}[Query Complexity]
+\label{thm:queryComplexity}
+Let the framework be as in Thm. \ref{thm:sampleComplexityLSH}. With probability atleast $1-\exp\big(-\frac{\nu^2m_-}{4}) - \exp\big(-\frac{\nu^2m_+}{4}\big) - \exp(-\nu^2(1-\alpha)^2|\mc X_+^2|^2)$ over the randomness in the sampling procedure, the number of same-cluster queries $q$ made by $\mc A$ is  
+$$q \le (1+\nu)\bigg(\frac{m_-}{(1-\gamma)} + \frac{m_+}{\beta(1-\zeta-\nu)}\bigg)$$
+\end{restatable}
+
+\begin{proof}
+The number of queries made to sample the set $S_g$ is $q_g = m_g$. Let $q_+$ denote the number queries to sample the set $S_+$. Using Lemma \ref{lemma:posQueriesLSH}, we know that $\mb E[q_+] \le \frac{1}{\beta(1-\zeta-\nu)}$ with probability atleast $1-\exp(-\nu^2(1-\alpha)^2|\mc X_+^2|^2)$ over the randomness in the hashing procedure. Given that the expectation is bounded as above, using Thm. \ref{thm:geometricRV}, we get that $q_+ \le \frac{(1+\nu)m_+}{\beta(1-\zeta-\nu)}$ with probability atleast $1-\exp(\frac{-\nu^2m_+}{4})$. Similarly, combining Lemma \ref{lemma:negQueries} with Thm. \ref{thm:geometricRV}, we get that with probability atleast $1-\exp(\frac{-\nu^2m_-}{4})$, $q_- \le \frac{(1+\nu)m_-}{(1-\gamma)}$.
 \end{proof}
 
 \section{VC-dimension of common classes}

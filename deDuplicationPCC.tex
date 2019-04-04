@@ -37,7 +37,7 @@ The framework of correlation clustering is very natural for modelling the proble
 
 Given the graph, the goal of correlation clustering is to find a clustering of the dataset which correlates `as much as possible' with the given edges. In other words, find a clustering which minimizes the correlation loss w.r.t the given edges. Correlation loss is defined as the sum of the number of zero edges within a cluster plus the number of one edges across different clusters. However, solving this optimization problem is NP-Hard \cite{bansal2004correlation}. 
   
-In this paper we offer a formal modelling of such record de-duplication tasks. Our framework is the same as correlation clustering but with the added \textit{promise} that the input graph edges $E$ is `close to' the optimal correlation clustering of the given dataset. We analyse the computational complexity of this problem and show that even under strong promise, correlation clustering is NP-Hard. Moreover, the problem remains NP-Hard (assuming the ETH hypothesis) even when we are allowed to make queries to a human expert (or an \textit{oracle}) as long as the number of queries is not too large (sub-linear in the number of points in the dataset). 
+In this chapter, we offer a formal modelling of such record de-duplication tasks. Our framework is the same as correlation clustering but with the added \textit{promise} that the input graph edges $E$ is `close to' the optimal correlation clustering of the given dataset. We analyse the computational complexity of this problem and show that even under strong promise, correlation clustering is NP-Hard. Moreover, the problem remains NP-Hard (assuming the ETH hypothesis) even when we are allowed to make queries to a human expert (or an \textit{oracle}) as long as the number of queries is not too large (sub-linear in the number of points in the dataset). 
 
 Given these negative results, we introduce the framework of restricted correlation clustering (RCC). This framework has two important differences from the standard (and promise) correlation clustering formulation. Firstly, the optimization problem is restricted over a given class $\mc F$ of clusterings. Secondly, the goal is to find a clustering which correlates as much as possible with the unknown target (or ground truth) clustering $C^*$. That is, $C^*$ is the clustering where only records corresponding to same entity are in the same cluster. We offer an algorithmic approach (which uses the help of an oracle) with success guarantees for the restricted version. The `success guarantee' depends on the complexity of the class $\mc F$ (measured by $\vcdim(\mc F)$) as well as the `closeness' of the distance (or similarity) metric $d$ to the target clustering.
 
@@ -52,11 +52,11 @@ In this work, we use the framework of same-cluster queries developed by \cite{as
 
 On de-duplication side, most prevalent are approaches that are based on designing a similarity measure (or distance) over the records, such that records that are highly similar according to that measure are likely to be duplicates and records that measure as significantly dissimilar are likely to represent different entities. For example, to handle duplicate records created due typographical mistakes, many character-based similarity metrics have been considered. Examples of such metrics include the edit or levenshtein distance \cite{levenshtein1966binary}, smith-waterman distance \cite{waterman1981identification} and jaro distance metric \cite{jaro1980unimatch}. Token-based similarity metrics try to handle rearrangement of words, for example \cite{monge1996field} and \cite{cohen1998integration}. Other techniques include phonetic-based metrics and numerical metrics (to handle numeric data). A nice overview of these methods can be found in \cite{elmagarmid2007duplicate}. 
    
-While the above approaches relied on designing a good similarity metric, some works try to `learn' the distance function from a labelled training dataset of pairs of records. Examples of such works include \cite{cochinwala2001efficient} and \cite{bilenko2003adaptive}. Clustering for de-duplication has been mostly addressed in application oriented works. \cite{hernandez1995merge} assumes that the duplicate records are transitive. The clustering problem now reduces to finding the connected components in a graph. 
+While the above approaches relied on designing a good similarity metric, some works try to `learn' the distance function from a labelled training dataset of pairs of records. Examples of such works include \cite{cochinwala2001efficient} and \cite{bilenko2003adaptive}. Clustering for de-duplication has been mostly addressed in application oriented works. \cite{hernandez1995merge} assumes that the duplicate records are transitive. The clustering problem now reduces to finding the connected components in a graph. \cite{hassanzadeh2009framework} carried out an extensive experimental evaluation of different graph-based clustering algorithms on a simulated dataset of strings.
 
 \section{Preliminaries}
 \label{section:problemFormulation}
-Given $X$, a clustering $C$ of the set $X$ partitions it into $k$ disjoint subsets or clusters. The clustering $C$ can also be viewed as a $\{0, 1\}$-function over the domain $X^{[2]} := \{(x_1, x_2) : x_1 \neq x_2\}$. Here, $C(x_1, x_2) = 1$ iff $x_1, x_2$ belong to the same cluster according to $C$.
+Given $X$, a clustering $C$ of the set $X$ partitions it into $k$ disjoint subsets or clusters. The clustering $C$ can also be viewed as a $\{0, 1\}$-function over the domain $X^{[2]} := \{(x_1, x_2) : x_1 \neq x_2\}$. Here, $C(x_1, x_2) = 1$ iff $x_1, x_2$ belong to the same cluster according to $C$. Similarly, we also view the edges of a graph $G = (X, E)$ as a $\{0, 1\}$-function over $X^{[2]}$.
 
 We allow a clustering algorithm to make queries to a human oracle in the following way. 
 \begin{definition}[ Same-cluster oracle \cite{ashtiani2016clustering}]
@@ -73,13 +73,13 @@ Given graph $G = (X, E)$ where $X$ is the set of vertices (the given dataset to 
 \end{align*}
 A weighted version of the loss function places weights of $w_1$ and $w_2$ on the two terms and is defined as 
 \begin{align}
-  &corrL_{E}^{w_1, w_2}(C) = w_1 \thinspace corrN_{E}(C) + w_2 \thinspace corrP_{E}(C)\label{eqn:weightedCorrelationLoss}
+  &corrL_{E}^{w}(C) = w \thinspace corrN_{E}(C) + (1-w) \thinspace corrP_{E}(C)\label{eqn:weightedCorrelationLoss}
 \end{align}
 \end{definition}
 
-The goal of correlation clustering is to find a clustering which minimizes the (weighted) correlation loss. For our purposes, it is more relevant to consider a loss function which takes values in the range $[0, 1]$. Also, we consider the correlation loss w.r.t a target clustering $C^*$ rather than the edges $E$.
+The goal of correlation clustering is to find a clustering which minimizes the (weighted) correlation loss. We also consider the normalized version of this loss function w.r.t a target clustering $C^*$ (rather than the edges $E$).
 
-\begin{definition}[Normalized correlation loss\cite{kushagra2018semisupervised}]
+\begin{definition}[Normalized correlation loss]
 \label{defn:normalizedCorrelationLoss}
 Given domain $X$ and a target clustering $C^*$. The loss of a clustering $C$ w.r.t the target $C^*$ is defined as
 \begin{align*}
@@ -94,6 +94,7 @@ The normalized correlation loss measures two quantities for the clustering $C$. 
 Lets observe the relation between Defns. \ref{defn:correlationLoss} and \ref{defn:normalizedCorrelationLoss}. Define $\gamma_0 := \mb P[C^*(x, y) = 1]$, that is the probability of true positive (or same-cluster pairs) in the dataset. Using the notation of Defn. \ref{defn:correlationLoss}, we see that $corrP_{C^*}(C) = \gamma_0|X^{[2]}| L_{P^+}(C)$ and $corrN_{C^*}(C) = (1-\gamma_0)|X^{[2]}| L_{P^-}(C)$. Normalising by $|X^{[2]}|$ and choosing $\mu = \frac{w_2 \gamma_0}{w_1 (1-\gamma_0) + w_2 \gamma_0}$ gives us the normalized version of the loss function.
 
 \begin{definition}[Informative metric \cite{kushagra2018semisupervised}]
+\label{defn:informativeMetric}
 Given a metric space $(X, d)$, a target clustering $C^*$ and a parameter $\lambda$. We say that the metric $d$ is $(\alpha, \beta)$-informative w.r.t $C^*$ and $\lambda$ if
 \begin{align}
 	&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[d(x, y) > \lambda \enspace|\enspace C^*(x, y) = 1\big] \enspace \le \enspace \alpha \label{eqn:alphaInformative}\\
@@ -110,14 +111,7 @@ Given $X$ and a target clustering $C^*$. We say that $X$ is $\gamma$-skewed w.r.
 	&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[\enspace C^*(x, y) = 1 \big] \enspace \le \enspace \gamma
 \end{align*}
 \end{definition}
-In de-duplication applications, most of the pairs are negative (or belong to different clusters). The above definition states this property formally. We are now ready to introduce the framework of \textit{restricted correlation clustering}. 
-
-To incorporate supervision into the clustering problem, we allow an algorithm to make \textit{same-cluster} queries to a $C^*$-oracle defined below.
-\begin{definition}[ Same-cluster oracle \cite{ashtiani2016clustering}]
-Given $X$. A same-cluster $C^*$-oracle receives a pair $x, y \in X$ as input and outputs $1$ if $x, y$ belong to the same-cluster according to $C^*$. Otherwise, it outputs $0$. 
-\end{definition}
-
-In the next section, we introduce our framework of \textit{promise correlation clustering} and discuss the computational complexity of the problem both in the absence and presence of an oracle.   
+In de-duplication applications, most of the pairs are negative (or belong to different clusters). The above definition states this property formally. In the next section, we introduce our framework of \textit{promise correlation clustering} and discuss the computational complexity of the problem both in the absence and presence of an oracle.   
 
 \section{Promise Correlation Clustering}
 \label{section:PCC}
@@ -126,11 +120,11 @@ In the next section, we introduce our framework of \textit{promise correlation c
 \label{defn:promiseCorrClustering}
 Given a clustering instance $G = (X, E)$. Let $C^*$ be such that
 \begin{align}
-  &C^* = \argmin_{C \in \mc F} \enspace L_{E}(C) \label{eqn:promiseCorrLoss}
+  &C^* = \argmin_{C \in \mc F} \enspace corrL_{E}(C) \label{eqn:promiseCorrLoss}
 \end{align}
-where $\mc F$ is the set of all possible clusterings $C$ such that $m(C) \le M$. Let $d_E$ be the metric defined by $d_E(x, y) = 1$ iff $(x, y) \in E$ and $0$ otherwise. Given that the metric $d_E$ is $(\alpha, \beta)$-informative. Find the clustering $C^*$. 
+where $\mc F$ is the set of all possible clusterings $C$ such that $m(C) \le p$. Given that $E$ is $(\alpha, \beta)$-informative w.r.t $C^*$. Find the clustering $C^*$. 
 \end{definition}
-When the edges $E$ correspond to a clustering $C$ then $\beta = 1$ and $\mu = 0$. We show in the subsequent sections that even for this `restricted' class of clusterings (when the size of the maximum cluster is atmost a constant $M$) and given the prior knowledge, PCC is still NP-Hard. Furthermore, PCC is NP-Hard even when we are allowed to make $o(|X|)$ queries to a $C^*$-oracle. 
+When the edges $E$ correspond to a clustering $C$ then $\beta = 1$ and $\alpha = 0$. We show in the subsequent sections that even for this `restricted' class of clusterings (when the size of the maximum cluster is atmost a constant $M$) and given the prior knowledge, PCC is still NP-Hard. Furthermore, PCC is NP-Hard even when we are allowed to make $o(|X|)$ queries to a $C^*$-oracle. 
 
 \subsection{PCC is NP-Hard}
 \label{section:PCCNPHard}
@@ -353,7 +347,7 @@ When the edges $E$ correspond to a clustering $C$ then $\beta = 1$ and $\mu = 0$
 \end{figure*}
 
 \begin{theorem}
-Finding the optimal solution to the Promise Correlation Clustering problem is NP-Hard for all $M \ge 3$ and for $\alpha = 0$ and $\beta = \frac{1}{2}$.  
+Finding the optimal solution to the Promise Correlation Clustering problem is NP-Hard for all $p \ge 3$ and for $\alpha = 0$ and $\beta = \frac{1}{2}$.  
 \end{theorem}
 
 \noindent To prove the result, we will use a reduction from exact cover by $3$-sets problem which is known to be NP-Hard.
@@ -361,8 +355,6 @@ Finding the optimal solution to the Promise Correlation Clustering problem is NP
 (X3C) Given a universe of elements $U = \{x_1, \ldots, x_{3q}\}$ and a collections of subsets $S = \{S_1, \ldots, S_m\}$. Each $S_i \subset U$ and contains exactly three elements. Does there exist $S' \subseteq S$ such that each element of $U$ occurs exactly once in $S'$?
 
 This decision problem is known to be NP-Hard. We will now reduce an instance of X3C to the promise correlation clustering problem. For each three set $S_i = \{x_{i1}, x_{i2}, x_{i3}\}$, we construct a replacement gadget as described in Fig. \ref{fig:X3CNPHard}. The gadget is similar to the one used in the proof of partition into triangles problem. However, instead of triangles the graph is `made of' cliques of size $p$. 
-
-
 
 Given an instance of X3C, we construct $G = (V, E)$ using local replacement described in Fig. \ref{fig:X3CNPHard}. Let $A$ be an algorithm which solves the promise problem described in Eqn. \ref{eqn:promiseCorrLoss}. Then, we can use this algorithm to decide exact cover by three sets as follows.
 
@@ -379,10 +371,10 @@ In the construction, for each clause, we have $p^2 t + (p - 3)$ vertices and a v
 
 \subsection{Hardness of PCC in the presence of an oracle}
 \label{section:PCCNPHardOracle}
-In the previous sections, we have shown that the PCC problem is NP-Hard without queries. It is trivial to see that by making $\beta |X|$ queries to the same-cluster oracle allows us to solve (in polynomial time) the Promise Correlation Clustering problem for all $M$ and $\alpha = 0$. In this section, we prove that the linear dependence on $n = |X|$ is tight. We prove that if the exponential time hypothesis (ETH) holds then any algorithm that runs in polynomial time makes atleast $\Omega(n)$ same-cluster queries.
+In the previous sections, we have shown that the PCC problem is NP-Hard without queries. It is trivial to see that by making $\beta |X|$ queries to the same-cluster oracle allows us to solve (in polynomial time) the Promise Correlation Clustering problem for all $p$ and $\alpha = 0$. In this section, we prove that the linear dependence on $n = |X|$ is tight. We prove that if the exponential time hypothesis (ETH) holds then any algorithm that runs in polynomial time makes atleast $\Omega(n)$ same-cluster queries.
 
 \begin{theorem}
-Given that the Exponential Time Hypothesis (ETH) holds then any algorithm for the Promise Correlation Clustering problem  that runs in polynomial time makes $\Omega(|X|)$ same-cluster queries for all $M \ge 3$ and for $\alpha = 0$ and $\beta = \frac{1}{2}$. 
+Given that the Exponential Time Hypothesis (ETH) holds then any algorithm for the Promise Correlation Clustering problem  that runs in polynomial time makes $\Omega(|X|)$ same-cluster queries for all $p \ge 3$ and for $\alpha = 0$ and $\beta = \frac{1}{2}$. 
 \end{theorem}
 
 \noindent Below, we give a proof sketch but a detailed proof is in the supplementary material. The exponential time hypothesis says that any solver for $3$-SAT runs in $2^{o(m)}$ time (where $m$ is the number of clauses in the $3$-SAT formula). We use a reduction from $3$-SAT to 3DM to X3C to show that the exact cover by 3-sets (X3C) problem also can't be solved in $2^{o(m)}$ time (if ETH holds). Then, using the reduction from the previous section implies that PCC also can't be solved in $2^{o(n)}$ time. Thus, any query based algorithm for PCC needs to make atleast $\Omega(n)$ queries where $n = |X|$ is the number of vertices in the graph. 
