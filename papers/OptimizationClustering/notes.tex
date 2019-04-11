@@ -1,0 +1,90 @@
+\documentclass[12pt]{article}
+
+\begin{document}
+\section{Mixture of gaussians}
+	\begin{itemize}
+		\item Jon Feldman, Rocco A. Servedio, and Ryan O’Donnell, {\em PAC learning axis-aligned mixtures of gaussians with no separation assumption [FSO06]}\\
+		PAC model for learning a mixture of gausssians.\\
+		Given a class $C$ of probability distributions over $R^d$ and access to random data sampled from an unknown distribution $Z \in C$. Find $Z' \in C$ which with high confidence is $\epsilon$-close to $Z$ in KL-divergence.\\
+		Give an algorithm which recover the mixture of gaussians and runs in time $ploy(n/\epsilon).\log(1/\delta)$.\\
+		Polynomial in $n$ only if $k$ is a constant. 
+		
+		\item Adam Tauman Kalai, Ankur Moitra, and Gregory Valiant, {\em Efficiently learning mixtures of two gaussians [KMV10]}\\
+		In the mixtures of gaussian model, covariance matrix is the same.\\
+		They consider GMM (Gaussian mixture model).\\
+		Similar result as [FSO06].\\
+		Their algorithm recovers the parameters such that variation distance between the estimated and true distributions is small.
+		
+		\item Ankur Moitra and Gregory Valiant, {\em Settling the polynomial learnability of mixtures of gaussians [MV10]}\\
+		Extend the previous result to mixture of $k$ gaussians.
+		
+		\item Mikhail Belkin and Kaushik Sinha, {\em Polynomial learning of distribution families [BS10]}\\
+		Prove that the parameters of a Gaussian mixture can be learned with precision $\epsilon$ and confidence $1−\delta$ using number of samples which are polynomial in $n$.\\
+		Their results hold for arbitrary separation.\\
+		The computational complexity is exponential in $k$.
+		
+		\item Daniel Hsu and Sham M. Kakade, {\em Learning mixtures of spherical Gaussians: moment methods and spectral decompositions [HK13]}\\
+		If the  means  of  the  gaussians  are  linearly  independent,  their algorithm can learn the model in polynomial time and with polynomial number of samples.
+		
+		\item Joseph Anderson, Mikhail Belkin, Navin Goyal, Luis Rademacher, and James R. Voss, {\em The more, the merrier: the blessing of dimensionality for learning large gaussian mixtures [ABG + 14]}\\
+		Learning gaussians under certain conditions.		
+	\end{itemize}
+	
+\section{Mixture of gaussians in the presence of noise}
+	\begin{itemize}
+		\item Kevin A. Lai, Anup B. Rao, and Santosh Vempala, {\em Agnostic estimation of mean and covariance [LRV16]}\\
+		Estimate the mean of a gaussian distribution when $\epsilon$ fraction of points are corrupted by noise.\\
+		Propose an efficient algorithm that can estimate it with almost linear samples.
+		
+		\item Ilias Diakonikolas, Gautam Kamath, Daniel M. Kane, Jerry Li, Ankur Moitra, and Alistair Stewart {\em Robust estimators in high dimensions without the computational intractability [DKK + 16]}\\
+		Achieve error $O(\epsilon\sqrt{\log (1/\epsilon)})$ for estimating the mean of a gaussian.\\
+		For mixture of gaussians, output a distribution whose total variation distance is bounded by $\tilde O(poly(k)\sqrt\epsilon)$ 
+		
+		\item Ilias Diakonikolas, Gautam Kamath, Daniel M. Kane, Jerry Li, Ankur Moitra, and
+Alistair Stewart, {\em Being robust (in high dimensions) can be practical [DKK + 17a]}\\
+		Acheive an error of $\sqrt\epsilon$ for mean estimation.
+		
+		\item Jacob Steinhardt, Moses Charikar, and Gregory Valiant, {\em Resilience: A criterion for
+learning in the presence of arbitrary outliers [SCV17]}\\
+		
+	\end{itemize}
+	
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
