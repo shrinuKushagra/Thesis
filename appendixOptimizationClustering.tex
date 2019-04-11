@@ -555,12 +555,12 @@ Thus, $(\delta-1)^2 -1 - a^2 - 4a > 2a + 2\rho k\theta(1+s)^2\frac{1}{d}$ implie
 \label{a-thm:regSDPIsometric}
 Let $\mc P$ denote the isotropic distribution on the unit ball centered at origin in $\mb R^d$. Given centers $\mu_1, \ldots, \mu_k$ such that $\|\mu_i - \mu_j\| > \delta > 2$. Let $\mc P_i$ be the measure $\mc P$ translated with respect to the center $\mu_i$. Let $B_i$ is drawn i.i.d w.r.t the distribution $\mc P_i$. 
 
-Given a clustering instance $\mc X \subset \mb R^{N \times d}$ and $k$. Let $\mc X : = \mc I \cup \mc N$ where $\mc I := \cup_{i=1}^k B_i$. Let $\mc N = \mc N_1 \cup N_2$ have the following properties. For all $n \in N_1$ and for all $i, j$, we have that $| \|(n-\mu_i\|^2 - \|n-\mu_j\|^2| \ge \alpha$. For all $n \in \mc N_2$ and for all $x \in \mc I, \|n- x\| \ge 2\delta$. Note that $\mc N_1 \cap \mc N_2 = \phi$. Let $n = \min_i |B_i|$ and $\epsilon = \frac{|\mc N_1|}{n}$ and $\rho = \frac{|I|}{nk}$. If  
+Given a clustering instance $\mc X \subset \mb R^{N \times d}$ and $k$. Let $\mc X : = \mc I \cup \mc N$ where $\mc I := \cup_{i=1}^k B_i$. Let $\mc N = \mc N_1 \cup N_2$ have the following properties. For all $n \in N_1$ and for all $i, j$, we have that $| \|(n-\mu_i\|^2 - \|n-\mu_j\|^2| \ge \alpha$. For all $n \in \mc N_2$ and for all $x \in \mc I, \|n- x\| \ge \nu \ge \sqrt{(\delta-1)^2+1}$. Note that $\mc N_1 \cap \mc N_2 = \phi$. Let $n = \min_i |B_i|$ and $\epsilon = \frac{|\mc N_1|}{n}$ and $\rho = \frac{|I|}{nk}$. If  
 
 \begin{itemize}
-  \item $\delta > 2 + \sqrt{ 18\epsilon+9\epsilon^2+ \frac{2\rho k\theta(1+1/\log(|I|))^2}{d}}$ 
-  \item $\alpha \ge 18\epsilon+9\epsilon^2+ \frac{2\rho k\theta(1+1/\log|I|)^2}{d}$ 
-  \item $\frac{|\mc N_2|}{n} \le \frac{\delta^2-2\delta-12\epsilon-\epsilon^2}{\lambda}$
+  \item $\delta > 2 + \sqrt{ O(\epsilon) + \frac{2\rho k\theta(1+1/\log(|I|))^2}{d}}$ 
+  \item $\alpha \ge O(\epsilon)+ \frac{2\rho k\theta(1+1/\log|I|)^2}{d}$ 
+  \item $\frac{|\mc N_2|}{n} \le \frac{\delta^2-2\delta-O(\epsilon)}{\lambda}$
 \end{itemize}
 then there exists a constant $c_2 > 0$ such that with probability at least $1 - 2d\exp(\frac{-c_2|I|\theta}{d\log^2|I|})$ the regularised $k$-means SDP finds the intended cluster solution  $\mc C^* = \{C_1, \ldots, C_k, \mc N_2\}$ where $B_i \subseteq C_i$ when given $\mc X$ and $\delta^2+2\delta \ge \lambda \ge (\delta-1)^2 + 1$ as input.
 \end{theorem}
