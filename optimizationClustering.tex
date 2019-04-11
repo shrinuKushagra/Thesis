@@ -231,15 +231,11 @@ Assume that we are given a set $\mc I$ of $k$ well-separated balls in $\mb R^d$.
 
 \begin{theorem}
 \label{thm:SDPGeneral}
-Given a clustering instance $\mc I \subset \mb R^{N\times d}$ and $k$. Let $\mc I := \cup_{i=1}^k B_i$ where $B_i$ is a finite set of radius at most one centered at $\mu_i$ and $\|\mu_i - \mu_j\| > \delta$. Let $\mc I' = \cup_i B_i'$ where $B_i' := \{x - \mu_i : x \in B_i\}$. Define $ n := \min_{i\in[k]} |B_i|$ and $\rho = \frac{N}{nk}$.
-\begin{enumerate}[leftmargin=*,nolistsep,noitemsep]
-	\item \textbf{Distribution-free} - If the distance between the centers of any two balls 
-$$\delta > 1 + \sqrt{1+ 2\frac{\sigma_{\max}^2(\mc I')}{n}}$$ 
-then the $k$-means SDP finds the intended cluster solution  $\mc C^* = \{B_1, \ldots, B_k\}$.
-	\item \textbf{Stochastic ball assumption} - Let $\mc P$ denote the isotropic distribution on the unit ball centered at origin. Given points $c_1, \ldots, c_k$ such that $\|c_i - c_j\| > \delta  > 2$. Let $\mc P_i$ be the measure $\mc P$ translated with respect to the center $c_i$. If each $B_i$ is drawn i.i.d w.r.t the distribution $\mc P_i$ and 
+Let $\mc P$ denote the isotropic distribution on the unit ball centered at origin in $\mb R^d$. Given points $\mu_1, \ldots, \mu_k$ such that $\|\mu_i - \mu_j\| > \delta  > 2$. Let $\mc P_i$ be the measure $\mc P$ translated with respect to the center $\mu_i$. Let each $B_i$ is drawn i.i.d w.r.t the distribution $\mc P_i$. 
+
+Given a clustering instance $\mc I \subset \mb R^{N\times d}$ and $k$ where $\mc I := \cup_{i=1}^k B_i$. Define $ n := \min_{i\in[k]} |B_i|$ and $\rho = \frac{N}{nk}$. If
 $$\delta > 1 + \sqrt{1+\frac{2\theta\rho k}{d}\Big(1+\frac{1}{\log N}\Big)^2}$$  
 where $\theta = \mb E[\|x_{pi}-c_p\|^2] < 1$, then there exists a constant $c > 0$ such that with probability at least $1 - 2d\exp(\frac{-cN\theta}{d\log^2N})$ the $k$-means SDP finds the intended cluster solution  $\mc C^* = \{B_1, \ldots, B_k\}$.
-\end{enumerate}
 \end{theorem}
 
 Thm. \ref{thm:SDPGeneral} improves the result of Thm. 11 in \cite{awasthi2015relax}. Under the stochastic ball assumption, they showed that the $k$-means SDP finds the intended solution for $\delta > 2\sqrt{2}(1+\frac{1}{\sqrt{d}})$. For $k \ll d$, which is the case in many situations our bounds are optimal in terms of the separation reqirement of the clusters.  \cite{iguchi2015tightness} obtained similar results but for $\delta > 2 + \frac{k^2}{d}cond(\mc I)$. Asymptotically, as $d$ goes to $\infty$ their bound matches our result. However, the condition number (ratio of maximum distance between any two centers to the minimum distance between any two centers) can be arbitrarily large. We also have a better dependence on $k$ and $d$. 
@@ -248,21 +244,16 @@ Next, we analyse the recovery guarentees for $\mc A'$ in the presence of noisy p
 
 \begin{theorem}
 \label{thm:regularisedSDPGeneral}
-Given a clustering instance $\mc X \subset \mb R^{N \times d}$ and $k$. Let $\mc X : = \mc I \cup \mc N$. Let $\mc I := \cup_{i=1}^k B_i$ where $B_i$ is a ball of radius at most one centered at $\mu_i$ and $\|\mu_i - \mu_j\| > \delta$. Let $\mc I' = \cup_i B_i'$ where $B_i' := \{x - \mu_i : x \in B_i\}$.  Let $\mc N = \mc N_1 \cup \mc N_2$ have the following properties. For all $p \in \mc N_1$ and for all $i, j$, we have that $| \|p- \mu_i\| - \|p- \mu_j\|| \ge \alpha$. For all $p \in \mc N_2$ and for all $x \in I, \|p - x\| \ge 2\delta$. Note that $\mc N_1 \cap \mc N_2 = \phi$. Let $n = \min_i |B_i|$ and $\epsilon = \frac{|\mc N_1|}{n}$. If $\frac{|\mc N_2|}{n} \le \frac{\delta^2(1-4\epsilon^2)-2\delta(1+4\epsilon)}{\lambda}$ and 
-\begin{enumerate}[leftmargin=*,nolistsep,noitemsep]
-	\item \textbf{Distribution free} - If  the distance between the centers of any two balls
-	\begin{align*}
-		\delta > 2 + \frac{9\epsilon}{1-4\epsilon^2} + \sqrt{\frac{2\sigma_{\max}^2(I')}{n(1-4\epsilon^2)}} \text{ and }
-		\alpha \ge \sqrt{10\delta \epsilon + 4\delta^2 \epsilon^2+ \frac{2\sigma_{\max}^2(|I'|)}{n(1-4\epsilon^2)}}
-	\end{align*} 
-	then the regularised $k$-means SDP finds the intended cluster solution  $\mc C^* = \{C_1, \ldots, C_k, \mc N_2\}$ where $B_i \subseteq C_i$ when given $\mc X$ and $\delta^2+2\delta \ge \lambda \ge (\delta-1)^2 + 1$ as input.
-	\item  \textbf{Stochastic ball assumption} - Let $\mc P$ denote the isotropic distribution on the unit ball centered at origin. Given centers $c_1, \ldots, c_k$ such that $\|c_i - c_j\| > \delta > 2$. Let $\mc P_i$ be the measure $\mc P$ translated with respect to the center $c_i$. If each $B_i$ is drawn i.i.d w.r.t the distribution $\mc P_i$ 
-	\begin{align*}
-	   \delta > 2 + \frac{9\epsilon}{1-4\epsilon^2} + \sqrt{\frac{2\rho k\theta(1+\frac{1}{\log|I|})^2}{d(1-4\epsilon^2)}} \text{ and }
-	  \alpha \ge \sqrt{10\delta \epsilon + 4\delta^2 \epsilon^2+ \frac{2\rho k\theta(1+\frac{1}{\log|I|})^2}{d(1-4\epsilon^2)}}
-	\end{align*}
-	then there exists a constant $c_2 > 0$ such that with probability at least $1 - 2d\exp(\frac{-c_2|I|\theta}{d\log^2|I|})$ the regularised $k$-means SDP finds the intended cluster solution  $\mc C^* = \{C_1, \ldots, C_k, \mc N_2\}$ where $B_i \subseteq C_i$ when given $\mc X$ and $\delta^2+2\delta \ge \lambda \ge (\delta-1)^2 + 1$ as input.
-\end{enumerate}
+Let $\mc P$ denote the isotropic distribution on the unit ball centered at origin in $\mb R^d$. Given centers $\mu_1, \ldots, \mu_k$ such that $\|\mu_i - \mu_j\| > \delta > 2$. Let $\mc P_i$ be the measure $\mc P$ translated with respect to the center $\mu_i$. Let $B_i$ is drawn i.i.d w.r.t the distribution $\mc P_i$. 
+
+Given a clustering instance $\mc X \subset \mb R^{N \times d}$ and $k$. Let $\mc X : = \mc I \cup \mc N$ where $\mc I := \cup_{i=1}^k B_i$. Let $\mc N = \mc N_1 \cup N_2$ have the following properties. For all $n \in N_1$ and for all $i, j$, we have that $| \|(n-\mu_i\|^2 - \|n-\mu_j\|^2| \ge \alpha$. For all $n \in \mc N_2$ and for all $x \in \mc I, \|n- x\| \ge 2\delta$. Note that $\mc N_1 \cap \mc N_2 = \phi$. Let $n = \min_i |B_i|$ and $\epsilon = \frac{|\mc N_1|}{n}$ and $\rho = \frac{|I|}{nk}$. If  
+
+\begin{itemize}
+  \item $\delta > 2 + \sqrt{ 18\epsilon+9\epsilon^2+ \frac{2\rho k\theta(1+1/\log(|I|))^2}{d}}$ 
+  \item $\alpha \ge 18\epsilon+9\epsilon^2+ \frac{2\rho k\theta(1+1/\log|I|)^2}{d}$ 
+  \item $\frac{|\mc N_2|}{n} \le \frac{\delta^2-2\delta-12\epsilon-\epsilon^2}{\lambda}$
+\end{itemize}
+then there exists a constant $c_2 > 0$ such that with probability at least $1 - 2d\exp(\frac{-c_2|I|\theta}{d\log^2|I|})$ the regularised $k$-means SDP finds the intended cluster solution  $\mc C^* = \{C_1, \ldots, C_k, \mc N_2\}$ where $B_i \subseteq C_i$ when given $\mc X$ and $\delta^2+2\delta \ge \lambda \ge (\delta-1)^2 + 1$ as input.
 \end{theorem}
 
 The proof of both the Thms. \ref{thm:SDPGeneral} and \ref{thm:regularisedSDPGeneral} use the following ideas. We construct a dual for the SDP. We then show that when the conditions of our theorems are satisfied then there exists a feasible solution for the dual program. Moreover, the objective function value of primal and dual sdp program are the same. Hence, the solution found is indeed optimal. The same idea was also used in the proof of Thm. 11 in \cite{awasthi2015relax}. However, our analysis is tighter which helps us to obtain better bounds. The details are in the supplementary section.
