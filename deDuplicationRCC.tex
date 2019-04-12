@@ -81,7 +81,7 @@ We first describe the procedure $\mc P_0$ which samples according to $P^-$. Then
 \vspace{0.1in} 
 \While{TRUE}{
   Sample $(x, y)$ using $U^2$\\
-  \If {$ C^*(x, y) = 0$}{\label{algLine:oracleP1}
+  \If {$ C^*(x, y) = 0$}{
   		Output $(x, y)$
 	}
 }
@@ -110,28 +110,33 @@ Lemma \ref{lemma:negQueries} shows that for $\gamma < \frac{1}{2}$, to sample a 
 \subsection{Sampling positive pairs for general metrics}
 \label{section:samplingPositive}
 
+\RestyleAlgo{ruled}
+\SetAlgoNoLine
+\LinesNumbered
+\SetNlSkip{-0.4em}
+\begin{algorithm}
+\caption{Sampling procedure $\mc P_{11}$ for positive pairs (general metrics)}
+\label{alg:weightedPosPairs}
+\Indp\KwIn{A set $X$, a $C^*$-oracle and a parameter $\lambda$.}
+\KwOut{One pair $(x, y) \in X^{[2]}$ such that $\mc C^*(x, y) = 1$}
+
+\vspace{0.1in}\textbf{Pre-compute:} For all $x \in X$, compute $S_x := \{y: d(x, y) \le \lambda\}$.\\
+
+\vspace{0.1in} \While{TRUE}{
+Sample $x \in X$ with probability $\propto |S_x|$.\\
+Sample $y$ uniformly at random from $S_x$. \\
+\If {$\mc C^*(x, y) = 1$}{
+	Output $(x, y)$.
+	}
+}	
+\end{algorithm}
+
+
 Given a clustering instance $(X, d)$. Assume that the metric $d$ is $(\alpha, \beta)$-informative w.r.t target $C^*$ and parameter $\lambda$. This means that `most' of the positive pairs are within distance $\lambda$. Our sampling strategy is to ``construct" a set $K = \{(x, y) \in X^2: d(x, y) \le \lambda\}$ and then sample uniformly from this set. We will prove that this procedure approximates $P^+$. 
 
 The sampling algorithm is described in Alg. \ref{alg:weightedPosPairs}. In the pre-compute stage, for all points $x$ we construct its set of `neighbours' ($S_x$). We then choose a point with probability proportional to the size of its neighbour-set and then choose the second point uniformly at random from amongst its neighbours. This guarantees that we sample uniformly from the set $K$.  
 
-\RestyleAlgo{ruled}
-\SetAlgoNoLine
-\LinesNumbered
-\begin{algorithm}
-\label{alg:weightedPosPairs}
-\caption{Sampling procedure $\mc P_{11}$ for positive pairs (general metrics)}
-\Indp\KwIn{A set $X$, a $C^*$-oracle and a parameter $\lambda$.}
-\KwOut{One pair $(x, y) \in X^{[2]}$ such that $\mc C^*(x, y) = 1$}
-\vspace{0.1in}\textbf{Pre-compute:} For all $x \in X$, compute $S_x := \{y: d(x, y) \le \lambda\}$.\\
 
-\vspace{0.1in} \While{TRUE}{
-Sample $x \in X$ with probability $\propto |S_x|$. \label{algLine:size}\\
-Sample $y$ uniformly at random from $S_x$. \label{algLine:sample}\\
-\If {$\mc C^*(x, y) = 1$}{\label{algLine:oracleP21}
-	Output $(x, y)$.
-	}
-}
-\end{algorithm}
 
 \begin{restatable}{thrm}{posDistribution}
 \label{thm:posDistribution}
@@ -180,7 +185,6 @@ Next, we check if the pair satisfies $d(x, y) \le \lambda$. Note that the LSH-ba
 
 \begin{algorithm}[h]
 \caption{Sampling procedure $\mc P_{12}$ for positive pairs}
-\label{alg:weightedPosPairsHash}
 \Indp\KwIn{A set $\mc X$, a hashing algorithm $\mc A$, a $C^*$-oracle and parameter $\lambda$.}
 \KwOut{$(x, y)$ such that $ C^*(x, y) = 1$}
 
@@ -203,6 +207,7 @@ Next, we check if the pair satisfies $d(x, y) \le \lambda$. Note that the LSH-ba
 			 Output $(x, y)$.
 	 }	
 }
+\label{alg:weightedPosPairsHash}
 \end{algorithm}
 
 
@@ -266,7 +271,7 @@ Output $\argmin_{C \in \mc F} \enspace \hat L(C)$ \label{algLine:ERM}
 
 Thm. \ref{thm:sampleComplexity} analyses the sample complexity of our approach. That is, the number of labelled positive and negative pairs our algorithm needs as input, so that the estimates of the loss based on this sample are close to their true values. We show that as long as the number of sampled pairs are in $O(\frac{\vcdim(\mc F)}{\epsilon^2})$ then our algorithm finds a clustering $\hat C$ which is close to the best clustering in $\mc F$. Here, $\vcdim$ is a combinatorial property which measures how `complex' or rich the class of clusterings is. Note that the number of samples needed is independent of the size of the dataset $X$. 
 
-For common classes, like $\mc F = \{T_1, \ldots, T_s\}$ where each $T_i$ is a hierarchical clustering of $X$, \cite{kushagra2018semisupervised} showed that the $\vcdim(\mc F)$ is in $o(\log s)$. Thus for such classes a small number of samples suffice to find a clustering which is close to the best clustering in $\mc F$.  
+For common classes, like $\mc F = \{T_1, \ldots, T_s\}$ where each $T_i$ is a hierarchical clustering of $X$, we also analyze their $\vcdim(\mc F)$ and prove that it is in $o(\log^2 s)$. Thus for such classes a small number of samples suffice to find a clustering which is close to the best clustering in $\mc F$.  
 
 \begin{restatable}{thrm}{sampleComplexity}
 \label{thm:sampleComplexity}
@@ -379,6 +384,179 @@ Now, let's focus on the case when $\mc F = \{T_1, \ldots, T_s\}$ (a finite set o
 
 For every node $\nu$ in the hierarchical clustering tree, let $nl(\nu)$ be the leaves which are descendants of $\nu$. For a leaf node $\nu$, $nl(\nu) = \{\nu\}$. Let $\mu_1 = \mu|S_-|$ and $\mu_2 = (1-\mu)|S_+|$. Let $$e(\nu) = \argmin_{C \in T_{\nu}} \mu_1|S_+|\hat P(C) + \mu_2|S_-|\hat N(C)$$ where $T_{\nu}$ is the tree $T$ restricted to the descendants of $\nu$. Let $a(\nu) = \mu_1|S_+|\hat P(C) + \mu_2|S_-|\hat N(C)$ where $C$ is the clustering which assigns all the descendants of $\nu$ to a single cluster. We are now ready tp describe our bottom-up approach in Alg. \ref{alg:ERMTrees}. Its easy to see that the running time of the approach is $\Theta(|S|^2)$. 
 
+\section{Experimental evaluation}
+\label{sec:evaluation}
+
+\begin{table*}[t]
+\centering
+\resizebox{\textwidth}{!}{
+\begin{tabular}{ |c || c|c||c|c|| c|c || c|c || c|c| } 
+ \hline
+  & \multicolumn{2}{c||}{\textbf{simulated}} & \multicolumn{2}{|c|}{\textbf{publications}} & \multicolumn{2}{c||}{\textbf{products I}} & \multicolumn{2}{c||}{\textbf{products II}} & \multicolumn{2}{c||}{\textbf{restaurants}}\\ \hline
+Clustering & true loss & estimated loss & true loss & estimated loss & true loss & estimated loss & true loss & estimated loss & true loss & estimated loss \\ \hline
+ArtPt           & 0.091         & 0.105         & 0.023         & 0.005         & 0.206         & 0.170         & 0.153         &   0.160           & 0.094	                        & 0.110 \\ \hline
+Star            & 0.052         & 0.060         & 0.100         & 0.050         & 0.207	        & 0.190         & 0.231         &	0.170           & 0.041	                        & 0.045 \\ \hline
+ApproxCorr      &  NA\footnote{ Algorithm did not finish within a reasonable time limit because of the high computational cost.}           & NA       & 0.180	        & 0.145         & 0.380	        & 0.310         & 0.373         &	0.340           & 0.094	                        & 0.065 \\ \hline
+Markov          & 0.011         & \textbf{0.000}& 0.017	        & 0.010         & 0.159         & 0.130         & 0.125         &	0.085           & 0.045                         & 0.030 \\ \hline
+Na\"iveDedup    & 0.397         & 0.365         & 0.497         & 0.495         & 0.413         & 0.405         & 0.394         &	0.380           & 0.094                         & 0.080 \\ \hline
+C1 (single)     & 0.019         & 0.025	        & 0.016         & 0.018         & 0.150         & 0.110         & 0.131         &	0.120           & 0.022                         & \textbf{0.015} \\ \hline
+C2 (complete)   & 0.005         & 0.005	        & 0.009	        & 0.009         & 0.150	        & 0.130	        & 0.135         &	0.065           & 0.034	                        & 0.040 \\ \hline
+C3 (weighted)   & 0.002         & \textbf{0.000}& \textbf{0.005}& \textbf{0.006}& \textbf{0.110}& 0.110	        & 0.107         &	0.070           & \textbf{0.019}      & 0.020 \\ \hline
+C4 (average)    & \textbf{0.001}& \textbf{0.000}& 0.007 	    & 0.017         & 0.120	        & \textbf{0.100}& \textbf{0.099}&	\textbf{0.060}  & \textbf{0.019}      & 0.020 \\ \hline \hline
+Mean loss difference   &               & 0.016         &               & 0.014         &               & 0.027         &               &   0.035           &                        & 0.010 \\ \hline
+\end{tabular}
+}
+\caption{True loss and the loss estimated by our framework.}
+\label{tab:exp3}
+\end{table*}
+
+\begin{table}[t]
+\centering
+\resizebox{\textwidth}{!}{
+
+\begin{tabular}{ |c|c|c|c|c|c|c|c|c| } 
+\hline
+  &  & \multicolumn{2}{|c|}{\textbf{25, 25 samples}} & \multicolumn{2}{|c|}{\textbf{100, 100 samples}} & \multicolumn{2}{|c|}{\textbf{500, 500 samples}} \\ \hline
+Clustering & true loss & \# queries & estimated loss & \# queries & estimated loss & \# queries & estimated loss \\ \hline
+C1 (single) & \textbf{0.06107}   &  51 & 0.06 & 204	&   0.025 & 1023 &	0.024   \\ \hline
+C2 (complete) &	\textbf{0.04177} &	50 & 0.02 &	210 &	0.005 & 1024 &	0.016 \\ \hline
+C3 (weighted) & \textbf{0.03831} &	50 & 0.02 &	203 &	0.015 &	1027 &	0.016 \\ \hline
+C4 (average) &	\textbf{0.03489} &	52 & 0.02 &	207 &	0.020 &	1043 &	0.013 \\ \hline
+\end{tabular}
+
+}
+\caption{Simulated dataset: Impact of number of samples on the loss of the clustering}
+\label{tab:exp1}
+\end{table}
+
+
+
+
+\begin{table}[t]
+\centering
+\resizebox{\textwidth}{!}{
+
+\begin{tabular}{ |c|c|c|c|c|c|c|c|c| } 
+ \hline
+  &  & \multicolumn{2}{|c|}{\textbf{25, 25 samples}} & \multicolumn{2}{|c|}{\textbf{100, 100 samples}} &  \multicolumn{2}{|c|}{\textbf{500, 500 samples}} \\ \hline
+Clustering & true loss & \# queries & estimated loss & \# queries & estimated loss & \# queries & estimated loss \\ \hline
+C1 (single) & \textbf{0.11075}   &  51 & 0.08 & 208 &	0.055 &	1031 &	0.041 \\ \hline
+C2 (complete) &	\textbf{0.37172} &	50 & 0.34 &	204 &	0.315 &	1035 &	0.334 \\ \hline
+C3 (weighted) & \textbf{0.29622} &	51 & 0.14 &	203 &	0.260 &	1037 &	0.239 \\ \hline
+C4 (average) &	\textbf{0.26877} &	50 & 0.20 &	204 &	0.195 &	1027 &	0.202 \\ \hline
+\end{tabular}
+
+}
+
+\caption{Publications dataset: Impact of number of samples on the loss of the clustering}
+\label{tab:exp2}
+\end{table}
+
+\begin{figure}[t]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[trim=100 0 100 0, width=0.5\linewidth,valign=t]{figures/deDuplication/plot_simulated_s.pdf}
+        \caption{Single linkage}
+    \end{subfigure}%
+    ~ 
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[trim=100 0 100 0, width=0.5\linewidth,valign=t]{figures/deDuplication/plot_simulated_c.pdf}
+        \caption{Complete linkage}
+    \end{subfigure}
+	\caption{Simulated dataset: Loss reported for every iteration of hierarchical clustering}
+    \label{fig:simulated}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[trim=100 0 100 0, width=0.5\linewidth,valign=t]{figures/deDuplication/plot_real_s.pdf}
+        \caption{Single linkage}
+    \end{subfigure}%
+    ~ 
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[trim=100 0 100 0, width=0.5\linewidth,valign=t]{figures/deDuplication/plot_real_c.pdf}
+        \caption{Complete linkage}
+    \end{subfigure}
+	\caption{Publications dataset: Loss reported for every iteration of hierarchical clustering}
+    \label{fig:publications}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[trim=0 0 0 0, width=\linewidth,valign=t]{figures/deDuplication/plot_oracle_error.pdf}
+    \caption{Impact of oracle mistakes}
+    \label{fig:oracle-error}
+\end{figure}
+    
+
+
+
+We now present the evaluation of our framework on a simulated and four real world datasets.
+In Section \ref{sec:exp1} we show that our framework is generic and can be used to choose amongst many of the classes of algorithms for de-duplication. We also show that our framework can always choose a clustering which is close to the best clustering (algorithm) from a given class of clustering (algorithms) and our estimated loss for each of the clustering is very close to the true loss of these clustering algorithms.
+In Section \ref{sec:exp2} we show that our framework is robust to upto 10\% of oracle mistakes, which far exceeds the intended settings dealing with human experts.
+Finally, in Section \ref{sec:exp3} we show that in our framework a relatively small number of samples are enough to accurately estimate the loss of a clustering.
+
+\subsection{Evaluation setup}
+\label{sec:setup}
+\textbf{Algorithms} In our evaluation we use four graph based clustering algorithms: (1) Articulation point clustering (\textit{ArtPt}) \cite{cormen2009introduction}, (2) Star clustering (\textit{Star}) \cite{aslam2006star}, (3) Approximate correlation clustering (\textit{ApproxCorr}) \cite{bansal2004correlation}, (4) Markov clustering (\textit{Markov}) \cite{van2000graph}. These graph based algorithms have been used for de-duplication problems as shown in previous work \cite{hassanzadeh2009framework}.
+Hierarchical clustering algorithms are very effective and have been widely used to perform de-duplication. We consider 4 different linkage methods for hierarchical clustering: single linkage (C1), complete linkage (C2), weighted linkage (C3), and average linkage (C4). 
+In addition to this we also implemented a heuristic based de-duplication algorithm (\textit{Na\"iveDedup}) where any two data points are considered similar if their distance is below a certain threshold. The output of this algorithm is pairs of data points which are marked similar.
+
+\textbf{Datasets} For our evaluation we use five datasets.
+First dataset is a simulated dataset of ten thousand strings of length 20 where we simulate a clustering over the set of strings and use it as our ground truth.
+We use Jaro distance \cite{jaro1980unimatch} as the distance metric for strings.
+To simulate a clustering we generate some seed strings and then for each seed string we generate multiple secondary strings by slightly editing the seed string.
+Each cluster of strings resembles a single entity.
+Second dataset is a real-world bibliographical information of scientific publications \cite{pubdata}.
+The dataset has 1879 publication records with duplicates.
+The ground truth of duplicates is available.
+To perform clustering on this dataset we first tokenized each publication record and extracted 3-grams from them.
+Then, on 3-grams we used Jaccard distance to define distance between two records.
+Next two datasets are lists of E-commerce products: First dataset contains 1,363 products from Amazon, and 3,226 products from Google, and the ground truth has 1,300 matching products.
+Second dataset contains 1,082 products from Abt, and 1,093 products from Buy, and the ground truth has 1,098 matching products. Both these products datasets are publicly available at \cite{products}. 
+The fifth dataset is a list of 864 restaurants from the Fodor's and Zagat's restaurant guides that contains 112 duplicates. This dataset is also publicly available at \cite{restaurant}.
+To perform clustering on the products and restaurants datasets we normalized the records (product or restaurant description) using standard techniques from natural language processing, namely; denoising text, word tokenization, normalization, and stemming and lemmatization. Given a record, this process gives us a list of word tokens. For each token, we first obtained a vector representation of the word using  \textit{Global Vectors} for word representations (GloVe \cite{jeffrey2014glove}). We averaged this representation across word tokens to obtain the representation of a single record. We use cosine similarity to define the distance between two records.
+For the simulated and publications datasets, our distance metric was Jaccard and hence we use the MinHash \cite{broder2000min} as the hashing scheme. For the rest of the datasets, we used SimHash \cite{charikar2002similarity} as the hashing scheme. 
+For all the datasets we use ground truth as the oracle that can answer \textit{same-cluster queries}. 
+To calculate the true loss of a clustering (i.e. $L_{C^*}(C)$) we access all of the ground truth. Our framework uses only a sample of the ground truth to estimate the loss of a clustering.
+To judge the performance of our framework we compare the estimated loss $\hat L_{C^*}(C)$ against the true loss.
+
+\subsection{Clustering selection}
+\label{sec:exp1}
+In this experiment we demonstrate that our framework is generic and can be used to choose the best clustering algorithm amongst any of the classes of algorithms for de-duplication.
+We used our framework on all the algorithms mentioned in Section \ref{sec:setup}. The results on five datasets are summarized in Table \ref{tab:exp3}. For each dataset we report the loss of the true-best clustering ($L_{C^*}(C)$) and the estimated loss of the best clustering selected by our framework $\hat L_{C^*}(C)$.
+This experiment highlights two main features of our framework: (i) our framework can always choose a clustering close to the best clustering  algorithm from a given class of clustering algorithms using only a small number of samples, which is 200 (100 positive samples, and 100 negative samples) for all datasets and all the algorithms in Table \ref{tab:exp3}. (ii) Our estimated loss for each clustering is very close to the true loss of these clustering algorithms. At the bottom of the table we report the mean loss difference between estimated loss and true loss computed over all the algorithms. 
+
+We would also like to emphasize that in our framework we sample only once for each dataset and use that  sample to estimate the loss of all the clusterings. In Figure \ref{fig:simulated} and \ref{fig:publications} we show that our sample can very closely estimate the loss of every clustering generated at each iteration of the hierarchical clustering. Similarly, for Table \ref{tab:exp3} we sampled only once for each dataset and evaluated all the clusterings generated by each algorithm.
+Note that, each of the graph based algorithms have a hyper-parameter, i.e. the threshold on the edge weights. Edges with weights above this threshold represent dissimilar items and are pruned from the graph. For each of the graph based clustering algorithm we applied our framework on multiple values of the hyper-parameter and report only the ones with least true loss. However, for every choice of the hyper-parameter we observed that the estimated loss was very close to the true loss.
+
+\subsection{Effect of oracle mistakes}
+\label{sec:exp2}
+In this experiment we show that our framework is effective in real-world scenarios where the oracle may not be perfect and can make mistakes. Whenever the oracle classifies a similar pair as dissimilar or a dissimilar pair as similar we count it as a mistake. In our datasets we artificially introduce such mistakes and vary their ratio from from 0\%, to 20\%. In Figure \ref{fig:oracle-error} we show that our framework can closely estimate the clustering loss up to 10\% of oracle mistakes, which, in real-world far exceeds the intended settings dealing with human experts. The Y-axis in Figure \ref{fig:oracle-error} reports the mean difference between true loss and estimated loss over all the clusterings selected in Table \ref{tab:exp3}.
+
+%on four different methods of hierarchical clustering (C1 - C4). For each clustering, the goal is to find the pruning from the clustering tree that has minimum loss. We compare the loss of the best clustering found by our framework against the loss of the true-best clustering. We find the loss of the true-best clustering by performing all $|X|^2$ queries against the ground truth. In Table \ref{tab:exp3} we report the loss of the best clustering for all four clustering methods and both the datasets. In all the scenarios the best clustering picked by our framework is very close to the true-best clustering. The framework used 100 positive and 100 negative samples for this experiment for both the datasets. In Figures \ref{fig:simulated} and \ref{fig:publications}, we report the loss at every iteration of the hierarchical clustering. The loss reported by our framework is always close to the true loss of the clustering at every iteration. Another important point to note is that by only sampling 200 points, we are able to estimate the loss of all the clusterings (or prunings) of the hierarchical clustering tree.
+
+\subsection{Impact of sample size}
+\label{sec:exp3}
+
+In this experiment we show that even a small number of samples are enough to estimate the true loss ($L_{C^*}(C)$).
+%The true loss is computed by querying every pair $(x_1, x_2) \in X^{[2]}$ against the oracle (ground truth in our case).
+We consider four different clusterings, each one picked at random from the four hierarchical clustering methods (C1 - C4).
+Table \ref{tab:exp1} and \ref{tab:exp2} reports the loss for simulated and publications dataset, respectively.
+For each dataset we increased the number of positive and negative samples and measured the loss.
+The table also shows the true loss of the clustering.
+It can be seen that the estimated loss calculated by our framework is close to the true loss even with 25 positive samples and 25 negative samples.
+In addition to this, the loss does not change much by increasing the number of samples.
+Which means that there is no incentive to sample more.
+We also show that the number of queries performed by our framework are close to the sample size (as claimed in Thm. \ref{thm:queryComplexity}), which are orders of magnitude less than $O(|X|^2)$.
+For example, in the simulated dataset and single linkage clustering (C1) with 25 positive and 25 negative samples our framework performed 51 queries, that means only one query was wasted. Similarly, 4 queries were wasted for 100 positive and 100 negative samples, and so on.
+
+ 
 \ifdefined\COMPLETE
 \else
 \end{document}

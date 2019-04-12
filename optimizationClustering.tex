@@ -2,9 +2,9 @@
 \else
 \documentclass[12pt]{article}
 
-\usepackage{algorithm}
 \usepackage{mathtools,amsmath,amssymb,amstext,amsthm,tikz,thmtools}
 \usepackage[inline]{enumitem}
+\usepackage{algorithm2e}
 
 \usepackage[utf8]{inputenc} % allow utf-8 input
 \usepackage[T1]{fontenc}    % use 8-bit T1 fonts
@@ -30,19 +30,29 @@
 \newtheorem{proposition}[theorem]{Proposition}
 \newtheorem{corollary}[theorem]{Corollary}
 
+\title{Provably noise-robust $k$-means clustering}
+
+\author{\normalsize
+{Shrinu Kushagra} {\textnormal {,}} {Yaoliang Yu} {\textnormal {and}} {Shai Ben-David} \\
+\normalsize David R. Cheriton School of Computer Science \\
+\normalsize University of Waterloo,\\
+\normalsize Waterloo, Ontario, Canada\\
+\normalsize \{skushagr,yaoliang.yu,shai\}@uwaterloo.ca \\
+}
+
 \begin{document}
 \fi
 
 Clustering aims to group similar data instances together while separating dissimilar ones. However, often many datasets have, on top of cohesive groups, a subset of ``unstructured'' points as well. In such cases, the goal is to detect the structure while simultaneously separating the unstructured data points. Clustering algorithms that achieve this goal are said to be {\em robust} to noise.
 
-The most common approach to clustering views it as an optimization problem. The idea is to associate a cost (or objective) with each possible partition of the input dataset (into $k$ subsets) and then try to find a partition which has minimum cost. Examples of common objective functions include $k$-means and $k$-median cost functions. However, these common objective functions are not robust to the presence of noise.   
+The most common approach to clustering views it as an optimization problem. The idea is to associate a cost (or objective) with each possible partition (into $k$ subsets) of the input dataset and then try to find a partition which has minimum cost. Examples of common objective functions include $k$-means and $k$-median cost functions. However, it is easy to see that even the presence of one outlier can cause significant damage to the centers outputted by these methods.
 
-In this chapter, we propose a generic method of regularization that can transforms any clustering objective which outputs $k$ clusters to one that outputs $k+1$ clusters. The algorithm is now allowed to `discard' points into an extra `garbage' or noise cluster by paying a constant regularization penalty. The intuition is that allowing the clustering algorithm to discard a few points should make it easier to detect the structure in the remaining non-noisy points. However, we prove that finding the optimal solution to the regularized objective is NP-Hard \footnote{Throughout this chapter, we consider the standard and regularized versions of the $k$-means objective}. The goal is to develop an efficient clustering algorithm which is provably noise-robust.
+In this chapter, we propose a generic method of regularization that can transforms any clustering objective which outputs $k$ clusters to one that outputs $k+1$ clusters. The algorithm is now allowed to `discard' points into an extra `garbage' or noise cluster by paying a constant regularization penalty. The intuition is that allowing the clustering algorithm to discard a few points should make it easier to detect the structure in the remaining non-noisy points. However, we prove that finding the optimal solution to the regularized objective is NP-Hard \footnote{Throughout this chapter, we consider the standard and regularized versions of the $k$-means objective}. 
 %Similar to regularisation, {\em noise prototypes} (points which are equidistant to all other points) were considered by \cite{dave1993robust}. However, that idea was used only in the limited context of Lloyd’s algorithm and without any theoretical or noise robustness guarantees.
 
 From a theoretical perspective, one common approach to dealing with such hardness results is the following. (i) Consider a convex relaxation of the original objective function (which can be efficiently solved using standard techniques). (ii) Prove that under certain data niceness conditions the solution obtained by solving the relaxed objective function coincides with the optimal solution of the original objective function. For example, \cite{peng2007approximating} used this strategy to design an algorithm based on the sdp-relaxation of the $k$-means objective function. \cite{awasthi2015relax} proved that under the `stochastic ball assumption', the solution of the sdp-based approach is indeed the optimal $k$-means clustering. 
 
-One advantage of studying convex relaxations of clustering objectives over other clustering heuristics (like the llyod's algorithm \cite{lloyd1982least}) is that we can verify when the output solution is optimal. There was been lot of work in analyzing clustering algorithms under distributional and clusterability assumptions (see \cite{balcan2012clustering}, \cite{awasthi2012center}, \cite{kalai2010efficiently}, , \cite{achlioptas2005spectral, \cite{sanjeev2001learning}} and \cite{hsu2013learning} and the references therein). However, often the algorithms are designed keeping the input conditions in mind. Convex relaxations have an advantage that they are not specifically tailored to a particular distribution. In this chapter, we use this approach (sdp relaxation of the regularized $k$-means objective) to design an efficient and noise-robust clustering algorithm.
+One advantage of studying convex relaxations of clustering objectives over other clustering heuristics (like the llyod's algorithm \cite{lloyd1982least}) is that we can verify when the output solution is optimal. There was been lot of work in analyzing clustering algorithms under distributional and clusterability assumptions (see \cite{balcan2012clustering}, \cite{awasthi2012center}, \cite{kalai2010efficiently}, , \cite{achlioptas2005spectral}, \cite{sanjeev2001learning} and \cite{hsu2013learning} and the references therein). However, often the algorithms are designed keeping the input conditions in mind. Convex relaxations have an advantage that they are not specifically tailored to a particular distribution. In this chapter, we use this approach (sdp relaxation of the regularized $k$-means objective) to design an efficient and noise-robust clustering algorithm.
 
 Our framework is the following. We are given an input dataset $X$ made of two components. The first is the clusterable subset $I$ which satisfies a niceness property. Namely, $I$ is the union of $k$ unit balls $B_i$ each separated by a distance of atleast $\delta$. The second is the unstructured or noise component $N$. Note that the clustering algorithm only sees $X$ and is not aware of $I$ or $N$. The goal is to design an efficient clustering algorithm $\mc A$ such that the output of the algorithm $\mc A(X)$ when restricted to $I$, is able to detect and recover the structure of $I$ (namely, the balls $B_i$). In this chapter, we consider two choices for $\mc A$. The first based on SDP relaxation of the regularized $k$-means objective and the second based on the LP relaxation. For the noiseless case, \cite{awasthi2015relax} showed that for $\delta > 2\sqrt{2}(1+1/\sqrt d)$ (where $d$ is the dimension of the euclidean space) the algorithm based on SDP-relaxation of the standard $k$-means objective recovers (with high probability) the structure of $I$ if the balls $B_i$ are generated by an isotropic distribution (stochastic ball model \cite{iguchi2015tightness}, \cite{iguchi2017probably}, \cite{awasthi2015relax} and \cite{nellore2015recovery}).
 
@@ -63,11 +73,11 @@ We also conduct simulation studies where we examine the effect of $\lambda$, the
  & Separation condition & Reference\\
  \hline
 $k$-median LP & $\delta > 3.75$ & Thm. 1 in \cite{nellore2015recovery}\\
- & $\delta > 2$ & Thm. 1 in \cite{awasthi2015relax}\\
+ & $\delta > 2$ & Thm. 7 in \cite{awasthi2015relax}\\
 \hline
 $k$-means LP & $\delta > 4$ & Thm. 9 in \cite{nellore2015recovery}\\
 \hline
-$k$-means SDP & $\delta > 2\sqrt2 (1 + \frac{1}{\sqrt d})$ & Thm. 3 in \cite{awasthi2015relax}\\
+$k$-means SDP & $\delta > 2\sqrt2 (1 + \frac{1}{\sqrt d})$ & Thm. 11 in \cite{awasthi2015relax}\\
  & $\delta > 2 + \frac{k^2}{d}cond(\gamma)$ & Thm. 2 in \cite{iguchi2015tightness}\\
  & $\delta > 2 + \frac{k^2}{d}$ & Thm. 9 in \cite{iguchi2017probably}\\
  & $\delta > 2 + \sqrt{\frac{k}{d}}$ & Thm. \ref {thm:SDPGeneral}\\
@@ -78,11 +88,11 @@ $k$-means SDP & $\delta > 2\sqrt2 (1 + \frac{1}{\sqrt d})$ & Thm. 3 in \cite{awa
 \end{tabular}
 }
 \end{table}
-The problem of robustifying a clustering objective function has been studied before. \cite{ben2014clustering} give a generic procedure that can transform any clustering objective with metric $d$ to an objective function which uses $d'$ which is a truncated version of the original metric. More specifically, $d'(x, y) = \min (\lambda,   d(x,y)).$ Then they show that if there exists an algorithm which can solve the optimization problem then such an algorithm is robust to noise. \cite{georgogiannis2016robust}  also studies breakdown properties of the truncated objective function, that is the number of outliers which can cause significant change in the estimates of any one of the centers. However, it is unclear as to how we would solve the optimization problem. In this work, we propose an efficient algorithm based on convex relaxation of our regularized objective function and give robustness guarantees for the same. 
+The problem of robustifying a clustering objective function has been studied before. \cite{ben2014clustering} gave a generic procedure that can transform any clustering objective with metric $d$ to an objective function with metric $d'$, where $d'$ is a truncated version of the original metric. More specifically, $d'(x, y) = \min (\lambda,   d(x,y)).$ Then they show that if there exists an algorithm which can solve the optimization problem under the truncated metric then such an algorithm is robust to noise. \cite{georgogiannis2016robust}  also studies breakdown properties of the truncated objective function, that is the number of outliers which can cause significant change in the estimates of any one of the centers. However, both these papers do not make any comment about how one would solve the optimization problem for both the standard or the truncated versions. In this work, we propose an efficient algorithm based on convex relaxation of our regularized objective function and give robustness guarantees for the same. 
 
 The problem of recovering the underlying cluster structure in the presence and absence of noise has been studied before both in distribution-free and distribution-based settings. In the distribution-free setting, the goal is to prove that if the data has some structure (is {\em clusterable}) then the (proposed or existing) clustering algorithm recovers that structure in the presence or absence of noise. Such works, make no assumption on the distribution that generated the data. Different works define different notions of `clusterable' data. In the current work, the separation requirement on the clusters was global. That is, the each cluster was separated by atleast $\delta$ times the maximum radius amongst all the clusters. Another popular notion of clusterability is $\alpha$-center proximity \cite{awasthi2012center} which requires that two clusters be separated relative to their radii. \cite{balcan2012clustering} consider a dataset which has $\alpha$-center proximity except for an $\epsilon$-fraction of points. They propose an efficient algorithm which provides an $1+O(\epsilon)$ approximation to the optimal $k$-median solution for $\alpha > 2 + \sqrt{7}$.
 
-In this work, we assume that the input satisfies the stochastic ball assumption. This model was considered by \cite{nellore2015recovery} in the context of LP relaxation of the $k$-median objective function. They showed that if the separation between the clusters $\delta > 3.75$, then the lp relaxation finds the desired clustering. This bound was later improved to $\delta > 2$ in \cite{awasthi2015relax}. They also considered the LP relaxation of $k$-means objective and gave recovery guarantees when $\delta > 4$. They also considered the sdp relaxation of the $k$-means objective. They showed similar recovery guarantees when $\delta > 2\sqrt 2 (1 + \sqrt d)$. This bound was later improved to $\delta > 2 + k^2/d$ by \cite{iguchi2017probably}. Table \ref{table:stochasticBall} contains a summary of the various results under the stochastic ball model. These results however apply only to the noiseless case. In this chapter, we consider the same framework but prove recovery guarantees even in the presence of a small fraction of noisy points. 
+In this work, we assume that the input satisfies the stochastic ball assumption. This model was considered by \cite{nellore2015recovery} in the context of LP relaxation of the $k$-median objective function. They showed that if the separation between the clusters $\delta > 3.75$, then the lp relaxation finds the desired clustering. This bound was later improved to $\delta > 2$ in \cite{awasthi2015relax}. They also considered the LP relaxation of $k$-means objective and gave recovery guarantees when $\delta > 4$. Along the same lines, \cite{awasthi2015relax} considered the sdp relaxation of the $k$-means objective. They showed similar recovery guarantees when $\delta > 2\sqrt 2 (1 + \sqrt d)$. This bound was later improved to $\delta > 2 + k^2/d$ by \cite{iguchi2017probably}. Table \ref{table:stochasticBall} contains a summary of the various results under the stochastic ball model. These results however apply only to the noiseless case. In this chapter, we consider the same framework but prove recovery guarantees even in the presence of a small fraction of noisy points. 
 
 Another line of work, which has some similarities to the framework in this chapter is estimating the parameters of a distribution in the presence of noise. \cite{lai2016agnostic} considered the problem of mean estimation of a gaussian when $\epsilon$ fraction of the points are corrupted by noise and propose an efficient algorithm that can estimate it with almost linear samples. \cite{diakonikolas2016robust} acheive an error of $O(\epsilon\sqrt{\log \epsilon})$ for mean estimation which was later improved to $O(\sqrt\epsilon)$ \cite{diakonikolas2017being}, \cite{steinhardt2018resilience}. \cite{charikar2017learning} and \cite{diakonikolas2016robust} considered the problem of recovering a mixture of $k$ gaussians with few adversaries. \cite{charikar2017learning} show that it is possible to recover the means when the separation between the means is $\tilde \Omega(\sigma \sqrt{k})$ where $\sigma^2$ is an upper bound on the variance of the $k$ gaussians. \cite{diakonikolas2016robust} output a distribution which is close to the target distribution in total variation distance. However, their run-time is exponential in $k$. In this chapter our focus is on understanding the robustness properties of convex-relaxation type algorithms (specifically those based on relaxation of our regularized objective). Hence, these results our orthogonal to the current discussion.  
 
@@ -119,6 +129,18 @@ The regularised objective allows discarding certain points into a ``garbage'' cl
 
 In this work, we focus on robustification of the $k$-means objective. Hence, it is useful to define the regularised $k$-means objective as we will refer to it many times in the remainder of the chapter. 
 
+\subsection{Robustness measure}
+Given two clusterings $\mc C$ and $\mc C'$ of the same set $\mc X$, we define the distance between them, $\Delta(\mc C, \mc C')$, as the fraction of pairs of points which are clustered differently in $\mc C$ than in $\mc C'$. % I changed this sentence because it didn't make sense -- is this equivalent to what you meant?. -Nicole
+Given $\mc I \subseteq \mc X$, $\mc C|\mc I$ denotes the restriction of the clustering $\mc C$ to the set $\mc I$.
+
+\begin{definition}[$\gamma$-robust \cite{ben2014clustering}]
+Given $\mc X\subset \mb M$ and clustering algorithm $\mc A$, let $\mc A'$ be its robustified version obtained using any robustification paradigm. Given $\mc I \subseteq \mc X$, we say that $\mc I$ is $\gamma$-robust w.r.t $\mc X \setminus \mc I$ and $\mc A'$ if 
+\begin{align}
+\Delta(\mc A'(\mc X)|\mc I, \mc A(\mc I)) \le \gamma
+\end{align}
+\end{definition}
+This measure tries to quantify the difference in the clustering of the set $\mc I$ after the addition of `noisy' points $\mc X \setminus \mc I$. If $\mc A'$ is indeed robust to noisy points, then the clusterings should be similar. 
+
 \subsection{Regularised $k$-means objective}
 Given a finite set $\mc X \subset \mb R^{d}$ and an integer $k$, the regularised $k$-means objective aims to partition the data into $k+1$ clusters $\mc C = \{C_1, \ldots, C_{k}, C_{k+1}\}$ so as to solve 
 % Changed to put min in objective; seems clearer to me -Nicole
@@ -136,17 +158,7 @@ Let $m(\mc X) := \min_{x\ne y \in \mc X} \|x-y\|_2^2$ and $N = |\mc X|$. Then, i
 \end{align}
 Comparing the objectives we see the solution is indeed trivial when $\lambda \leq m(\mc X) /2$. Surprisingly, for the interesting case when $\lambda > m(\mc X) /2$, the problem suddenly becomes NP-Hard, as we prove below.
 
-\subsection{Robustness measure}
-Given two clusterings $\mc C$ and $\mc C'$ of the same set $\mc X$, we define the distance between them, $\Delta(\mc C, \mc C')$, as the fraction of pairs of points which are clustered differently in $\mc C$ than in $\mc C'$. % I changed this sentence because it didn't make sense -- is this equivalent to what you meant?. -Nicole
-Given $\mc I \subseteq \mc X$, $\mc C|\mc I$ denotes the restriction of the clustering $\mc C$ to the set $\mc I$.
 
-\begin{definition}[$\gamma$-robust \cite{ben2014clustering}]
-Given $\mc X\subset \mb M$ and clustering algorithm $\mc A$, let $\mc A'$ be its robustified version obtained using any robustification paradigm. Given $\mc I \subseteq \mc X$, we say that $\mc I$ is $\gamma$-robust w.r.t $\mc X \setminus \mc I$ and $\mc A'$ if 
-\begin{align}
-\Delta(\mc A'(\mc X)|\mc I, \mc A(\mc I)) \le \gamma
-\end{align}
-\end{definition}
-This measure tries to quantify the difference in the clustering of the set $\mc I$ after the addition of `noisy' points $\mc X \setminus \mc I$. If $\mc A'$ is indeed robust to noisy points, then the clusterings should be similar. 
 
 
 
@@ -155,14 +167,7 @@ This measure tries to quantify the difference in the clustering of the set $\mc 
 
 In this section, we present hardness results for the regularised $k$-means objective. 
 %Before we discuss the hardness results, it is worthwhile to mention the trivial case when $\lambda = 0$. In this case the optimization problem is easy and corresponds to the trivial solution of putting every point in the noise cluster $C_{k+1}$. 
-The proof for $k \ge 2$ is fairly straightforward and follows from known hardness results for the standard (non-regularised) $k$-means. The more interesting case is when $k = 1$. It is well-known that $1$-means can be solved in linear time \cite{Bellman73} hence the same reduction does not work any more. We reduce an instance of the MAX-CLIQUE problem to the regularised $1$-means problem. We give a proof sketch for the reader's intuition. The technical details can be found in the supplementary section.
-
-%\begin{restatable}{theorem}{hardForAvgdist}\label{lemma:hardForAvgdist}
-%Given a clustering instance $\mc X \subset \mb R^d$ and $k \ge 2$, finding the optimal solution to the regularised $k$-means objective is NP-Hard for $\lambda > 0 $.
-%\end{restatable}
-%\begin{proof}[Proof sketch]
-%The idea is as follows. We first show that for a ``big enough'' $\lambda$, the problem is NP-Hard. This is because for a sufficiently large value of $\lambda$, any optimal solution of regularised $k$-means will set $C_{k+1} = \emptyset$, in which case regularised $k$-means reduces to $k$-means, which is known to be NP-Hard \cite{dasgupta2008hardness}. Next, using a scaling argument we show that if the problem is NP-Hard for one $\lambda$, then it is NP-Hard for all $\lambda > 0$.  
-%\end{proof}
+The proof for $k \ge 2$ is fairly straightforward and follows from known hardness results for the standard (non-regularised) $k$-means. The more interesting case is when $k = 1$. It is well-known that $1$-means can be solved in linear time \cite{Bellman73} hence the same reduction does not work any more. We reduce an instance of the MAX-CLIQUE problem to the regularised $1$-means problem. We give a proof sketch here. The technical details can be found in the appendix.
 
 \begin{restatable}{theorem}{hardForkone}
 \label{theorem:hardFork1}
@@ -181,11 +186,14 @@ In the previous section, we showed that the regularised $k$-means objective is N
 
 \cite{peng2007approximating} developed an algorithm $\mc A$ (Alg. \ref{alg:heuristicSDP} with $\lambda = \infty$) which tries to minimize the $k$-means objective. They obtained a convex relaxation of the $k$-means objective and solved it polynomially using standard solvers. In this section, we use the same technique to obtain and efficiently solve the convex relaxation of the regularised $k$-means objective. Our algorithm $\mc A'$ (Alg. \ref{alg:heuristicSDP}) is the robustified version of $\mc A$ using the $\lambda$-regularised paradigm. In \S \ref{subsection:sdpAlg}, we give the details of how we transform the regularised objective into an SDP. \S \ref{subsection:sdpRobust} has our main results where we give robustness guarentees for $\mc A'$.    
 
+\RestyleAlgo{ruled}
+\SetAlgoNoLine
+\LinesNumbered
 \begin{algorithm}[t]
 \caption{SDP-based regularised $k$-means algorithm}
 \label{alg:heuristicSDP}
-	\textbf{Input: }{ $\mc{X} \subset R^d$, $k$, and hyperparameter $\lambda$.} \\
-	\textbf{Output: }{$\mc C' := \{C_1, \ldots, C_k, C_{k+1}$\}.}
+	\Indp\KwIn{ $\mc{X} \subset R^d$, $k$, and hyperparameter $\lambda$.}
+	\KwOut{$\mc C' := \{C_1, \ldots, C_k, C_{k+1}$\}.}
 	
 	Compute the matrix $D_{ij} = \|x_i-x_j\|^2_2$.\\
 	Solve the SDP (Eqn. \ref{eqn:regularisedSDP}) using any standard SDP solver and obtain matrix $Z$ and vector $y$.\\
@@ -226,14 +234,16 @@ Finding a solution to the 0-1 SDP (\ref{eqn:regularisedSDP}) is equivalent to fi
 Equation \ref{eqn:regularisedSDP} shows our 0-1 SDP formulation. The optimization is NP-Hard as it is equivalent to the regularised $k$-means objective. Hence, we consider a convex relaxation of the same. First, we replace $Z^2 = Z$ with $Z \succeq 0$. In addition, we relax $y \in \{0, 1\}^n$ to $y \geq 0$, as the constraint $y\leq 1$ is redundant. Using these relaxations, we obtain the SDP formulation for our objective function.
 
 We solve the SDP using standard solvers \cite{yang2015sdpnal+} thereby obtaining $Z, y$. 
-The proof of Thm. \ref{thm:modifiedkmeans} showed that the optimal solution of 0-1 SDP is of the following form. $Z$ is a $n\times n$ block diagonal matrix of the form $\diag(Z_{I_1}, \ldots, Z_{I_k}, 0)$, where $n = |\mc X|$ and $Z_{I_i} = \frac{1}{|C_i|}11^T$. Thus, given $Z$, we can extract the set of cluster centers $C = ZX$ which is an $n \times d$ matrix. Each row $C_i$ contains the cluster center to which data point $x_i$ belongs. For the points $x_j$ assigned to the noise cluster, the corresponding row $C_j$ is zero and $y_j = 1$. The SDP solver does not always return the optimal solution, as the relaxation is not exact. However, we expect that it returns a near-optimal solution. Hence, given $Z$ and $y$ returned by the solver, we use Alg. \ref{alg:roundSDP} to extract a clustering of our original dataset. The $threshold$ parameter indicates our confidence that a given point is noise. In our experiments, we have used a threshold of $0.5$. We did not tune the threshold as in our experiments the results
-are not very sensitive to it.
+The proof of Thm. \ref{thm:modifiedkmeans} showed that the optimal solution of 0-1 SDP is of the following form. $Z$ is a $n\times n$ block diagonal matrix of the form $\diag(Z_{I_1}, \ldots, Z_{I_k}, 0)$, where $n = |\mc X|$ and $Z_{I_i} = \frac{1}{|C_i|}11^T$. Thus, given $Z$, we can extract the set of cluster centers $C = ZX$ which is an $n \times d$ matrix. Each row $C_i$ contains the cluster center to which data point $x_i$ belongs. For the points $x_j$ assigned to the noise cluster, the corresponding row $C_j$ is zero and $y_j = 1$. The SDP solver does not always return the optimal solution, as the relaxation is not exact. However, we expect that it returns a near-optimal solution. Hence, given $Z$ and $y$ returned by the solver, we use Alg. \ref{alg:roundSDP} to extract a clustering of our original dataset. The $threshold$ parameter indicates our confidence that a given point is noise. In our experiments, we have used a threshold of $0.5$. 
 
+\RestyleAlgo{ruled}
+\SetAlgoNoLine
+\LinesNumbered
 \begin{algorithm}[t]
 \caption{Regularised $k$-means rounding procedure}
 \label{alg:roundSDP}
-	\textbf{Input: }{ $Z \subset \mathbb{R}^{n\times n}$, $y \subset \mathbb{R}^{n}$, $\mc{X}$, and $threshold \in [0,1]$.}\\
-	\textbf{Output: }{$\mc C'$.}
+	\Indp\KwIn{ $Z \subset \mathbb{R}^{n\times n}$, $y \subset \mathbb{R}^{n}$, $\mc{X}$, and $threshold \in [0,1]$.}
+	\KwOut{$\mc C'$.}
 	
 	If $y_i > threshold$ then
 	\begin{itemize}[nolistsep] 
@@ -255,10 +265,10 @@ Let $\mc P$ denote the isotropic distribution on the unit ball centered at origi
 
 Given a clustering instance $\mc I \subset \mb R^{N\times d}$ and $k$ where $\mc I := \cup_{i=1}^k B_i$. Define $ n := \min_{i\in[k]} |B_i|$ and $\rho = \frac{N}{nk}$. If
 $$\delta > 1 + \sqrt{1+\frac{2\theta\rho k}{d}\Big(1+\frac{1}{\log N}\Big)^2}$$  
-where $\theta = \mb E[\|x_{pi}-c_p\|^2] < 1$, then there exists a constant $c > 0$ such that with probability at least $1 - 2d\exp(\frac{-cN\theta}{d\log^2N})$ the $k$-means SDP finds the intended cluster solution  $\mc C^* = \{B_1, \ldots, B_k\}$.
+where $\theta = \mb E[\|x_{pi}-c_p\|^2] < 1$, then there exists a constant $c > 0$ such that with probability at least $1 - 2d\exp(\frac{-cN\theta}{d\log^2N})$ the $k$-means SDP (Alg. \ref{alg:heuristicSDP} with $\lambda = \infty$) finds the intended cluster solution  $\mc C^* = \{B_1, \ldots, B_k\}$.
 \end{theorem}
 
-Thm. \ref{thm:SDPGeneral} improves the result of Thm. 11 in \cite{awasthi2015relax}. Under the stochastic ball assumption, they showed that the $k$-means SDP finds the intended solution for $\delta > 2\sqrt{2}(1+\frac{1}{\sqrt{d}})$. For $k \ll d$, which is the case in many situations our bounds are optimal in terms of the separation reqirement of the clusters.  \cite{iguchi2015tightness} obtained similar results but for $\delta > 2 + \frac{k^2}{d}cond(\mc I)$. Asymptotically, as $d$ goes to $\infty$ their bound matches our result. However, the condition number (ratio of maximum distance between any two centers to the minimum distance between any two centers) can be arbitrarily large. We also have a better dependence on $k$ and $d$. 
+Thm. \ref{thm:SDPGeneral} improves the result of Thm. 11 in \cite{awasthi2015relax}. Under the stochastic ball assumption, they showed that the $k$-means SDP finds the intended solution for $\delta > 2\sqrt{2}(1+\frac{1}{\sqrt{d}})$. For $k \ll d$, which is the case in many situations our bounds are optimal in terms of the separation requirement of the clusters.  \cite{iguchi2015tightness} obtained similar results but for $\delta > 2 + \frac{k^2}{d}cond(\mc I)$. However, the condition number (ratio of maximum distance between any two centers to the minimum distance between any two centers) can be arbitrarily large. \cite{iguchi2017probably} improve the separation requirement to $\delta > 2 + \frac{k^2}{d}$. Asymptotically, as $d$ goes to $\infty$ their bound matches our result. We also have a better dependence on the number of clusters $k$ while they have a better dependence on the dimension $d$. 
 
 Next, we analyse the recovery guarentees for $\mc A'$ in the presence of noisy points $\mc N$. We decompose the noisy points into two disjoint sets $\mc N_1$ and $\mc N_2$. The set $\mc N_2$ consists of all the points which are far from any of the points in $\mc I$. The set $\mc N_1$ consists of points which are close to atleast one of the clusters. We also require that any point in $\mc N_1$ has an $\alpha$-margin w.r.t to the centers of the balls $B_1, \ldots, B_k$. That is the difference of the distance between any point in $\mc N_1$ to a cluster center is atleast $\alpha$. Now, we will show that if $\mc N$ has the aforementioned properties then $\mc I$ is robust w.r.t the regularised SDP algorithm $\mc A'$.
 
@@ -273,12 +283,12 @@ Given a clustering instance $\mc X \subset \mb R^{N \times d}$ and $k$. Let $\mc
   \item $\alpha \ge O(\epsilon)+ \frac{2\rho k\theta(1+1/\log|I|)^2}{d}$ 
   \item $\frac{|\mc N_2|}{n} \le \frac{\delta^2-2\delta-O(\epsilon)}{\lambda}$
 \end{itemize}
-then there exists a constant $c_2 > 0$ such that with probability at least $1 - 2d\exp(\frac{-c_2|I|\theta}{d\log^2|I|})$ the regularised $k$-means SDP finds the intended cluster solution  $\mc C^* = \{C_1, \ldots, C_k, \mc N_2\}$ where $B_i \subseteq C_i$ when given $\mc X$ and $\delta^2+2\delta \ge \lambda \ge (\delta-1)^2 + 1$ as input.
+then there exists a constant $c_2 > 0$ such that with probability at least $1 - 2d\exp(\frac{-c_2|I|\theta}{d\log^2|I|})$ the regularised $k$-means SDP (Alg. \ref{alg:heuristicSDP}) finds the intended cluster solution  $\mc C^* = \{C_1, \ldots, C_k, \mc N_2\}$ where $B_i \subseteq C_i$ when given $\mc X$ and $\delta^2+2\delta \ge \lambda \ge (\delta-1)^2 + 1$ as input.
 \end{theorem}
 
-The proof of both the Thms. \ref{thm:SDPGeneral} and \ref{thm:regularisedSDPGeneral} use the following ideas. We construct a dual for the SDP. We then show that when the conditions of our theorems are satisfied then there exists a feasible solution for the dual program. Moreover, the objective function value of primal and dual sdp program are the same. Hence, the solution found is indeed optimal. The same idea was also used in the proof of Thm. 11 in \cite{awasthi2015relax}. However, our analysis is tighter which helps us to obtain better bounds. The details are in the supplementary section.
+The proof of both the Thms. \ref{thm:SDPGeneral} and \ref{thm:regularisedSDPGeneral} use the following ideas. We construct a dual for the SDP. We then show that when the conditions of our theorems are satisfied then there exists a feasible solution for the dual program. Moreover, the objective function value of primal and dual sdp program are the same. Hence, the solution found is indeed optimal. We use similar techniques as in the proof of Thm. 11 in \cite{awasthi2015relax}. However, our analysis is tighter which helps us to obtain better bounds. The details are in the appendix.
 
-We have also developed a regularised version of the $k$-means LP based algorithm. The details and the robustness guarantees for the LP-based algorithm are in the appendix. 
+We have also developed a regularized version of the $k$-means LP based algorithm. The details and the robustness guarantees for the LP-based algorithm are in the appendix. 
 
 \section{Experiments}
 We ran several experiments to analyse the performance of our regularised $k$-means algorithm. The first set of experiments were simulations done on synthetic data. The second set of experiments were done on real world datasets like MNIST where we compared the performance of our algorithm against other popular clustering algorithms like $k$-means++. All our experiments were run on Matlab. We solved the SDP formulation using the Matlab SDPNAL+ package \cite{yang2015sdpnal+}. To run $k$-means++ we used the standard implementation of the algorithm available on Matlab.
@@ -290,14 +300,14 @@ We analyse the performance of the regularised SDP algorithm as the parameters ch
 
 We see an interesting transition for $\lambda$. When $\lambda$ is `too small' then the probability of recovering the true clustering is also low. As $\lambda$ increases the probability of success goes up which are represented by the light colors. However, if we increase $\lambda$ to a very high value then the success probability again goes down. This shows that there is a `right' range of $\lambda$ as was also predicted by our theoretical analysis. 
 
-Another parameter of interest is the dimension of the space $d$. Note that from our theoretical analysis, we know that both the probability of success and the separation depend on $d$. Fig. \ref{figure:simulation} shows that for very low dimension, the regularised sdp fails to perfectly recover the underlying clustering. However, as the dimension grows so does the probability of success. For these two simulations, we fixed the number of points per cluster $n = 30$, $k = 8$ and the number of noisy points $m = 30$. We have similar plots for $(\delta, n)$ and $(\delta, k)$ and $(\delta, m)$ and $(n, m)$. These plots very mostly light colored as long as the number of noisy points was not too large ($\frac{m}{n} \le 5$). Hence, due to space constraints, we have included them only in the supplementary section.
+Another parameter of interest is the dimension of the space $d$. Note that from our theoretical analysis, we know that both the probability of success and the separation depend on $d$. Fig. \ref{figure:simulation} shows that for very low dimension, the regularised sdp fails to perfectly recover the underlying clustering. However, as the dimension grows so does the probability of success. For these two simulations, we fixed the number of points per cluster $n = 30$, $k = 8$ and the number of noisy points $m = 30$. We have similar plots for $(\delta, n)$ and $(\delta, k)$ and $(\delta, m)$ and $(n, m)$. These plots very mostly light colored as long as the number of noisy points was not too large ($\frac{m}{n} \le 5$). Hence, due to space constraints, we have included them only in the appendix.
    
 \begin{figure}[t]
-  \label{figure:simulation}
   \centering
   \includegraphics[width=0.4\textwidth]{figures/optimizationClustering/deltaLambda.png}
   \includegraphics[width=0.4\textwidth]{figures/optimizationClustering/deltaD.png}
   \caption{Heatmap showing the probability of success of the $k$-means regularised sdp algorithm. Lighter color indicates probability closer to one while darker indicates probability closer to zero.}  
+  \label{figure:simulation}
 \end{figure}
 
 \subsection{Results on MNIST dataset}
@@ -309,10 +319,8 @@ We report the performance on datasets with and without noisy points. The first i
 
 \section{Conclusion}
 We introduced a regularisation paradigm which can transform any center-based clustering objective to one that is more robust to the addition of noisy points.  We proved that regularised objective is NP-Hard for common cost functions like $k$-means. We then obtained regularised versions of an existing clustering algorithm based on convex (sdp) relaxation of the $k$-means cost. We then proved noise robustness guarentees for the regularised algorithm. The proof improved existing bounds (in terms of cluster separation) for sdp-based standard (non-regularised) $k$-means algorithm. Our experiments showed that regularised sdp-based $k$-means performed better than existing algorithms like $k$-means++ on MNIST especially in the presence of noisy points.
- 
 
 \ifdefined\COMPLETE
-\else
+\else 
 \end{document}
 \fi
-
