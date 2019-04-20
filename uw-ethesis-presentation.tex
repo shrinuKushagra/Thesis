@@ -771,6 +771,243 @@ University of Waterloo
 	\end{itemize}
 \end{frame}
 
+\begin{frame}{Challenges in clustering}	
+	\onslide<1>End of first part
+	\vspace{10pt}\begin{block}{}
+	\mynum{2} Under-specificity \alert{and} \\\vspace{10pt}\mynum{1} Computational complexity
+	\end{block}
+		
+	\onslide<2>\vspace{35pt}Second part
+	\vspace{10pt}\begin{block}{}
+	\mynum{3} Noise-robustness \alert{and} \\\vspace{10pt}\mynum{1} Computational complexity
+	\end{block}		
+\end{frame}
+
+
+\begin{frame}{Clustering definition: Revisit}
+	Partition the input such that
+	\begin{itemize}
+		\vspace{10pt}\item Similar points share a cluster.
+		\vspace{10pt}\item Dis-similar points are separated.
+	\end{itemize}
+	
+	\vspace{30pt}Makes sense when the data is made of {\color{blue} cohesive subsets}.
+\end{frame}
+
+\begin{frame}{A more complex view}
+	Besides nice structure, data also includes 
+	\begin{itemize}
+	  \item \alert{Unstructured} parts.
+	\end{itemize}
+	
+	\vspace{30pt}
+	Alternate definition of clustering that also allows for 
+	\begin{itemize}
+		\item A subset of ``{\color{blue}background noise}".
+	\end{itemize}
+	
+\end{frame}
+
+\begin{frame}{High-level problem definition}
+
+	Input: $(X, d)$
+	\vspace{20pt}
+
+	Assuming the data consists of 
+	\begin{itemize}
+	\vspace{10pt}
+	\item ``well clustered" subset $S$  
+	\vspace{10pt}
+	\item ``unstructured" complement $N= X \setminus S$
+	\end{itemize}
+
+	\vspace{30pt}
+	{\color{blue} Output} a partition $C=(C_1, \ldots C_k)$ of $X$.
+	\begin{itemize}
+		\vspace{5pt}\item \emph{Induces} a good clustering of $S$. 
+		\vspace{5pt}\item $C|_{S}$ recovers the structure.
+	\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Clustering in the presence of sparse noise}
+	\begin{itemize}
+		\item Joint work with Samira Samadi (Phd candidate at Georgia Tech) and Shai Ben-David.
+		\vspace{20pt}\item In proceedings of \alert{ALT'16}. 
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Definitions}
+
+	Given $(X, d)$, a set $S \subseteq X$\\
+	\vspace{0.5cm}A clustering $\mc C = \{S_1, \ldots, S_k\}$ of the set $\mc S$ induced by centers $s_1, \ldots, s_k$.
+
+	\vspace{10pt}\begin{block}{$(\alpha, \eta)$-center proximity}
+	\vspace{0.5cm} {\bf $\alpha$-center proximity}: For all $x \in S_i$ and $i\neq j$, $$\alpha d(x, s_i) < d(x, s_j)$$
+	{\bf $\eta$-sparse noise}: For any ball $B$, 
+	$$r(B)\leq \eta \thinspace r(\mc{C}) \implies |B\cap (\mc X\setminus \mc S)| < \frac{m(\mc C)}{2}$$
+	\end{block}
+\end{frame}
+
+
+\begin{frame}{Sparse Noise}
+    Any ball of small radius contains few points from $N$.
+    \begin{figure}
+	  \includegraphics[trim = 100 0 0 100, clip, width=\linewidth]{figures/clusteringNoise/2.pdf}
+   \end{figure}
+    	 
+\end{frame}
+
+\begin{frame}{Our Results}
+ \alert{Positive results}
+ 
+ \begin{itemize}
+  	\item $\alpha > 4.6$ and noise is sparse\\ 
+	
+	
+	\textcolor{blue}{We construct  in poly time a clustering tree that induces the original nice clustering}.
+  	
+	\begin{figure}
+	  \includegraphics[trim = 50 150 50 200, clip, width=0.8\linewidth]{figures/clusteringNoise/hier.pdf}
+	\end{figure}	  	
+  \end{itemize}  
+\end{frame}
+
+\begin{frame}{Our Results}
+\alert{Negative results}
+  \begin{itemize}
+  	\vspace{10pt}\item $\alpha < 5.8$ and noise is adversarial, or 
+	\vspace{10pt}\item $\alpha < 4.4$ and noise is sparse
+\end{itemize}
+
+	 \vspace{30pt}\textcolor{red}{One cannot guarantee efficient recovery of the non-noise clustering}. 
+\end{frame}
+
+
+\begin{frame}{Clustering under $(\alpha, \eta)$-center proximity}
+	\begin{block}{The algorithm}
+	  Input: $(X, d)$ and a parameter $t$.\\
+	  Output: A hierarchical clustering tree.\\
+	  \vspace{20pt}Initialize every point in its own cluster.\\
+	  \vspace{10pt}Go over all pairs of points $p, q$ in increasing order of distance.\\
+	  \vspace{10pt}If $B := B(p, d(p, q))$ satisfies the \alert{sparse-distance condition}
+	  \begin{itemize}
+	  	\item Merge all clusters that intersect with $B$ into a single cluster
+	  \end{itemize}
+    \end{block}
+
+\end{frame}
+
+
+\begin{frame}{Sparse-distance condition}
+    All clusters that intersect with $B$ should have a non-sparse intersection. 
+	\begin{itemize}
+	  \item $|B| \ge t$.
+	  \item For any $X_i \in \mc C$, if $X_i \cap B \neq \emptyset$, then $X_i \subseteq B$ or $|B \cap X_i| \ge t/2$.
+	\end{itemize}
+
+   \begin{figure}
+	  \includegraphics[trim = 100 0 0 100, clip, width=\linewidth]{figures/clusteringNoise/3.pdf}
+   \end{figure}
+\end{frame}
+
+\begin{frame}{Sparse-distance condition failure}   
+   \begin{figure}
+	  \includegraphics[trim = 100 0 0 100, clip, width=\linewidth]{figures/clusteringNoise/4.pdf}
+   \end{figure}
+\end{frame}
+
+\begin{frame}{Positive results}
+	\begin{itemize}
+		\item \textit{Captures} all clusterings which satisfy $(2+\sqrt{7}, 1)$-center proximity.
+	
+		\vspace{30pt}\item Runs in time $O(|X|^3)$.
+	
+		\vspace{30pt}\item Results \alert{don't} depend on any \alert{upper bound} on $|N|$.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Lower bound}
+	If $\alpha < 3 + \sqrt{2}$ and noise is sparse
+	\begin{itemize}
+		\item No clustering tree can capture all nice solutions.
+	\end{itemize}
+	
+	\vspace{20pt}\begin{figure}[!t]
+	  \begin{center}
+	    \includegraphics[trim={47mm 205mm 12mm 44mm},clip,width=\textwidth]{figures/clusteringNoise/lbdFig2.pdf}
+	  \end{center}
+	\end{figure}
+	\vspace{20pt}Same ideas can be extended to a list output.\\
+	\begin{itemize}
+		\item Any list should have size $> 2^{k/2}$
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Possible justification of sparse noise}
+    \begin{itemize}
+	  \item Data $\mc S$ has nice structure.
+	  \vspace{20pt}\item Noise $\mc N$ is added by a non-concentrated distribution.
+	  \vspace{30pt}\item $\mc X = \mc S \cup \mc N$ satisfies the structureless noise definition with high probability.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Key Takeaways}
+	\begin{itemize}
+		\item Notion of sparse noise to handle background noise.
+		\vspace{25pt}\item Efficient hierarchical algorithm that captures {\color{blue}all nice} solutions.
+		\vspace{25pt}\item Positive result {\color{blue}independent} of the number of noisy points.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Noise-robust clustering objectives}
+	\begin{itemize}
+		\item Joint work with Yaoliang Yu and Shai Ben-David.
+		\vspace{25pt}\item Available on \alert{arxiv'18}. 
+		\vspace{20pt}\item Under submission. 
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Problem definition}
+	Input: $(X, d)$
+	\vspace{20pt}
+
+	Assuming $X = S \cup N$
+
+	\vspace{20pt}
+	{\color{red} Output} a partition $C= \{C_1, \ldots C_k\}$
+	\begin{itemize}
+		\vspace{5pt}\item \emph{Induces} a good clustering of $S$. 
+	\end{itemize}
+	
+	\vspace{20pt}Algorithms based on {\color{blue} optimizing} a {\color{blue} suitable clustering objective} function.
+\end{frame}
+
+\begin{frame}{Simple observations}
+	$k$-means or $k$-median type objectives can \alert{break} with one outlier.
+	\begin{itemize}
+		\item $$\sum_{i =1}^k\enspace\sum_{x \in C_i} \|x - \mu_i\|^2$$		
+		\vspace{10pt}\item Place outlier at `infinity'.
+		\vspace{10pt}\item Allowing $p$ extra clusters doesn't work for $p+1$ outliers. 
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Robustifing clustering objectives}
+	$\lambda$-regularized paradigm.
+	\begin{itemize}
+		\vspace{5pt}\item $$\sum_{i =1}^k\enspace\sum_{x \in C_i} \|x - \mu_i\|^2 \enspace+\enspace \textcolor{red}{\lambda |C_{k+1}|}$$
+		\vspace{20pt}\item Discard points into a garbage cluster.
+	\end{itemize}
+	
+	\vspace{20pt}\textcolor{blue}{Can regularization help with noise-robustness?}
+\end{frame}
+
+\begin{frame}{Sidenote: Properties of the regularized objective}	
+	\begin{itemize}
+		\item Reduces to classical $k$-means for $\lambda = \infty$.
+	\end{itemize}
+\end{frame}
+
 \begin{frame}
     \Huge{\centerline{Thank You!}}
 \end{frame}
