@@ -30,6 +30,16 @@
 \newtheorem{proposition}[theorem]{Proposition}
 \newtheorem{corollary}[theorem]{Corollary}
 
+\title{Provably noise-robust $k$-means clustering}
+
+\author{\normalsize
+{Shrinu Kushagra} {\textnormal {,}} {Yaoliang Yu} {\textnormal {and}} {Shai Ben-David} \\
+\normalsize David R. Cheriton School of Computer Science \\
+\normalsize University of Waterloo,\\
+\normalsize Waterloo, Ontario, Canada\\
+\normalsize \{skushagr,yaoliang.yu,shai\}@uwaterloo.ca \\
+}
+
 \begin{document}
 \fi
 
@@ -378,9 +388,11 @@ So we see that as long $(\delta - 1)^2 - 1 > 2k\rho\theta (1+s)^2\frac{1}{d}$, t
 
 \begin{theorem}
 \label{a-thm:SDPIsometric}
-Let $\mc P$ denote the isotropic distribution on the ball centered at origin of radius $r$, that is on, $B_1(r)$ in $\mb R^d$. Given centers $\mu_1, \ldots, \mu_k$ such that $\|\mu_i - \mu_j\| > \delta r > 2 r$. Let $\mc P_i$ be the measure $\mc P$ translated with respect to the center $\mu_i$. Given a clustering instance $\mc I := \cup_{i=1}^k B_i$ where each $B_i$ is drawn i.i.d w.r.t $\mc P_i$. If the distance between the centers of any two balls
+Let $\mc P$ denote the isotropic distribution on the unit ball centered at origin in $\mb R^d$. Given points $\mu_1, \ldots, \mu_k$ such that $\|\mu_i - \mu_j\| > \delta  > 2$. Let $\mc P_i$ be the measure $\mc P$ translated with respect to the center $\mu_i$. Let each $B_i$ is drawn i.i.d w.r.t the distribution $\mc P_i$. 
+
+Given a clustering instance $\mc I \subset \mb R^{N\times d}$ and $k$ where $\mc I := \cup_{i=1}^k B_i$. Define $ n := \min_{i\in[k]} |B_i|$ and $\rho = \frac{N}{nk}$. If
 $$\delta > 1 + \sqrt{1+\frac{2\theta\rho k}{d}\Big(1+\frac{1}{\log N}\Big)^2}$$  
-where $\rho = \frac{N}{nk}$ and $ n := \min_{i\in[k]} |B_i|$ and $\theta = \mb E[\|x_{pi}-\mu_p\|] < 1$, then there exists a constant $c > 0$ such that with probability at least $1 - 2d\exp(\frac{-cN\theta}{d\log^2N})$ the $k$-means SDP finds the intended cluster solution  $\mc C^* = \{B_1, \ldots, B_k\}$.
+where $\theta = \mb E[\|x_{pi}-c_p\|^2] < 1$, then there exists a constant $c > 0$ such that with probability at least $1 - 2d\exp(\frac{-cN\theta}{d\log^2N})$ the $k$-means SDP finds the intended cluster solution  $\mc C^* = \{B_1, \ldots, B_k\}$.
 \end{theorem}
 
 \section{Tightness of the regularised SDP based algorithm}
@@ -390,7 +402,8 @@ where $\rho = \frac{N}{nk}$ and $ n := \min_{i\in[k]} |B_i|$ and $\theta = \mb E
 		\min_{Z, y} \enspace &\tr(DZ) + \lambda \langle \mb 1, y\rangle\\
 		\text{subject to } \enspace &\tr(Z) = k\\
 		& Z\cdot \mb 1 + y = \mb 1\\	
-		&Z\ge 0, Z^2 = Z, Z^T = Z \\
+		&Z\ge 0\\
+		&Z^2 = Z, Z^T = Z \\
 		& y \in \{0, 1\}^n
 	\end{cases}
 	\xrightarrow{\text{relaxed}} \textbf{ SDP } 
@@ -677,32 +690,39 @@ Following the exact same analysis as in \cite{awasthi2015relax}, we know that Eq
 
 \begin{theorem}
 \label{a-theorem:lptight}
-Given a clustering instance $\mc X \subset \mb R^d$ and $k$. Let $\mc X : = \mc I \cup \mc N$. Let $\mc I := \cup_{i=1}^k B_i$ where $B_i$ is a ball of radius at most $r$ centered at $\mu_i$ and $\|\mu_i - \mu_j\| \ge \delta r$. Let $\mc P$ denote the isotropic distribution on the ball centered at origin of radius $r$, that is on, $B_1(r)$ in $\mb R^d$. The ball $B_i$ is drawn from the isotropic distribution $\mc P_i$, that is, the measure $\mc P$ translated with respect to the center $\mu_i$.  Let $\mc N$ have the following property. Each $p_n \in \mc N$ is such that $\min_{p_i \in \mc I} \|p_n - p_i\| \ge \nu r$. Let $|\mc N| =: m$. If
+Let $\mc P$ denote the isotropic distribution on the unit ball centered at origin in $\mb R^d$. Given centers $\mu_1, \ldots, \mu_k$ such that $\|\mu_i - \mu_j\| > \delta > 2$. Let $\mc P_i$ be the measure $\mc P$ translated with respect to the center $\mu_i$. Let $B_i$ is drawn i.i.d w.r.t the distribution $\mc P_i$. 
+
+Given a clustering instance $\mc X \subset \mb R^d$ and $k$. Let $\mc X : = \mc I \cup \mc N$. Let $\mc I := \cup_{i=1}^k B_i$ and $\mc N$ have the following property. Each $p_n \in \mc N$ is such that $\min_{p_i \in \mc I} \|p_n - p_i\| \ge \nu r$. Let $|\mc N| =: m$. If
 
 \begin{itemize}
   \item $\delta > 4$ and $\nu > \delta - 2$ 
   \item $m \le |\mc I|\Big(\frac{\nu^2}{(\delta-2)^2}-1\Big)$
 \end{itemize}
-then the regularised $k$-means LP finds the intended cluster solution  $\mc C^* = \{B_1, \ldots, B_k, \mc N\}$ when given $\mc X$ and $(\delta - 2)^2r^2 \le \lambda \le \nu^2(1-\frac{m}{N})$ as input.
+then the regularized $k$-means LP finds the intended cluster solution  $\mc C^* = \{B_1, \ldots, B_k, \mc N\}$ when given $\mc X$ and $(\delta - 2)^2r^2 \le \lambda \le \nu^2(1-\frac{m}{N})$ as input.
 \end{theorem}
 
+\section{Additional experimental results}
+Now, we provide some additional experiments on simulated data for the regularized sdp-based algorithm. Fig. \ref{a-figure:simulationSepL} shows the performance of the algorithm as the cluster separation and regularization constant are varied. It shows that for very high and very low values of $\lambda$, the performance of our algorithm is bad. There exists a 'correct' range of lambda when it is able to correctly recover the target clustering. Similarly, Figs. \ref{a-figure:simulationSepK} and \ref{a-figure:simulationSepN} shows the performance of the algorithm as other parameters are varied.
 
 \begin{figure}[t]
-  \label{a-figure:simulation}
   \centering
   \includegraphics[width=0.45\textwidth]{figures/optimizationClustering/deltaLambda.png}
   \includegraphics[width=0.45\textwidth]{figures/optimizationClustering/deltaD.png}
   \caption{Heatmap showing the probability of success of the $k$-means regularised sdp algorithm. Lighter color indicates probability closer to one while darker indicates probability closer to zero.}
+  \label{a-figure:simulationSepL}
 \end{figure}
+
 \begin{figure}
   \includegraphics[width=0.45\textwidth]{figures/optimizationClustering/deltaK.png}
   \includegraphics[width=0.45\textwidth]{figures/optimizationClustering/deltaM.png}
   \caption{Heatmap showing the probability of success of the $k$-means regularised sdp algorithm. Lighter color indicates probability closer to one while darker indicates probability closer to zero.$m$ denotes the number of noisy points while $n$ denotes the number of points in the smallest cluster.}
+  \label{a-figure:simulationSepK}
 \end{figure}
 \begin{figure}
   \includegraphics[width=0.45\textwidth]{figures/optimizationClustering/deltan.png}
   \includegraphics[width=0.45\textwidth]{figures/optimizationClustering/nM.png}
   \caption{Heatmap showing the probability of success of the $k$-means regularised sdp algorithm. Lighter color indicates probability closer to one while darker indicates probability closer to zero. $m$ denotes the number of noisy points while $n$ denotes the number of points in the smallest cluster.}  
+  \label{a-figure:simulationSepN}
 \end{figure}
 
 \section{Technical lemma}
@@ -713,7 +733,8 @@ $$\sqrt{N} - t\sqrt{m} \le \sigma_{\min}(A) \le \sigma_{\max}(A) \le \sqrt{N} + 
 with probability atleast $1-2d\exp(-ct^2)$, where $c$ is an absolute constant. $\sigma_{\min}$ and $\sigma_{\max}$ are the spectral norms or the minimum and maximum eigenvalues respectively of the matrix $A$.
 \end{theorem}
 
+
 \ifdefined\COMPLETE
-\else
+\else 
 \end{document}
 \fi
