@@ -166,19 +166,19 @@ Comparing the objectives we see the solution is indeed trivial when $\lambda \le
 \label{section:hardness}
 
 In this section, we present hardness results for the regularised $k$-means objective. 
-%Before we discuss the hardness results, it is worthwhile to mention the trivial case when $\lambda = 0$. In this case the optimization problem is easy and corresponds to the trivial solution of putting every point in the noise cluster $C_{k+1}$. 
-The proof for $k \ge 2$ is fairly straightforward and follows from known hardness results for the standard (non-regularised) $k$-means. The more interesting case is when $k = 1$. It is well-known that $1$-means can be solved in linear time \cite{Bellman73} hence the same reduction does not work any more. We reduce an instance of the MAX-CLIQUE problem to the regularised $1$-means problem. We give a proof sketch here. The technical details can be found in the appendix.
+
+We consider the interesting case of the regularized $1$-means problem. It is well-known that $1$-means can be solved in linear time \cite{Bellman73}. However, we will show by reducing an instance of the MAX-CLIQUE problem to the regularised $1$-means problem is NP-Hard. We give a proof sketch here. The technical details can be found in the appendix.
 
 \begin{restatable}{theorem}{hardForkone}
 \label{theorem:hardFork1}
-Given a clustering instance $\mc X \subset \mb R^d$. Finding the optimal solution to the regularised $1$-means objective is NP-Hard for all $\lambda > m(\mc X)/2$, where recall that $m(\mc X) := \min_{x\ne y \in \mc X} \|x-y\|_2^2$.
+For all $\lambda$ there exists a clustering instance $X \subset R^p$ such that $\lambda > m(X)$ but finding the optimal solution to the regularized 1-means objective is NP-Hard where recall that $m(X) := \min_{x\ne y \in X} \|x-y\|^2$.
 \end{restatable}
 
 \begin{proof}[Proof sketch]
-The proof has two parts. We first show that for fixed $\lambda$ the problem is NP-Hard. The proof works by reducing an instance of MAX-CLIQUE to the regularised $1$-mean instance. The idea is to define the distance between any pair of vertices as $1$ if there exists an edge between them. If not, then define the distance as $1 + \Delta$ for a suitably chosen $\Delta$. This construction guarentees that the problem is NP-Hard for atleast one $\lambda > \frac{m(\mc X)}{2}$. Next, using a scaling argument we show that if the problem is NP-Hard for one particular $\lambda$, then it is NP-Hard for all $\lambda > \frac{m(\mc X)}{2}$.
+The proof has two parts. We first show that for fixed $\lambda$ the problem is NP-Hard. The proof works by reducing an instance of MAX-CLIQUE to the regularised $1$-mean instance. The idea is to define the distance between any pair of vertices as $1$ if there exists an edge between them. If not, then define the distance as $1 + \Delta$ for a suitably chosen $\Delta$. This construction guarentees that the problem is NP-Hard for atleast one $\lambda > \frac{m(\mc X)}{2}$. Our result then follows using a scaling argument.
 \end{proof}
 
-The above theorem infact shows that regularised $k$-means is hard for all $k \ge 1$. This is becuase we can reduce an instance of regularised $1$-means to regularised $k$-means by placing $k-1$ points very far away. 
+Note that the same argument (as in the appendix) infact works for $k \ge 2$ where we would reduce from the MAX-$k$-CLIQUE problem (cover maximum vertices by $k$ cliques). We leave this proof as a simple exercise for the reader. Thus, we show that regularised $k$-means is hard for all $k \ge 1$. 
 
 \section{The regularised $k$-means SDP-based algorithm}
 \label{section:heuristic}
@@ -196,14 +196,14 @@ In the previous section, we showed that the regularised $k$-means objective is N
 	\KwOut{$\mc C' := \{C_1, \ldots, C_k, C_{k+1}$\}.}
 	
 	Compute the matrix $D_{ij} = \|x_i-x_j\|^2_2$.\\
-	Solve the SDP (Eqn. \ref{eqn:regularisedSDP}) using any standard SDP solver and obtain matrix $Z$ and vector $y$.\\
+	Solve the SDP (Eqn. \ref{eqn:regularizedSDP}) using any standard SDP solver and obtain matrix $Z$ and vector $y$.\\
 	Use the rounding procedure (Alg. \ref{alg:roundSDP}) to obtain the partition $\mc C'$. 
 \end{algorithm}
 
  
 \subsection{The SDP-based algorithm}
 \label{subsection:sdpAlg}
-The SDP relaxation of the regularised $k$-means objective is obtained in two steps. Using similar technique to that of \cite{peng2007approximating}, we translate Eqn. \ref{eqn:modifiedkmeans} into a 0-1 SDP (Eqn. \ref{eqn:regularisedSDP}). We then prove that solving the 0-1 SDP exactly is equivalent to solving the regularised $k$-means problem exactly. Then, we relax some of the constraints of the 0-1 SDP to obtain a tractable SDP which we then solve using standard solvers. We then describe the rounding procedure which uses the solution of the SDP to construct a clustering of the original dataset. 
+The SDP relaxation of the regularised $k$-means objective is obtained in two steps. Using similar technique to that of \cite{peng2007approximating}, we translate Eqn. \ref{eqn:modifiedkmeans} into a 0-1 SDP (Eqn. \ref{eqn:regularizedSDP}). We then prove that solving the 0-1 SDP exactly is equivalent to solving the regularised $k$-means problem exactly. Then, we relax some of the constraints of the 0-1 SDP to obtain a tractable SDP which we then solve using standard solvers. We then describe the rounding procedure which uses the solution of the SDP to construct a clustering of the original dataset. 
 
 \begin{equation*}
 	\begin{split}
@@ -222,16 +222,16 @@ The SDP relaxation of the regularised $k$-means objective is obtained in two ste
 		\min_{Z, y} \enspace &\tr(DZ) + \lambda \langle \mb 1, y\rangle\\
         \text{s.t. } \enspace &\tr(Z) = k\\
 		& \Big(\frac{Z+Z^T}{2}\Big)\cdot \mb 1 + y = \mb 1\\		
-		&Z \ge 0, y \ge 0, Z \succeq 0 \numberthis\label{eqn:regularisedSDP}
+		&Z \ge 0, y \ge 0, Z \succeq 0 \numberthis\label{eqn:regularizedSDP}
 	\end{cases}
 \end{equation*}
 
 \begin{restatable}{theorem}{modifiedkmeans}
 \label{thm:modifiedkmeans}
-Finding a solution to the 0-1 SDP (\ref{eqn:regularisedSDP}) is equivalent to finding a solution to the regularised $k$-means objective (\ref{eqn:modifiedkmeans}). 
+Finding a solution to the 0-1 SDP (\ref{eqn:regularizedSDP}) is equivalent to finding a solution to the regularised $k$-means objective (\ref{eqn:modifiedkmeans}). 
 \end{restatable}
 
-Equation \ref{eqn:regularisedSDP} shows our 0-1 SDP formulation. The optimization is NP-Hard as it is equivalent to the regularised $k$-means objective. Hence, we consider a convex relaxation of the same. First, we replace $Z^2 = Z$ with $Z \succeq 0$. In addition, we relax $y \in \{0, 1\}^n$ to $y \geq 0$, as the constraint $y\leq 1$ is redundant. Using these relaxations, we obtain the SDP formulation for our objective function.
+Equation \ref{eqn:regularizedSDP} shows our 0-1 SDP formulation. The optimization is NP-Hard as it is equivalent to the regularised $k$-means objective. Hence, we consider a convex relaxation of the same. First, we replace $Z^2 = Z$ with $Z \succeq 0$. In addition, we relax $y \in \{0, 1\}^n$ to $y \geq 0$, as the constraint $y\leq 1$ is redundant. Using these relaxations, we obtain the SDP formulation for our objective function.
 
 We solve the SDP using standard solvers \cite{yang2015sdpnal+} thereby obtaining $Z, y$. 
 The proof of Thm. \ref{thm:modifiedkmeans} showed that the optimal solution of 0-1 SDP is of the following form. $Z$ is a $n\times n$ block diagonal matrix of the form $\diag(Z_{I_1}, \ldots, Z_{I_k}, 0)$, where $n = |\mc X|$ and $Z_{I_i} = \frac{1}{|C_i|}11^T$. Thus, given $Z$, we can extract the set of cluster centers $C = ZX$ which is an $n \times d$ matrix. Each row $C_i$ contains the cluster center to which data point $x_i$ belongs. For the points $x_j$ assigned to the noise cluster, the corresponding row $C_j$ is zero and $y_j = 1$. The SDP solver does not always return the optimal solution, as the relaxation is not exact. However, we expect that it returns a near-optimal solution. Hence, given $Z$ and $y$ returned by the solver, we use Alg. \ref{alg:roundSDP} to extract a clustering of our original dataset. The $threshold$ parameter indicates our confidence that a given point is noise. In our experiments, we have used a threshold of $0.5$. 
@@ -273,7 +273,7 @@ Thm. \ref{thm:SDPGeneral} improves the result of Thm. 11 in \cite{awasthi2015rel
 Next, we analyse the recovery guarentees for $\mc A'$ in the presence of noisy points $\mc N$. We decompose the noisy points into two disjoint sets $\mc N_1$ and $\mc N_2$. The set $\mc N_2$ consists of all the points which are far from any of the points in $\mc I$. The set $\mc N_1$ consists of points which are close to atleast one of the clusters. We also require that any point in $\mc N_1$ has an $\alpha$-margin w.r.t to the centers of the balls $B_1, \ldots, B_k$. That is the difference of the distance between any point in $\mc N_1$ to a cluster center is atleast $\alpha$. Now, we will show that if $\mc N$ has the aforementioned properties then $\mc I$ is robust w.r.t the regularised SDP algorithm $\mc A'$.
 
 \begin{theorem}
-\label{thm:regularisedSDPGeneral}
+\label{thm:regularizedSDPGeneral}
 Let $\mc P$ denote the isotropic distribution on the unit ball centered at origin in $\mb R^d$. Given centers $\mu_1, \ldots, \mu_k$ such that $\|\mu_i - \mu_j\| > \delta > 2$. Let $\mc P_i$ be the measure $\mc P$ translated with respect to the center $\mu_i$. Let $B_i$ is drawn i.i.d w.r.t the distribution $\mc P_i$. 
 
 Given a clustering instance $\mc X \subset \mb R^{N \times d}$ and $k$. Let $\mc X : = \mc I \cup \mc N$ where $\mc I := \cup_{i=1}^k B_i$. Let $\mc N = \mc N_1 \cup N_2$ have the following properties. For all $n \in N_1$ and for all $i, j$, we have that $| \|(n-\mu_i\|^2 - \|n-\mu_j\|^2| \ge \alpha$. For all $n \in \mc N_2$ and for all $x \in \mc I, \|n- x\| \ge \nu \ge \sqrt{(\delta-1)^2+1}$. Note that $\mc N_1 \cap \mc N_2 = \phi$. Let $n = \min_i |B_i|$ and $\epsilon = \frac{|\mc N_1|}{n}$ and $\rho = \frac{|I|}{nk}$. If  
@@ -286,7 +286,7 @@ Given a clustering instance $\mc X \subset \mb R^{N \times d}$ and $k$. Let $\mc
 then there exists a constant $c_2 > 0$ such that with probability at least $1 - 2d\exp(\frac{-c_2|I|\theta}{d\log^2|I|})$ the regularised $k$-means SDP (Alg. \ref{alg:heuristicSDP}) finds the intended cluster solution  $\mc C^* = \{C_1, \ldots, C_k, \mc N_2\}$ where $B_i \subseteq C_i$ when given $\mc X$ and $\delta^2+2\delta \ge \lambda \ge (\delta-1)^2 + 1$ as input.
 \end{theorem}
 
-The proof of both the Thms. \ref{thm:SDPGeneral} and \ref{thm:regularisedSDPGeneral} use the following ideas. We construct a dual for the SDP. We then show that when the conditions of our theorems are satisfied then there exists a feasible solution for the dual program. Moreover, the objective function value of primal and dual sdp program are the same. Hence, the solution found is indeed optimal. We use similar techniques as in the proof of Thm. 11 in \cite{awasthi2015relax}. However, our analysis is tighter which helps us to obtain better bounds. The details are in the appendix.
+The proof of both the Thms. \ref{thm:SDPGeneral} and \ref{thm:regularizedSDPGeneral} use the following ideas. We construct a dual for the SDP. We then show that when the conditions of our theorems are satisfied then there exists a feasible solution for the dual program. Moreover, the objective function value of primal and dual sdp program are the same. Hence, the solution found is indeed optimal. We use similar techniques as in the proof of Thm. 11 in \cite{awasthi2015relax}. However, our analysis is tighter which helps us to obtain better bounds. The details are in the appendix.
 
 We have also developed a regularized version of the $k$-means LP based algorithm. The details and the robustness guarantees for the LP-based algorithm are in the appendix. 
 
