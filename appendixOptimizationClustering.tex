@@ -43,19 +43,19 @@
 \begin{document}
 \fi
 
-\section{Hardness of regularised $k$-means}
+\section{Hardness of regularized $k$-means}
 \label{a-section:hardness}
 \begin{theorem}
 \label{a-theorem:hardFork1Fixed}
-Given a clustering instance $\mc X \subset \mb R^{d}$, define $m(\mc X) := \min_{x \neq y \in \mc X} \|x-y\|_{2}^2$ and $n := |\mc X|$. Finding the optimal solution to the regularised $1$-means objective is NP-Hard for $\frac{m(\mc X)}{2} < \lambda < \frac{m(\mc X)}{2} + \frac{1}{2n^2(n-1)}$. 
+Given a clustering instance $X \subset \mb R^{p}$, define $m( X) := \min_{x \neq y \in  X} \|x-y\|_{2}^2$ and $n := | X|$. Finding the optimal solution to the regularized $1$-means objective is NP-Hard for $\frac{m( X)}{2} < \lambda < \frac{m( X)}{2} + \frac{1}{2n^2(n-1)}$. 
 
-In particular, the optimization problem is NP-Hard for $\lambda = \lambda_0(\mc X) := \frac{m(\mc X)}{2} + \frac{1}{4n^3}$.
+In particular, the optimization problem is NP-Hard for $\lambda = \lambda_0( X) := \frac{m( X)}{2} + \frac{1}{4n^3}$.
 \end{theorem}
 
 \begin{proof}
 The proof uses reduction from the clique problem. Given a graph $G = (V, E)$ and an integer $q$, the clique problem asks the following: does there exist a clique in $G$ of size at least $q$?
 
-Given an instance of the clique problem, we construct an instance of regularised $1$-means as follows. For every $v \in V$, construct $x_v \in \mc X$. Define the metric as 
+Given an instance of the clique problem, we construct an instance of regularized $1$-means as follows. For every $v \in V$, construct $x_v \in  X$. Define the metric as 
 \[
 d^2(x_i, x_j) = 
 \begin{cases}
@@ -63,15 +63,15 @@ d^2(x_i, x_j) =
 1 + \Delta \hspace{0.221in}\text{if }(i, j) \not\in E\numberthis\label{a-eqn:dmetric}
 \end{cases}
 \]
-where $0 < n\Delta < 1 $. Now, we will show that $G$ has a clique of size $ \ge q$ $\iff$$\mc X$ has a clustering of cost $\le c = \frac{q-1}{4} + \lambda (n - q)$.
+where $0 < n\Delta < 1 $. Now, we will show that $G$ has a clique of size $ \ge q$ $\iff$$ X$ has a clustering of cost $\le c = \frac{q-1}{2} + \lambda (n - q)$.
 
 $\Longrightarrow$ Assume $G$ has a clique of size at least $q$. Assign all points in the clique to $C_1$ and the remaining points to $C_2$. This clustering has cost as desired.
 
 $\Longleftarrow$ Let $|C_1| = n'$. Now, there are three possibilities.
 
-Case 1: $n' > q$. If all the distances in $C_1$ are 1, then the cost of the clustering is $\frac{n'-1}{4} + \lambda (n - n') \le c$ as $\lambda > \frac{1}{2}$. Thus, the vertices corresponding to the points in $C_1$ form a clique of size $n' > q$. If at least one distance is $1 + \Delta$ then the cost of the clustering is 
+Case 1: $n' > q$. If all the distances in $C_1$ are 1, then the cost of the clustering is $\frac{n'-1}{2} + \lambda (n - n') \le c$ as $\lambda > \frac{1}{2}$. Thus, the vertices corresponding to the points in $C_1$ form a clique of size $n' > q$. If at least one distance is $1 + \Delta$ then the cost of the clustering is 
 \begin{flalign*}
-\frac{n'-1}{4} + \lambda (n - n') + \frac{\Delta}{n'} \le c \implies \lambda \ge \frac{1}{2} + \frac{\Delta}{n'(n'-q)}
+\frac{n'-1}{2} + \lambda (n - n') + \frac{\Delta}{n'} \le c \implies \lambda \ge \frac{1}{2} + \frac{\Delta}{n'(n'-q)}
 \end{flalign*}
 This is a contradiction because of the choice of $\lambda$.
 
@@ -82,47 +82,48 @@ Hence, the only possibility remains that $|C_1| = q$ and all the distances in $C
 \end{proof}
 
 \begin{lemma}
-Let $d$ be as in Eqn. \ref{a-eqn:dmetric}. Then $d$ can be embedded into $\mb R^{|\mc X|}$.
+Let $d$ be as in Eqn. \ref{a-eqn:dmetric}. Then $d$ can be embedded into $\mb R^{| X|}$.
 \end{lemma}
 \begin{proof}
-The proof of embedding is very similar to Thm. 8 in \cite{dasgupta2008hardness}. Using Cor. 7 in \cite{dasgupta2008hardness}, we know that $D$ can be embedded into $\mb R^{|\mc X|}$ if and only if $u^TDu \le 0$ for all $u^T1 = 0$.
+The proof of embedding is very similar to Thm. 8 in \cite{dasgupta2008hardness}. Using Cor. 7 in \cite{dasgupta2008hardness}, we know that $D$ can be embedded into $\mb R^{| X|}$ if and only if $u^TDu \le 0$ for all $u^T1 = 0$.
 \begin{align*}
 u^TDu &= \sum_{ij} u_{i}d_{ij}u_{j} = \sum_{ij}u_iu_j \Big(1 - \mb 1(i=j) + \Delta \mb 1(i \not\sim_{E} j) \big)\\
-&\le \Big(\sum_{i}u_i \Big)^2 - \sum_i u_i^2 +\Delta\sum_{ij}|u_i||u_j| \le -\|u\|^2 + |\mc X|\Delta \|u\|^2 = -(1-|\mc X|\Delta)\|u\|^2,
+&\le \Big(\sum_{i}u_i \Big)^2 - \sum_i u_i^2 +\Delta\sum_{ij}|u_i||u_j| \le -\|u\|^2 + | X|\Delta \|u\|^2 \\
+&= -(1-| X|\Delta)\|u\|^2,
 \end{align*}
 which completes our proof.
 \end{proof}
 
-We now use Thm. \ref{a-theorem:hardFork1Fixed} to show that regularised $1$-means is Np-Hard for any $\lambda > m(\mc X) / 2$.
+We now use Thm. \ref{a-theorem:hardFork1Fixed} to show that regularized $1$-means is Np-Hard for any $\lambda > m( X) / 2$.
 
 \begin{restatable}{theorem}{hardForkone}
 \label{a-theorem:hardFork1}
-Given a clustering instance $\mc X \subset \mb R^d$. Finding the optimal solution to the regularised $1$-means objective is NP-Hard for all $\lambda > m(\mc X) / 2$.
+For all $\lambda$ there exists a clustering instance $ X \subset \mb R^p$ such that $\lambda > \frac{m(X)}{2}$ but finding the optimal solution to the regularized $1$-means objective is NP-Hard.  
 \end{restatable}
 \begin{proof}
-Denote $d(x,y)$ to be the $l_2$ distance. Thm. \ref{a-theorem:hardFork1Fixed} showed that optimizing the problem  
+Let $(X, d)$ be any clustering instance. Thm. \ref{a-theorem:hardFork1Fixed} showed that optimizing the problem  
 \begin{align*}
-\min_{C\subseteq \mc X} \enspace \sum_{x \in C}d^2(x, c) + \lambda_0(\mc X) \enspace |\mc X\setminus \mc C| \hspace{0.5in}\text{(FRM)}
+\min_{C\subseteq  X} \enspace \sum_{x \in C}d^2(x, c) + \lambda_0( X) \enspace | X\setminus  C| \hspace{0.5in}\text{(FRM)}
 \end{align*}
-is NP-Hard when $\lambda_0(\mc X) := \frac{m(\mc X)}{2} +\frac{1}{4n^3}$. Given $\lambda>0$, we want to show that for all $\lambda > m(\mc X) / 2$, the following is also NP-Hard to optimize: 
+is NP-Hard when $\lambda_0( X) := \frac{m( X)}{2} +\frac{1}{4n^3}$. Given $\lambda>0$, we want to show that for all $\lambda > m( X) / 2$, the following is also NP-Hard to optimize: 
 \begin{align*}
-\min_{C\subseteq \mc X} \enspace \sum_{x \in C}d^2(x, c) + \lambda \enspace |\mc X\setminus \mc C| \hspace{0.5in}\text{(GRM)}
+\min_{C\subseteq  X} \enspace \sum_{x \in C}d^2(x, c) + \lambda \enspace | X\setminus  C| \hspace{0.5in}\text{(GRM)}
 \end{align*}
 
-Let $\lambda' = \sqrt{n^3(4\lambda - 2m(\mc X))} > 0$, and define a new Euclidean distance $d'(x, y) = \frac{d(x,y)}{\lambda'}$. Then
+Let $\lambda' = \sqrt{n^3(4\lambda - 2m( X))} > 0$, and define a new Euclidean distance $d'(x, y) = \frac{d(x,y)}{\lambda'}$. Then
 \begin{flalign*}
-\sum_{x \in C}d^2(x, c) + \lambda \enspace |\mc X\setminus \mc C| &= \lambda'^2\Bigg(\sum_C d'^2(x, c) + \frac{|\mc X \setminus \mc C|}{\lambda'^2} \Big(\frac{m(\mc X)}{2} +\frac{\lambda'^2}{4n^3}\Big)\Bigg)\\
-&= \lambda'^2\Big(\sum_C d'^2(x, c) + |\mc X \setminus \mc C| \lambda_0(\mc X')\Big).&
+\sum_{x \in C}d^2(x, c) + \lambda \enspace | X\setminus  C| &= \lambda'^2\Bigg(\sum_C d'^2(x, c) + \frac{| X \setminus  C|}{\lambda'^2} \Big(\frac{m( X)}{2} +\frac{\lambda'^2}{4n^3}\Big)\Bigg)\\
+&= \lambda'^2\Big(\sum_C d'^2(x, c) + | X \setminus  C| \lambda_0( X')\Big).&
 \end{flalign*}
 Hence, we see that GRM is equivalent to FRM which is NP-Hard.
 \end{proof}
 
-\section{The regularised $k$-means algorithm}
+\section{The regularized $k$-means algorithm}
 \label{a-section:heuristic}
  
-\subsubsection{Equivalence of regularised $k$-means with $0,1$-SDP}
+\subsubsection{Equivalence of regularized $k$-means with $0,1$-SDP}
 \label{a-subsection:modifiedkmeans01sdp}
-We follow a similar technique to that of \cite{peng2007approximating} to translate equation \ref{eqn:modifiedkmeans} into a 0-1 SDP. We are given a set $\mc X$ with $n$ data points. The goal is to partition the set into $k$ clusters with the option of throwing some points into the garbage $k+1$ cluster. Let $S$ be an assignment matrix of size $n\times k$ and $y$ be an $n \times 1$ column vector that assigns points to the ``garbage'' cluster.  
+We follow a similar technique to that of \cite{peng2007approximating} to translate equation \ref{eqn:modifiedkmeans} into a 0-1 SDP. We are given a set $X$ with $n$ data points. The goal is to partition the set into $k$ clusters with the option of throwing some points into the garbage $k+1$ cluster. Let $S$ be an assignment matrix of size $n\times k$ and $y$ be an $n \times 1$ column vector that assigns points to the ``garbage'' cluster.  
 
  \[s_{ij} = 
     \begin{dcases}
@@ -193,17 +194,17 @@ Finally, observe that $\lambda |C_{k+1}| = \lambda\langle \mb 1, y\rangle$.
 		\min_{Z, y} \enspace &\tr(DZ) + \lambda \langle \mb 1, y\rangle\\
         \text{s.t. } \enspace &\tr(Z) = k\\
 		& \Big(\frac{Z+Z^T}{2}\Big)\cdot \mb 1 + y = \mb 1\\		
-		&Z \ge 0, y \ge 0, Z \succeq 0 \numberthis\label{a-eqn:regularisedSDP}
+		&Z \ge 0, y \ge 0, Z \succeq 0 \numberthis\label{a-eqn:regularizedSDP}
 	\end{cases}
 \end{equation*}
 
 \begin{restatable}{theorem}{modifiedkmeans}
 \label{a-thm:modifiedkmeans}
-Finding a solution to the 0-1 SDP (\ref{eqn:regularisedSDP}) is equivalent to finding a solution to the regularised $k$-means objective (\ref{eqn:modifiedkmeans}). 
+Finding a solution to the 0-1 SDP (\ref{eqn:regularizedSDP}) is equivalent to finding a solution to the regularized $k$-means objective (\ref{eqn:modifiedkmeans}). 
 \end{restatable}
 
 \begin{proof}
-We will use the same proof ideas as in the proof of Theorem 2.2 in \cite{peng2007approximating}. However, we need to modify the proof slightly according to our formulation. From the discussion in the previous subsection, we can see that any solution for (\ref{eqn:modifiedkmeans}) implies a solution for the 0-1 SDP (\ref{eqn:regularisedSDP}) with same cost. Now, we will prove the other direction. Any solution for the 0-1 SDP implies a solution for for (\ref{eqn:modifiedkmeans}) with same cost.
+We will use the same proof ideas as in the proof of Theorem 2.2 in \cite{peng2007approximating}. However, we need to modify the proof slightly according to our formulation. From the discussion in the previous subsection, we can see that any solution for (\ref{eqn:modifiedkmeans}) implies a solution for the 0-1 SDP (\ref{eqn:regularizedSDP}) with same cost. Now, we will prove the other direction. Any solution for the 0-1 SDP implies a solution for for (\ref{eqn:modifiedkmeans}) with same cost.
 
 Let $e_i$ be a vector with all zeros except in the $i^{\text{th}}$ index. Observe that $u_i^T Z u_i \ge 0$. Hence, $Z_{ii} \ge 0$. Similarly, $(e_i-e_j)^T Z (e_i-e_j) = Z_{ii} - 2Z_{ij} + Z_{jj}$. Hence, $Z_{ij} \le \max (Z_{ii}, Z_{jj})$. Let $Z_{i^*i^*} = \max_i Z_{ii}$. Hence, we have that for all $i, j$, $Z_{ij} \le Z_{i^* i^*}$. 
 
@@ -239,7 +240,7 @@ Repeating this process $k$ times, we get that $Z$ can be decomposed into $k$ non
 \begin{align*}
 \frac{1}{2} \tr(DZ) + \lambda\langle\mb 1, y\rangle &= \sum_{i=1}^k\sum_{x,y \in C_i} \frac{\|x_i-x_j\|^2}{2|C_i|} + \lambda|C_{k+1}| = \sum_{i=1}^k \sum_{x \in C_i} \|x-c_i\|^2 + \lambda |C_{k+1}|
 \end{align*}
-which is the same as the cost of the regularised $k$-means objective. Hence, from a feasible solution of (\ref{eqn:modifiedkmeans}), we can obtain a feasible solution of the 0-1 SDP of same cost.
+which is the same as the cost of the regularized $k$-means objective. Hence, from a feasible solution of (\ref{eqn:modifiedkmeans}), we can obtain a feasible solution of the 0-1 SDP of same cost.
 \end{proof}
 
 \section{Tightness of the SDP based algorithm}
@@ -261,10 +262,10 @@ which is the same as the cost of the regularised $k$-means objective. Hence, fro
 	\end{cases}
 \end{equation*}
 
-We are given a set $\mc X \subset \mb R^d$. $\mc X$ can be covered by a set of $k$ ``well-separated'' balls. That is, $\mc X := \cup_{i=1}^k B_i$ where $B_i$ is a ball of radius at most $r$ centered at $\mu_i$ and $\|\mu_i - \mu_j\| \ge \delta r$. %Let $\mc P$ denote the isotropic distribution in the unit ball centered at origin $B_1(r)$ in $\mb R^d$. The ball $B_i$ is drawn from the isotropic distribution $\mc P_i$, that is, the measure $\mc P$ translated with respect to the center $\mu_i$. 
+We are given a set $X \subset \mb R^d$. $X$ can be covered by a set of $k$ ``well-separated'' balls. That is, $X := \cup_{i=1}^k B_i$ where $B_i$ is a ball of radius at most $r$ centered at $\mu_i$ and $\|\mu_i - \mu_j\| \ge \delta r$. %Let $\mc P$ denote the isotropic distribution in the unit ball centered at origin $B_1(r)$ in $\mb R^d$. The ball $B_i$ is drawn from the isotropic distribution $\mc P_i$, that is, the measure $\mc P$ translated with respect to the center $\mu_i$. 
 Define $n_i := |B_i|$ and $n := \min_{i\in[k]} n_i$ and $N = \sum_i n_i$. $D$ is an $N\times N$ matrix such that $D_{ij} = \|x_i -x_j\|^2$.  
 
-The goal is to output a clustering $\mc C^*$ of $\mc X$ such that $C^* = \{B_1, B_2, \ldots, B_k\}$. From the way we constructed the 0-1 SDP, this corresponds to
+The goal is to output a clustering $\mc C^*$ of $X$ such that $C^* = \{B_1, B_2, \ldots, B_k\}$. From the way we constructed the 0-1 SDP, this corresponds to
 \begin{align}
   Z^* = \sum_{p=1}^k \frac{\mb 1^p \mb 1^{p^T}}{n_p} \label{a-eqn:intendedsolution}
 \end{align}
@@ -372,7 +373,7 @@ Eqns. \ref{a-eqn:zlower} and \ref{a-eqn:zupper}, show that as long as
 \begin{align*}
   &\frac{2}{n}\Big(\max_{v\bot V} \frac{v^T XX^Tv}{v^Tv}\Big) = \frac{2}{n}\Big(\max_{v\bot V} \frac{v^T X'X'^Tv}{v^Tv}\Big) \le \frac{2}{n}\sigma_{\max}\big(X'\big)^2\numberthis\label{a-eqn:mainConstrintUpper}
 \end{align*}
-The last inequality follows from the Defn. of $\sigma_{\max}$. (Eqn. 5.3 in \cite{vershynin2010introduction}). In the current setting, $\mc X := \cup_{i=1}^k B_i$ where each $B_i$ is generated as follows. Let $\mc P$ denote the isotropic distribution on the ball centered at origin of radius atmost $r$, that is $B_1(r)\subset \mb R^d$. Let $B_i$ be a set of $n_i$ points drawn according to $P_i$, the measure $\mc P$ translated to $\mu_i$. Also, $\|\mu_i - \mu_j\| > \delta r > 2r$. 
+The last inequality follows from the Defn. of $\sigma_{\max}$. (Eqn. 5.3 in \cite{vershynin2010introduction}). In the current setting, $X := \cup_{i=1}^k B_i$ where each $B_i$ is generated as follows. Let $\mc P$ denote the isotropic distribution on the ball centered at origin of radius atmost $r$, that is $B_1(r)\subset \mb R^d$. Let $B_i$ be a set of $n_i$ points drawn according to $P_i$, the measure $\mc P$ translated to $\mu_i$. Also, $\|\mu_i - \mu_j\| > \delta r > 2r$. 
 
 Let $\Theta = E[\|x_{pr}'\|^2]$. Using Thm. \ref{a-thm:spectralNormCOncentration}, we can bound the RHS of Eqn. \ref{a-eqn:mainConstraint} by upper bounding the maximum eigenvalue of $X'$ as 
 \begin{align}
@@ -395,7 +396,7 @@ $$\delta > 1 + \sqrt{1+\frac{2\theta\rho k}{d}\Big(1+\frac{1}{\log N}\Big)^2}$$
 where $\theta = \mb E[\|x_{pi}-c_p\|^2] < 1$, then there exists a constant $c > 0$ such that with probability at least $1 - 2d\exp(\frac{-cN\theta}{d\log^2N})$ the $k$-means SDP finds the intended cluster solution  $\mc C^* = \{B_1, \ldots, B_k\}$.
 \end{theorem}
 
-\section{Tightness of the regularised SDP based algorithm}
+\section{Tightness of the regularized SDP based algorithm}
 \begin{equation*}
 	\textbf{0-1 SDP} 
 	\begin{cases}
@@ -411,18 +412,18 @@ where $\theta = \mb E[\|x_{pi}-c_p\|^2] < 1$, then there exists a constant $c > 
 		\min_{Z} \enspace &\tr(DZ) + \lambda \langle \mb 1, y\rangle\\
         \text{subject to } \enspace &\tr(Z) = k\\
 		& \Big(\frac{Z+Z^T}{2}\Big)\cdot \mb 1 + y = \mb 1\\		
-		&Z \ge 0, y \ge 0, Z \succeq 0 \numberthis\label{a-eqn:regularisedSDP}
+		&Z \ge 0, y \ge 0, Z \succeq 0 \numberthis\label{a-eqn:regularizedSDP}
 	\end{cases}
 \end{equation*}
 
-We are given a set $\mc X \subset \mb R^d$. $\mc X = \mc I \cup \mc N$ is such that $\mc I$ can be covered by a set of $k$ ``well-separated'' balls. That is, $\mc I := \cup_{i=1}^k B_i$ where $B_i$ is a ball of radius at most $r$ centered at $\mu_i$ and $\|\mu_i - \mu_j\|_{2}^{2} \ge \delta r$. %Let $\mc P$ denote the isotropic distribution in the unit ball centered at origin $B_1(r)$ in $\mb R^d$. The ball $B_i$ is drawn from the isotropic distribution $\mc P_i$, that is, the measure $\mc P$ translated with respect to the center $\mu_i$. 
+We are given a set $X \subset \mb R^d$. $X = \mc I \cup \mc N$ is such that $\mc I$ can be covered by a set of $k$ ``well-separated'' balls. That is, $\mc I := \cup_{i=1}^k B_i$ where $B_i$ is a ball of radius at most $r$ centered at $\mu_i$ and $\|\mu_i - \mu_j\|_{2}^{2} \ge \delta r$. %Let $\mc P$ denote the isotropic distribution in the unit ball centered at origin $B_1(r)$ in $\mb R^d$. The ball $B_i$ is drawn from the isotropic distribution $\mc P_i$, that is, the measure $\mc P$ translated with respect to the center $\mu_i$. 
 Define $n_i := |B_i|$ and $n := \min_{i\in[k]} n_i$ and $m := |\mc N| = n_{k+1}$ and $N = \sum_i n_i + m$. $D$ is an $N\times N$ matrix such that $D_{ij} = \|x_i -x_j\|^2$.  
 
-Note that the clustering algorithm gets $\mc X$ as input and does not know about the sets $B_i$'s or $\mc I$ or $\mc N$. The goal is to output a clustering $\mc C^*$ of $\mc X$ such that $C^* = \{B_1, B_2, \ldots, B_k, \mc N\}$. From the way we constructed the 0-1 SDP, this corresponds to
+Note that the clustering algorithm gets $X$ as input and does not know about the sets $B_i$'s or $\mc I$ or $\mc N$. The goal is to output a clustering $\mc C^*$ of $X$ such that $C^* = \{B_1, B_2, \ldots, B_k, \mc N\}$. From the way we constructed the 0-1 SDP, this corresponds to
 \begin{align}
-  Z^* = \sum_{p=1}^k \frac{\mb 1_p \mb 1_{p}^T}{n_p} \enspace\enspace\text{ and }\enspace\enspace y^* = \mb 1_{k+1}\label{a-eqn:regularisedIntendedsolution}
+  Z^* = \sum_{p=1}^k \frac{\mb 1_p \mb 1_{p}^T}{n_p} \enspace\enspace\text{ and }\enspace\enspace y^* = \mb 1_{k+1}\label{a-eqn:regularizedIntendedsolution}
 \end{align}
-where $\mb 1_p$ is an $N$-dimensional indicator vector for the $p^{th}$ cluster. That is, $Z$ is a block diagonal matrix and consists of $k$ non-zero diagonal blocks. Observe that $Z$ consists of blocks $Z^{(p, q)}$. Also, for $1\le p \le k$, we have that $Z^{(p, p)} = \frac{1}{n_p}\mb 1\mb 1^T$ and for all $p \neq q, Z^{(p, q)} = 0$. Also, $Z^{(k+1, k+1)} = 0$. To prove that the regularised SDP (Eqn. \ref{a-eqn:regularisedSDP}) finds the desired solution, we  will adopt the following strategy. We first construct a dual for Eqn. \ref{a-eqn:regularisedSDP}. We then show that under certain conditions on $\delta$ (well-separateness of the balls) and $m$ (the number of noisy points) the following happens. The primal objective value and the dual objective value are the same. Also, the corresponding $Z$ satisfies Eqn. \ref{a-eqn:regularisedIntendedsolution}. 
+where $\mb 1_p$ is an $N$-dimensional indicator vector for the $p^{th}$ cluster. That is, $Z$ is a block diagonal matrix and consists of $k$ non-zero diagonal blocks. Observe that $Z$ consists of blocks $Z^{(p, q)}$. Also, for $1\le p \le k$, we have that $Z^{(p, p)} = \frac{1}{n_p}\mb 1\mb 1^T$ and for all $p \neq q, Z^{(p, q)} = 0$. Also, $Z^{(k+1, k+1)} = 0$. To prove that the regularized SDP (Eqn. \ref{a-eqn:regularizedSDP}) finds the desired solution, we  will adopt the following strategy. We first construct a dual for Eqn. \ref{a-eqn:regularizedSDP}. We then show that under certain conditions on $\delta$ (well-separateness of the balls) and $m$ (the number of noisy points) the following happens. The primal objective value and the dual objective value are the same. Also, the corresponding $Z$ satisfies Eqn. \ref{a-eqn:regularizedIntendedsolution}. 
 
 Before, we describe the dual, lets introduce a bit of notation. We index every point as $(p, i)$ where $p$ denotes the ball (or cluster) to which it belongs and $i$ denotes the index within that ball. Observe that the distance matrix $D$ consists of blocks $D^{(p, q)}$ such that $D^{(p,q)}_{ij} = \|x_{(p,i)}-x_{(q,j)}\|^2_2$. Now, to construct the dual, we introduce variables $z, \alpha_{(p,i)}, \beta_{(p,i)(q,j)}$, $\gamma_{(p, i)}$ and $Q$ for each of the constraints in the primal problem. 
 \[\textbf{SDP Dual}
@@ -469,7 +470,7 @@ Summing over all $r$ and then substituiting back, we get that for all $1\le p \l
 Again, using complementary slackness, we know that $\gamma^{(k+1)} = 0$. This implies that $\alpha_{(k+1, i)} = -\lambda$. Combining these, we get that
 \begin{align*}
   \alpha_{(p, i)} &= -2\|x_{pi} - x_p\|^2-\frac{z}{n_p} \\
-  \alpha_{(k+1, i)} &= -\lambda \numberthis\label{a-eqn:regularisedAlpha} 
+  \alpha_{(k+1, i)} &= -\lambda \numberthis\label{a-eqn:regularizedAlpha} 
 \end{align*}
 Now, we have the value of $\alpha$ for all $1\le p \le k$ and for all $i$. Computing the objective function, we get that 
 \begin{align*}
@@ -524,7 +525,7 @@ To show that $Q^{(k+1, k+1)}$ is positive semi-definite, we need to ensure that 
 \subsubsection*{Putting it all together}
 We are given $X := I \cup N$. Let $I = \cup B_i$ where each $B_i$ is ball of radius atmost one and centered at $\mu_i$ where $\mu_i$ is the average of points in $B_i$. Also, $d(\mu_i, \mu_j) \ge \delta$. Decompose $N = N_1 \cup N_2$ into two sets. Let $N_2 = \{n \in N :$ for all $b \in I, \|n-b\| \ge \nu\}$ and $N_1 = N \setminus N_2$. Let $N_1$ be such that for all $n \in N_1$, $| \|n-\mu_i\|^2 - \|n- \mu_j\|^2| \ge \alpha$. 
 
-We will show that the regularised SDP outputs the clustering $\mc C = \{C_1, \ldots, C_k, N_2\}$, where each $B_i \subseteq C_i$. Hence, the clusters contain all the points from the balls $B_i$ plus (maybe) points from the set $N_1$.  
+We will show that the regularized SDP outputs the clustering $\mc C = \{C_1, \ldots, C_k, N_2\}$, where each $B_i \subseteq C_i$. Hence, the clusters contain all the points from the balls $B_i$ plus (maybe) points from the set $N_1$.  
 
 Consider the $p^{th}$ cluster $C_p$. We know that $C_p = B_p \cup M_p$ where $M_p \subseteq N_1$. Now, $x_p = \frac{\sum_{x \in B_p} x + \sum_{n \in M_p} n}{|B_p|+|M_p|} = \frac{\mu_p |B_p| + |M_p|avg(M_p)}{|B_p| + |M_p|}$. Thus, we get that $\|x_p- \mu_p\| = \frac{|M_p|}{|B_p| + |N_p|}\|\mu_p- avg(M_p)\| \le \frac{|N_1|}{n}(\nu + 1) =: a$. Thus, we have that for all $x_{pr} \in B_p$
 \begin{flalign*}
@@ -545,7 +546,7 @@ then Eqns. \ref{a-eqn:lambdaLower} and Eqns. \ref{a-eqn:lambdaUpper1} can be sat
 \end{align*}
 then Eqn. \ref{a-eqn:lambdaUpper2} can also be satisfied. 
 
-Now, for $\mc X$ as generated by the isotropic distribution, we need to ensure that Eqn. \ref{a-eqn:zLower} can be satisfied. 
+Now, for $X$ as generated by the isotropic distribution, we need to ensure that Eqn. \ref{a-eqn:zLower} can be satisfied. 
 
 We will now upper bound the we can bound the RHS of Eqn. \ref{a-eqn:zLower}. Decompose $X_1 := A_1' + C + N_1'$. Now, $A_1'$ contains points from the balls $B_1', \ldots, B_k'$. $C$ contains the centers $\mu_1, \ldots, \mu_k$ and $N_1'$ contains the points from the set $|N_1|$ but shifted by $\mu_p$. Now,
 \begin{align*}
@@ -568,17 +569,17 @@ Thus, $(\delta-1)^2 -1 - a^2 - 4a > 2a + 2\rho k\theta(1+s)^2\frac{1}{d}$ implie
 \label{a-thm:regSDPIsometric}
 Let $\mc P$ denote the isotropic distribution on the unit ball centered at origin in $\mb R^d$. Given centers $\mu_1, \ldots, \mu_k$ such that $\|\mu_i - \mu_j\| > \delta > 2$. Let $\mc P_i$ be the measure $\mc P$ translated with respect to the center $\mu_i$. Let $B_i$ is drawn i.i.d w.r.t the distribution $\mc P_i$. 
 
-Given a clustering instance $\mc X \subset \mb R^{N \times d}$ and $k$. Let $\mc X : = \mc I \cup \mc N$ where $\mc I := \cup_{i=1}^k B_i$. Let $\mc N = \mc N_1 \cup N_2$ have the following properties. For all $n \in N_1$ and for all $i, j$, we have that $| \|(n-\mu_i\|^2 - \|n-\mu_j\|^2| \ge \alpha$. For all $n \in \mc N_2$ and for all $x \in \mc I, \|n- x\| \ge \nu \ge \sqrt{(\delta-1)^2+1}$. Note that $\mc N_1 \cap \mc N_2 = \phi$. Let $n = \min_i |B_i|$ and $\epsilon = \frac{|\mc N_1|}{n}$ and $\rho = \frac{|I|}{nk}$. If  
+Given a clustering instance $X \subset \mb R^{N \times d}$ and $k$. Let $X : = \mc I \cup \mc N$ where $\mc I := \cup_{i=1}^k B_i$. Let $\mc N = \mc N_1 \cup N_2$ have the following properties. For all $n \in N_1$ and for all $i, j$, we have that $| \|(n-\mu_i\|^2 - \|n-\mu_j\|^2| \ge \alpha$. For all $n \in \mc N_2$ and for all $x \in \mc I, \|n- x\| \ge \nu \ge \sqrt{(\delta-1)^2+1}$. Note that $\mc N_1 \cap \mc N_2 = \phi$. Let $n = \min_i |B_i|$ and $\epsilon = \frac{|\mc N_1|}{n}$ and $\rho = \frac{|I|}{nk}$. If  
 
 \begin{itemize}
   \item $\delta > 2 + \sqrt{ O(\epsilon) + \frac{2\rho k\theta(1+1/\log(|I|))^2}{d}}$ 
   \item $\alpha \ge O(\epsilon)+ \frac{2\rho k\theta(1+1/\log|I|)^2}{d}$ 
   \item $\frac{|\mc N_2|}{n} \le \frac{\delta^2-2\delta-O(\epsilon)}{\lambda}$
 \end{itemize}
-then there exists a constant $c_2 > 0$ such that with probability at least $1 - 2d\exp(\frac{-c_2|I|\theta}{d\log^2|I|})$ the regularised $k$-means SDP finds the intended cluster solution  $\mc C^* = \{C_1, \ldots, C_k, \mc N_2\}$ where $B_i \subseteq C_i$ when given $\mc X$ and $\delta^2+2\delta \ge \lambda \ge (\delta-1)^2 + 1$ as input.
+then there exists a constant $c_2 > 0$ such that with probability at least $1 - 2d\exp(\frac{-c_2|I|\theta}{d\log^2|I|})$ the regularized $k$-means SDP finds the intended cluster solution  $\mc C^* = \{C_1, \ldots, C_k, \mc N_2\}$ where $B_i \subseteq C_i$ when given $X$ and $\delta^2+2\delta \ge \lambda \ge (\delta-1)^2 + 1$ as input.
 \end{theorem}
 
-\section{Tightness of the regularised LP based algorithm}
+\section{Tightness of the regularized LP based algorithm}
 \begin{equation*}
   \begin{split}
 	\textbf{IP}\\
@@ -597,17 +598,17 @@ then there exists a constant $c_2 > 0$ such that with probability at least $1 - 
         \text{s.t. } &\sum_{q}z_{pq} + y_p = 1\\
 		& z_{pq} \le z_{pp}\\
 		& \sum_{p} z_{pp} = k\\		
-		& z_{pq} \ge 0, y_p \ge 0 \numberthis\label{a-eqn:regularisedLP}
+		& z_{pq} \ge 0, y_p \ge 0 \numberthis\label{a-eqn:regularizedLP}
 	\end{cases}
 \end{equation*}
 
-We are given a set $\mc X \subset \mb R^d$. $\mc X = \mc I \cup \mc N$ is such that $\mc I$ can be covered by a set of $k$ ``well-separated'' balls. That is, $\mc I := \cup_{i=1}^k B_i$ where $B_i$ is a ball of radius at most $r$ centered at $\mu_i$ and $\|\mu_i - \mu_j\|_{2}^{2} \ge \delta r$. Let $\mc P$ denote the isotropic distribution in the unit ball centered at origin $B_1(r)$ in $\mb R^d$. The ball $B_i$ is drawn from the isotropic distribution $\mc P_i$, that is, the measure $\mc P$ translated with respect to the center $\mu_i$. Define $n_i := |B_i|$ and $n := \min_{i\in[k]} n_i$ and $m := |\mc N| = n_{k+1}$ and $N = \sum_i n_i + m$. $D$ is an $N\times N$ matrix such that $D_{ij} = \|x_i -x_j\|^2$.
+We are given a set $X \subset \mb R^d$. $X = \mc I \cup \mc N$ is such that $\mc I$ can be covered by a set of $k$ ``well-separated'' balls. That is, $\mc I := \cup_{i=1}^k B_i$ where $B_i$ is a ball of radius at most $r$ centered at $\mu_i$ and $\|\mu_i - \mu_j\|_{2}^{2} \ge \delta r$. Let $\mc P$ denote the isotropic distribution in the unit ball centered at origin $B_1(r)$ in $\mb R^d$. The ball $B_i$ is drawn from the isotropic distribution $\mc P_i$, that is, the measure $\mc P$ translated with respect to the center $\mu_i$. Define $n_i := |B_i|$ and $n := \min_{i\in[k]} n_i$ and $m := |\mc N| = n_{k+1}$ and $N = \sum_i n_i + m$. $D$ is an $N\times N$ matrix such that $D_{ij} = \|x_i -x_j\|^2$.
 
-Note that the clustering algorithm gets $\mc X$ as input and does not know about the sets $B_i$'s or $\mc I$ or $\mc N$. The goal is to output a clustering $\mc C^*$ of $\mc X$ such that $C^* = \{B_1, B_2, \ldots, B_k, \mc N\}$. From the way we constructed the Integer program, this corresponds to
+Note that the clustering algorithm gets $X$ as input and does not know about the sets $B_i$'s or $\mc I$ or $\mc N$. The goal is to output a clustering $\mc C^*$ of $X$ such that $C^* = \{B_1, B_2, \ldots, B_k, \mc N\}$. From the way we constructed the Integer program, this corresponds to
 \begin{align}
-  Z^* = \sum_{p=1}^k \frac{\mb 1_p \mb 1_{p}^T}{n_p} \enspace\enspace\text{ and }\enspace\enspace y^* = \mb 1_{k+1}\label{a-eqn:regularisedIntendedsolution}
+  Z^* = \sum_{p=1}^k \frac{\mb 1_p \mb 1_{p}^T}{n_p} \enspace\enspace\text{ and }\enspace\enspace y^* = \mb 1_{k+1}\label{a-eqn:regularizedIntendedsolution}
 \end{align}
-where $\mb 1_p$ is an $N$-dimensional indicator vector for the $p^{th}$ cluster. That is, $Z$ is a block diagonal matrix and consists of $k$ non-zero diagonal blocks. Observe that $Z$ consists of blocks $Z^{(p, q)}$. Also, for $1\le p \le k$, we have that $Z^{(p, p)} = \frac{1}{n_p}\mb 1\mb 1^T$ and for all $p \neq q, Z^{(p, q)} = 0$. Also, $Z^{(k+1, k+1)} = 0$. To prove that the regularised LP (Eqn. \ref{a-eqn:regularisedLP}) finds the desired solution, we  will adopt the following strategy. We first construct a dual for Eqn. \ref{a-eqn:regularisedLP}. We then show that under certain conditions on $\delta$ (well-separateness of the balls) and $m$ (the number of noisy points) the following happens. The primal objective value and the dual objective value are the same. Also, the corresponding $Z$ and $y$ satisfy Eqn. \ref{a-eqn:regularisedIntendedsolution}.
+where $\mb 1_p$ is an $N$-dimensional indicator vector for the $p^{th}$ cluster. That is, $Z$ is a block diagonal matrix and consists of $k$ non-zero diagonal blocks. Observe that $Z$ consists of blocks $Z^{(p, q)}$. Also, for $1\le p \le k$, we have that $Z^{(p, p)} = \frac{1}{n_p}\mb 1\mb 1^T$ and for all $p \neq q, Z^{(p, q)} = 0$. Also, $Z^{(k+1, k+1)} = 0$. To prove that the regularized LP (Eqn. \ref{a-eqn:regularizedLP}) finds the desired solution, we  will adopt the following strategy. We first construct a dual for Eqn. \ref{a-eqn:regularizedLP}. We then show that under certain conditions on $\delta$ (well-separateness of the balls) and $m$ (the number of noisy points) the following happens. The primal objective value and the dual objective value are the same. Also, the corresponding $Z$ and $y$ satisfy Eqn. \ref{a-eqn:regularizedIntendedsolution}.
 
 Now to construct the dual, we introduce variables $\alpha_p, \beta_{pq}, \gamma$, $\mu_{pq}$ and $\eta_p$ for each of the constraints in the primal problem. 
 \[\textbf{LP Dual}
@@ -692,13 +693,13 @@ Following the exact same analysis as in \cite{awasthi2015relax}, we know that Eq
 \label{a-theorem:lptight}
 Let $\mc P$ denote the isotropic distribution on the unit ball centered at origin in $\mb R^d$. Given centers $\mu_1, \ldots, \mu_k$ such that $\|\mu_i - \mu_j\| > \delta > 2$. Let $\mc P_i$ be the measure $\mc P$ translated with respect to the center $\mu_i$. Let $B_i$ is drawn i.i.d w.r.t the distribution $\mc P_i$. 
 
-Given a clustering instance $\mc X \subset \mb R^d$ and $k$. Let $\mc X : = \mc I \cup \mc N$. Let $\mc I := \cup_{i=1}^k B_i$ and $\mc N$ have the following property. Each $p_n \in \mc N$ is such that $\min_{p_i \in \mc I} \|p_n - p_i\| \ge \nu r$. Let $|\mc N| =: m$. If
+Given a clustering instance $X \subset \mb R^d$ and $k$. Let $X : = \mc I \cup \mc N$. Let $\mc I := \cup_{i=1}^k B_i$ and $\mc N$ have the following property. Each $p_n \in \mc N$ is such that $\min_{p_i \in \mc I} \|p_n - p_i\| \ge \nu r$. Let $|\mc N| =: m$. If
 
 \begin{itemize}
   \item $\delta > 4$ and $\nu > \delta - 2$ 
   \item $m \le |\mc I|\Big(\frac{\nu^2}{(\delta-2)^2}-1\Big)$
 \end{itemize}
-then the regularized $k$-means LP finds the intended cluster solution  $\mc C^* = \{B_1, \ldots, B_k, \mc N\}$ when given $\mc X$ and $(\delta - 2)^2r^2 \le \lambda \le \nu^2(1-\frac{m}{N})$ as input.
+then the regularized $k$-means LP finds the intended cluster solution  $\mc C^* = \{B_1, \ldots, B_k, \mc N\}$ when given $X$ and $(\delta - 2)^2r^2 \le \lambda \le \nu^2(1-\frac{m}{N})$ as input.
 \end{theorem}
 
 \section{Additional experimental results}
@@ -708,20 +709,20 @@ Now, we provide some additional experiments on simulated data for the regularize
   \centering
   \includegraphics[width=0.45\textwidth]{figures/optimizationClustering/deltaLambda.png}
   \includegraphics[width=0.45\textwidth]{figures/optimizationClustering/deltaD.png}
-  \caption{Heatmap showing the probability of success of the $k$-means regularised sdp algorithm. Lighter color indicates probability closer to one while darker indicates probability closer to zero.}
+  \caption{Heatmap showing the probability of success of the $k$-means regularized sdp algorithm. Lighter color indicates probability closer to one while darker indicates probability closer to zero.}
   \label{a-figure:simulationSepL}
 \end{figure}
 
 \begin{figure}
   \includegraphics[width=0.45\textwidth]{figures/optimizationClustering/deltaK.png}
   \includegraphics[width=0.45\textwidth]{figures/optimizationClustering/deltaM.png}
-  \caption{Heatmap showing the probability of success of the $k$-means regularised sdp algorithm. Lighter color indicates probability closer to one while darker indicates probability closer to zero.$m$ denotes the number of noisy points while $n$ denotes the number of points in the smallest cluster.}
+  \caption{Heatmap showing the probability of success of the $k$-means regularized sdp algorithm. Lighter color indicates probability closer to one while darker indicates probability closer to zero.$m$ denotes the number of noisy points while $n$ denotes the number of points in the smallest cluster.}
   \label{a-figure:simulationSepK}
 \end{figure}
 \begin{figure}
   \includegraphics[width=0.45\textwidth]{figures/optimizationClustering/deltan.png}
   \includegraphics[width=0.45\textwidth]{figures/optimizationClustering/nM.png}
-  \caption{Heatmap showing the probability of success of the $k$-means regularised sdp algorithm. Lighter color indicates probability closer to one while darker indicates probability closer to zero. $m$ denotes the number of noisy points while $n$ denotes the number of points in the smallest cluster.}  
+  \caption{Heatmap showing the probability of success of the $k$-means regularized sdp algorithm. Lighter color indicates probability closer to one while darker indicates probability closer to zero. $m$ denotes the number of noisy points while $n$ denotes the number of points in the smallest cluster.}  
   \label{a-figure:simulationSepN}
 \end{figure}
 

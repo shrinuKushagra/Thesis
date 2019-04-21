@@ -1004,7 +1004,9 @@ University of Waterloo
 
 \begin{frame}{Sidenote: Properties of the regularized objective}	
 	\begin{itemize}
-		\item Reduces to classical $k$-means for $\lambda = \infty$.
+		\item Reduces to classical $k$-means for $\lambda \ge \frac{M(X)}{2}$.
+		\vspace{30pt}\item Easy for $\lambda \le \frac{m(X)}{2}$.
+		\vspace{30pt}\item NP-Hard for all $\textcolor{blue}{k \ge 1}$ when $$\frac{m(X)}{2} < \lambda < \frac{M(X)}{2}$$
 	\end{itemize}
 \end{frame}
 
