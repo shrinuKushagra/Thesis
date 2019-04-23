@@ -255,12 +255,12 @@ Given the number of clusters $k$ and parameter $t$. For all $\alpha \le 2+\sqrt{
 
 \begin{theorem}
 \label{thm:nosparsealg}
-Given the number of clusters $k$ and a parameter $t$. For all $\alpha < 2\sqrt 2 + 3$ there exists $(X, d)$ such that any clustering tree $\mc T$ of $X$ has the following property. There exists $S \subseteq X$ and there exists clustering $\mc C_{S}$ which satisfies $\alpha$-center proximity such that $m(\mc C_{S}) = t$ and the following holds. If $|X \setminus S| \ge \frac{3t(\mc C_{S})}{2}+5$, then $\mc T$ doesn't capture $\mc C_{S}$.
+Given the number of clusters $k$ and a parameter $t$. For all $\alpha < 2\sqrt 2 + 3$ there exists $(X, d)$ such that any clustering tree $\mc T$ of $X$ has the following property. There exists $S \subseteq X$ and there exists clustering $\mc C_{S}$ which satisfies $\alpha$-center proximity such that $m(\mc C_{S}) = t$ and the following holds. If $|X \setminus S| \ge \frac{3m(\mc C_{S})}{2}+5$, then $\mc T$ doesn't capture $\mc C_{S}$.
 \end{theorem}
 
 \begin{theorem}
 \label{thm:nosparselistalphacp}
-Given the number of clusters $k$ and parameter $t$. For all $\alpha \le 2+\sqrt{2}+3$ there exists $(X, d)$ such that any list $\mc L$ (of clusterings of $X$) has  the following property. There exists $S \subseteq X$ and there exists clustering $\mc C_{S}$ which satisfies $\alpha$-center proximity such that $m(\mc C_{S}) = t$ and the following holds. If $|\mc L| < 2^{\frac{k}{2}}$ and $|X \setminus S|\ge \frac{k}{2}(\frac{3t(\mc C_{S})}{2}+5)$, then $\mc L$ doesn't capture $\mc C_{S}$.
+Given the number of clusters $k$ and parameter $t$. For all $\alpha \le 2+\sqrt{2}+3$ there exists $(X, d)$ such that any list $\mc L$ (of clusterings of $X$) has  the following property. There exists $S \subseteq X$ and there exists clustering $\mc C_{S}$ which satisfies $\alpha$-center proximity such that $m(\mc C_{S}) = t$ and the following holds. If $|\mc L| < 2^{\frac{k}{2}}$ and $|X \setminus S|\ge \frac{k}{2}(\frac{3m(\mc C_{S})}{2}+5)$, then $\mc L$ doesn't capture $\mc C_{S}$.
 \end{theorem}
 
 \section{Center Separation}
@@ -386,7 +386,7 @@ Given the number of clusters $k$ and parameters $r$ and $t$. For all $\lambda < 
 
 \begin{theorem}
 \label{thm:nosparselistlambdacs}
-Given the number of clusters $k$ and parameters $r$ and $t$. For all $\lambda \le 6$ there exists $(X, d)$ such that any list $\mc L$ (of clusterings of $X$) has the following property. There exists $S \subseteq X$ and there exists clustering $\mc C_{S}$ which satisfies $\lambda$-center separation such that $m(\mc C_{S}) = t$, $r(\mc C_{S}) = r$ and the following holds. If $|\mc L| < 2^{\frac{k}{2}}$ and $|X \setminus S|\ge \frac{k}{2}(\frac{3t(\mc C_{S})}{2}+5)$, then $\mc L$ doesn't capture $\mc C_{S}$.
+Given the number of clusters $k$ and parameters $r$ and $t$. For all $\lambda \le 6$ there exists $(X, d)$ such that any list $\mc L$ (of clusterings of $X$) has the following property. There exists $S \subseteq X$ and there exists clustering $\mc C_{S}$ which satisfies $\lambda$-center separation such that $m(\mc C_{S}) = t$, $r(\mc C_{S}) = r$ and the following holds. If $|\mc L| < 2^{\frac{k}{2}}$ and $|X \setminus S|\ge \frac{k}{2}(\frac{3m(\mc C_{S})}{2}+5)$, then $\mc L$ doesn't capture $\mc C_{S}$.
 \end{theorem}
 
 \ifdefined\COMPLETE
