@@ -15,8 +15,46 @@ What are the different approaches to clustering?
 	Let $L = D^{-1/2} A D^{-1/2}$ (where $A$ is adjacency matrix). Find top $k$ eigenvalues of this matrix and cluster using $k$-means.\\
 	There are relations between these and kernel PCA.
 \end{itemize}
-Some recent work on cost-based hierarchical clustering.
+Some recent work on cost-based hierarchical clustering. The cost is based on trying to put similar points higher on the tree.
 
 \subsection*{Slide 4}
 Computational complexity of clustering.
+	\begin{itemize}
+		\item $[$Dasgupta' 08$]$\\
+		Reduction from NAE3SAT. Hard for $k=2$ and $d = n$.
+
+		\item $[$Vattani' 09$]$\\
+		Planar construction. Hard for $d=2$ and $k=n^{\epsilon}$.
+
+		\item $[$Awasthi et. al '15$]$\\
+		There exists a constant $\epsilon$ such that it is NP-Hard to approximate $k$-means within $(1+\epsilon)$. Reduction from  vertex cover on triangle free graphs which is NP-Hard to approximate within $1.36$ for $k = \Omega(n)$.
+
+		\item $[$Megiddot and Supowit$]$\\
+		The $k$-median problem as well as the $k$-center problem is NP-Hard. They even show that $k$-center is NP-Hard to approximate within a constant factor for $d = 2$ for $k =\Omega(n)$.
+
+		\item $[$Arya et. al '01$]$\\
+		The $k$-median problem has a local search based algorithm with approximation ratio $3+\epsilon$.\\
+	This has been improved to $1+\sqrt{3}+\epsilon$.
+	\end{itemize}
+
+\subsection*{Slide 10-11}
+Definition of structure or clusterability conditions.
+	\begin{itemize}
+		\item $\alpha$-center proximity\\
+		$k$-means efficiently solvable under center-proximity for $\alpha > 2 + \sqrt{3}$. NP-Hard for $\alpha \le 3$.\\
+		 $k$-median efficiently solvable under center-proximity for $\alpha > 1 + \sqrt{2}$. NP-Hard for $\alpha \le 2$
+		 
+		 \item $(\alpha, \epsilon)$-center proximity\\
+		 Efficient $(1+\frac{8n}{m(C)}\epsilon)$-approximation to the $k$-median objective for $\alpha > 2 + \sqrt{7}$.
+		 
+		 \item $\epsilon$-separatedness\\
+		 $Cost(OPT(k)) \le \epsilon^2 Cost(OPT(k-1))$. Variant of $k$-means finds a $(1+\epsilon)$-approximation with high probability in time $O(nk+k^3)$. \\
+		 For $k=2$, algorithm succeeds with probability $1-\frac{20\epsilon^2}{\sqrt{(1-\epsilon^2)(1-101\epsilon^2)}}$. This implies average radius much smaller than separation.
+		 $r_i < \frac{\epsilon}{\sqrt{1-\epsilon^2}} d(c_i, c_j)$.  
+	\end{itemize}
+
+\subsection*{Slide 14}
+\subsection*{Slide 22}
+\subsection*{Slide 24}
+
 \end{document}
