@@ -1,0 +1,22 @@
+\documentclass[12pt]{article}
+
+\begin{document}
+
+\section{Introduction}
+\subsection*{Slide 2}
+What are the different approaches to clustering?
+\begin{itemize}
+	\item Cost-based clustering\\
+	Find minimum cost partition. $k$-means (minimize sum of squared distances), $k$-median (minimize sum of distances, centers from data), fuzzy $k$-means (aims to minimize the weighted sum of squared distances), $k$-medoids (Partitioning Around Medoids). \\
+	All the algorithms are some variants of local search heuristics.
+	\item Hierarchical clustering\\
+	Start with every point in its own cluster. Merge till one cluster remains. Common ways to merge, single-linkage, max-linkage, avg-linkage.
+	\item Spectral clustering\\
+	Let $L = D^{-1/2} A D^{-1/2}$ (where $A$ is adjacency matrix). Find top $k$ eigenvalues of this matrix and cluster using $k$-means.\\
+	There are relations between these and kernel PCA.
+\end{itemize}
+Some recent work on cost-based hierarchical clustering.
+
+\subsection*{Slide 4}
+Computational complexity of clustering.
+\end{document}
