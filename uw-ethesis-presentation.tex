@@ -60,7 +60,7 @@ University of Waterloo
 \end{frame}
 
 \begin{frame}{What is clustering?}
-	Given: $X$\\
+	Given: $(X, d)$\\
 	\vspace{10pt}Partition it into $k$ subsets .$$C = \{C_1, \ldots, C_k\}$$
 	\begin{itemize}
 		\item Similar points share a cluster.
@@ -79,11 +79,12 @@ University of Waterloo
 \begin{frame}{Computational cost}
 	Common approach to clustering
 	\begin{itemize}
-		\item Associate cost with each partition of the set.
+		\item Associate cost with each $k$-partition of the set.
 		\item Find partition with minimum cost.
 	\end{itemize}
 
 	\vspace{20pt}$k$-means is NP-Hard.
+	$$\min_{C} \enspace\sum_{i=1}^k\sum_{x \in C_i} d^2(x, \mu_i)$$
 	\begin{itemize}
 		\item NP-Hard for $k=2$ \alert{[Dasgupta `08]}
 		\vspace{0pt}\item NP-Hard in the plane. \alert{[Vattani `09]}
@@ -118,7 +119,7 @@ University of Waterloo
 	\end{center}
 \end{frame}
 
-\begin{frame}{Example}
+\begin{frame}{Different algorithms, different considerations}
 	Given $X \in \mb R^2$ and $k = 2$
 	\begin{center}
 	\begin{figure}
@@ -129,7 +130,7 @@ University of Waterloo
 	\end{center}
 \end{frame}
 
-\begin{frame}{Different algorithms have different considerations}
+\begin{frame}{Model selection problem}
 	
 	Single-linkage\\
 	\begin{itemize}
@@ -141,7 +142,7 @@ University of Waterloo
 		\item Separate dissimilar points, similar can be separated. 
 	\end{itemize}
 	
-	 \vspace{20pt}\alert{Model selection problem:} How to prefer one choice over the other?
+	 \vspace{20pt}\alert{How to prefer one choice over the other}?
 \end{frame}
 
 \begin{frame}<3>[label=clusteringChallenges]{Challenges in clustering}
@@ -175,7 +176,7 @@ University of Waterloo
 		\vspace{5pt}\item Unstructured part
 	\end{itemize}
 	
-	\vspace{25pt}How to detect structure in the presence of noise?
+	\vspace{25pt}Can we develop \alert{efficient algorithms to detect the structure in the presence of noise}?
 \end{frame}
 
 \begin{frame}{Summary: Challenges in clustering}
@@ -202,17 +203,16 @@ University of Waterloo
 
 	Incorporating domain knowledge into the clustering problem\\	
 	\begin{itemize}
-		\vspace{10pt} \item Must/cannot link constraints \alert{[Basu et. al `02]}\\
+		\vspace{10pt} \item Must/cannot link constraints \alert{[Wagstaff et. al `01]}\\
 		\vspace{10pt} \item Demonstration-based clustering \alert{[Ashtiani, Ben-David `15]}\\
 		\vspace{10pt} \item Merge/split queries \alert{[Balcan, Blum `08]}
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Our approach}
+\begin{frame}{Our approach to tackling under-specificity}
 	
-	{\color{blue}Same-cluster query}\\
-    \vspace{20pt}Given a clustering $C^*$ of set $X$\\
-    \vspace{5pt}Ask same-cluster queries to a $C^*$-oracle\\
+
+    \vspace{20pt}Ask {\color{blue}same-cluster queries} to a $C^*$-oracle\\
     $$C^*(x_1, x_2) = \left\{
 	\begin{array}{ll}
 		\mbox{true }  & \mbox{if } x_1 \overset{C^*}{\sim} x_2   \\
@@ -301,20 +301,22 @@ University of Waterloo
 		\end{itemize}
 	\end{block}
 	
-	\vspace{20pt}Query complexity: Logarithmic\\
-	\vspace{10pt}Any target clustering $C^*$ as long the niceness conditions are satisfied. 
+	\vspace{20pt}Any target clustering $C^*$ as long the niceness conditions are satisfied. 
 \end{frame}
 
 \begin{frame}{$k$-means revisited}
-	\vspace{-20pt}Input: $X \subseteq \mb R^d$ and $k$.
+	Input: $X \subseteq \mb R^d$ and $k$.
 	\vspace{-10pt}$$C^* = \argmin_{C} \sum_{i=1}^k \sum_{x \in C_i} \|x - \mu_i\|^2$$
-	\vspace{10pt}Given that $C^*$ satisfies $\gamma$-margin\\
+	\vspace{10pt}Find $C^*$ given that it satisfies $\gamma$-margin.
 	
-	\vspace{10pt}\begin{block}{Theorem}
+	\vspace{20pt} {\color{blue}Can efficiently find the optimal using $O(k\log n)$ queries for $\gamma > 1$}
+	\begin{center}
+		\alert{BUT}
+	\end{center}	
+	\begin{block}{Theorem}
 	Euclidean $k$-means is NP-hard even when the optimal solution satisfies the $\gamma$-margin property for $\gamma < 1.84$
 	\end{block}
 	
-	\vspace{20pt} Can efficiently find the optimal using $O(k\log n)$ queries for $\gamma > 1$
 \end{frame}
 
 \begin{frame}{Hardness result}

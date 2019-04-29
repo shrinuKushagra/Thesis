@@ -12,10 +12,15 @@ What are the different approaches to clustering?
 	\item Hierarchical clustering\\
 	Start with every point in its own cluster. Merge till one cluster remains. Common ways to merge, single-linkage, max-linkage, avg-linkage.
 	\item Spectral clustering\\
-	Let $L = D^{-1/2} A D^{-1/2}$ (where $A$ is adjacency matrix). Find top $k$ eigenvalues of this matrix and cluster using $k$-means.\\
+	Let $L = D^{-1/2} A D^{-1/2}$ (where $A$ is adjacency matrix). The graph can be constructed in various ways ($\epsilon$-neighbourhood, $k$-nearest neighbour, weighted fully connected graph). Find top $k$ eigenvalues of this matrix and cluster using $k$-means.\\
 	There are relations between these and kernel PCA.
 \end{itemize}
-Some recent work on cost-based hierarchical clustering. The cost is based on trying to put similar points higher on the tree.
+Some recent work on cost-based hierarchical clustering. The cost is based on trying to put similar points higher on the tree.\\
+
+\noindent Different definitions of clustering?
+\begin{itemize}
+	\item Soft $k$-means: Membership is probabilistic and not hard.
+\end{itemize}
 
 \subsection*{Slide 4}
 Computational complexity of clustering.
@@ -54,7 +59,20 @@ Definition of structure or clusterability conditions.
 	\end{itemize}
 
 \subsection*{Slide 14}
+Incorporating domain knowledge into clustering.
+	\begin{itemize}
+		\item $[$Wagstaff et. al' 01$]$\\
+		A set of constraints is provided to the algorithm in the beginning. COP $k$-means is a modified version of Llyod's algorithm where you assign points to closest center such that the constraints are satisfied.
+		\item $[$Ashtiani, Ben-David `15$]$\\
+		The user can cluster a small subset. Learn a model consistent with that clustering. Sample complexity of learning the model. The goal is to learn a mapping under which $k$-means clustering is close to the target clustering. Prove that an ERM approach has `small' sample complexity.
+		\item $[$Balcan, Blum `08$]$\\
+		The oracle responds with either split a cluster or merge two clusters. Given a class $C$ of clusters, recover the target clustering. A generic but inefficient procedure which makes $O(k^3 \log |C|)$ queries.
+		\item $[$Awasthi, Balcan, Voevodski '17$]$\\
+		Merge-split based algorithm to recover the target clustering. If the initial clustering has atmost $\delta$ over-clustering and under-clustering error (these quantities are upper bounded by $k^2$) then the algorithm can recover target by making atmost $\delta$ merge-split queries. \\
+		For correlation clustering, if the initial clustering has error $\delta$ (where $\delta$ is the number edges which are incorrect), their algorithm recovers the target by making atmost $\delta$ queries. For correlation clustering $\delta = O(n)$. Using our method, we can recover the target using only linear queries and the user doesn't need to evaluate the whole clustering everytime.
+	\end{itemize}
 \subsection*{Slide 22}
+
 \subsection*{Slide 24}
 
 \end{document}
