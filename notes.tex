@@ -72,7 +72,9 @@ Incorporating domain knowledge into clustering.
 		For correlation clustering, if the initial clustering has error $\delta$ (where $\delta$ is the number edges which are incorrect), their algorithm recovers the target by making atmost $\delta$ queries. For correlation clustering $\delta = O(n)$. Using our method, we can recover the target using only linear queries and the user doesn't need to evaluate the whole clustering everytime.
 	\end{itemize}
 \subsection*{Slide 22}
+The proof of positive result relies on two lemmas. The first lemma says that if $d(\mu, \mu') \le \epsilon$ and $\gamma > 1 + 2\epsilon$, then $d(x, \mu') < d(y, \mu')$. Hence, there is a separation even w.r.t to the center $\mu'$.
 
+The second lemma uses a concentration inequality in high dimensions. Namely, $\|\mu - \frac{1}{n}\sum X_i\| \le R^2 \epsilon$ 
 \subsection*{Slide 24}
 
 \end{document}
