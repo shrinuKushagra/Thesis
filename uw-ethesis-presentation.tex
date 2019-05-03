@@ -352,24 +352,23 @@ University of Waterloo
 \begin{frame}{De-duplication}
 	\onslide<1->
     Given a database $X$. \\
-    \vspace{10pt}Detect records which correspond to the same real-world entity.
+    \vspace{10pt}{\color{blue} Detect} records which correspond to the same real-world entity.
     
     \vspace{30pt}Output a clustering of $X$.
-    $$C = \{C_1, \ldots, C_k \}$$
-    where $C_i \cap C_j = \phi$ and $\cup C_i = X$.
 \end{frame}
 
 \begin{frame}{Clustering for de-duplication}
-	Challenges\\
+	Differences compared to standard formulations\\
     \begin{itemize}
-    	\vspace{20pt}\item Standard techniques like $k$-means, $k$-median etc. are not suitable.\\
-    	\textcolor{blue}{$k$ is unknown.}
+    	\vspace{10pt}\item The number of clusters are given as input. \\
+    	For example: $k$-means, $k$-median etc.\\
+    	\vspace{10pt}\textcolor{blue}{$k$ is unknown.}
 	\end{itemize}    	
 \end{frame}
 
 \begin{frame}{Correlation clustering (CC) for de-duplication}
 	Input: $X$\\
-	Metric: $d$ over $X^2$\\
+	Distance function: $d$ over $X^2$\\
 	\begin{itemize}
 		\item User designed (prior knowledge of domain) 
 		\item Learned from labelled data.
@@ -382,6 +381,13 @@ University of Waterloo
     \textcolor{blue}{\# zero edges within a cluster + \# one edges\\ across different clusters}
     \end{center}
     
+\end{frame}
+
+\begin{frame}{Computational complexity of CC?}
+	\begin{itemize}
+		\item NP-Hard
+		\item Hardness of approximation.
+ 	\end{itemize}
 \end{frame}
 
 \begin{frame}{CC framework: Missing pieces}
@@ -421,6 +427,25 @@ University of Waterloo
 			&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[C^*(x, y) = 1 \enspace|\enspace d(x, y) \le \lambda \big] \enspace \ge \enspace \beta 
 		\end{align*}
 	\end{block}	
+\end{frame}
+
+\begin{frame}{Informative metric}
+	\begin{block}{$(\alpha, \beta)$-informative for general metrics}		
+		\vspace{-10pt}\begin{align*}
+			&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[ d(x, y) > \lambda \enspace|\enspace C^*(x, y) = 1\big] \enspace \le \enspace \alpha \\
+			&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[C^*(x, y) = 1 \enspace|\enspace d(x, y) \le \lambda \big] \enspace \ge \enspace \beta 
+		\end{align*}
+	\end{block}	
+	
+	\begin{center}$\Downarrow$\end{center}
+	
+	\begin{block}{$(\alpha, \beta)$-informative for edges}		
+		\vspace{-10pt}\begin{align*}
+			&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[ \text{No edge between $x$ and $y$} \enspace|\enspace C^*(x, y) = 1\big] \enspace \le \enspace \alpha \\
+			&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[C^*(x, y) = 1 \enspace|\enspace \text{Edge between $x$ and $y$}  \big] \enspace \ge \enspace \beta 
+		\end{align*}
+	\end{block}	
+
 \end{frame}
 
 \begin{frame}{Goals}
