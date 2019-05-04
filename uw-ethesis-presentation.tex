@@ -35,6 +35,9 @@
   \tikz[baseline=(n.base)]\node(n)[beameritem]{#1};%
 }
 
+\def\checkmark{\tikz\fill[scale=0.4](0,.35) -- (.25,0) -- (1,.7) -- (.25,.15) -- cycle;} 
+
+
 \title[Efficient Clustering]{Theoretical foundations for efficient clustering}
 
 \author[S. Kushagra]{
@@ -352,17 +355,18 @@ University of Waterloo
 \begin{frame}{De-duplication}
 	\onslide<1->
     Given a database $X$. \\
+
     \vspace{10pt}\alert{Detect} records which correspond to the same real-world entity.
     
     \vspace{30pt}Output a clustering of $X$.
-    
 \end{frame}
 
 \begin{frame}{Clustering for de-duplication}
-	Challenges\\
+	Differences compared to standard formulations\\
     \begin{itemize}
-    	\vspace{20pt}\item Standard techniques like $k$-means, $k$-median etc. are not suitable.\\
-    	\textcolor{blue}{$k$ is unknown.}
+    	\vspace{10pt}\item The number of clusters are given as input. \\
+    	For example: $k$-means, $k$-median etc.\\
+    	\vspace{10pt}\textcolor{blue}{$k$ is unknown.}
 	\end{itemize}    	
 \end{frame}
 
@@ -381,6 +385,13 @@ University of Waterloo
     \textcolor{blue}{\# zero edges within a cluster + \# one edges\\ across different clusters}
     \end{center}
     
+\end{frame}
+
+\begin{frame}{Computational complexity of CC?}
+	\begin{itemize}
+		\item NP-Hard
+		\item Hardness of approximation.
+ 	\end{itemize}
 \end{frame}
 
 \begin{frame}{CC framework: Missing pieces}
@@ -420,6 +431,25 @@ University of Waterloo
 			&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[C^*(x, y) = 1 \enspace|\enspace d(x, y) \le \lambda \big] \enspace \ge \enspace \beta 
 		\end{align*}
 	\end{block}	
+\end{frame}
+
+\begin{frame}{Informative metric}
+	\begin{block}{$(\alpha, \beta)$-informative for general metrics}		
+		\vspace{-10pt}\begin{align*}
+			&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[ d(x, y) > \lambda \enspace|\enspace C^*(x, y) = 1\big] \enspace \le \enspace \alpha \\
+			&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[C^*(x, y) = 1 \enspace|\enspace d(x, y) \le \lambda \big] \enspace \ge \enspace \beta 
+		\end{align*}
+	\end{block}	
+	
+	\begin{center}$\Downarrow$\end{center}
+	
+	\begin{block}{$(\alpha, \beta)$-informative for edges}		
+		\vspace{-10pt}\begin{align*}
+			&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[ \text{No edge between $x$ and $y$} \enspace|\enspace C^*(x, y) = 1\big] \enspace \le \enspace \alpha \\
+			&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[C^*(x, y) = 1 \enspace|\enspace \text{Edge between $x$ and $y$}  \big] \enspace \ge \enspace \beta 
+		\end{align*}
+	\end{block}	
+
 \end{frame}
 
 \begin{frame}{Goals}
@@ -564,7 +594,7 @@ University of Waterloo
 
 \begin{frame}{Problem formulation: Attempt 1}
 	Input: $X$\\
-	Metric: $d$ over $X^2$.\\
+	Distance: $d$ over $X^2$.\\
 	A class of clusterings: $\mc F$\\
 	
 	\vspace{20pt}Construct $G = (X, E)$, 
@@ -606,168 +636,138 @@ University of Waterloo
 	$P^+$ is the uniform distribution over pairs where $C^*(x, y) = 1$
 \end{frame}
 
-
-\begin{frame}{Solution Strategy}
-	\begin{block}{Algorithm}
-		\begin{itemize}
-			\vspace{10pt}\item Sample `enough' positive pairs.
-			\vspace{10pt}\item Sample `enough' negative pairs.
-			\vspace{10pt}\item Estimate correlation loss of each $C \in \mc F$.
-			\vspace{10pt}\item Output clustering with minimum loss.
-		\end{itemize}
-	\end{block}
-	
-	\vspace{20pt}Uniform sampling doesn't work\\
-	\vspace{10pt}Make use of informative metric $d$
-\end{frame}
-
-\begin{frame}{Goals}
-	Computational complexity
+\begin{frame}{Goal}
+Analyse
 	\begin{itemize}
-		\vspace{10pt}\item Depends on the number of sampled points
-		\vspace{10pt}\item Iterate over (or bottom-up traversal) over $\mc F$.
+		\vspace{15pt}\item Computational complexity
+		\vspace{15pt}\item Query complexity
 	\end{itemize}
-	
-	\vspace{30pt}Query complexity
-	\begin{itemize}
-		\vspace{10pt}\item Depends on the number of sampled points
-	\end{itemize}
-	
-\end{frame}
+ \end{frame}
 
-
-\begin{frame}{Sampling negative pairs}
-	
-	\vspace{10pt}\textcolor{blue}{Basic Idea}\\
-	Sample (with rejection) uniformly at random from $X^2$. 
-	
-	\vspace{20pt}\begin{block}{Results}
-		The above procedure
-		\begin{itemize}
-			\item Samples a pair according to $P^-$.
-			\item Makes $\frac{1}{1-\gamma}$ queries to the oracle in expectation. 
-		\end{itemize}			
-	\end{block}
-	
-	
-\end{frame}
-
-\begin{frame}{Sampling positive pairs}
-	Recall the definition of $(\alpha, \beta)$-informative metric
-	\vspace{-10pt}\begin{align*}
-		&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[d(x, y) > \lambda \enspace|\enspace C^*(x, y) = 1\big] \enspace \le \enspace \alpha \\
-		&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[C^*(x, y) = 1 \enspace|\enspace d(x, y) \le \lambda \big] \enspace \ge \enspace \beta
-	\end{align*}
-
-    
-	\vspace{20pt}\textcolor{blue}{Basic Idea}\\
-	Sample (with rejection) uniformly at random from $K = \{(x, y): d(x, y) \le \lambda\}$. 
-\end{frame}
-
-\begin{frame}{Sampling positive pairs}
-
-	\begin{block}{Results}
-		The above procedure
-		\begin{itemize}
-			\item Samples a pair according to distribution $T$ which approximates $P^+$.
-			$$\Big|\underset{(x, y) \sim P^+}{\mb P}\enspace \big[ h(x, y) = 0 ] - \underset{(x, y) \sim T}{\mb P}\enspace \big[ h(x, y) = 0 ]\Big|  \enspace \le \enspace 2\alpha.$$ 
-			The loss computed according to $T$ is similar to loss computed according to $P^+$ for any labeling function.
-			\item Makes $\frac{1}{\beta}$ queries to the oracle in expectation. 
-		\end{itemize}			
-	\end{block}
-	\vspace{20pt}\alert{$\Theta(n^2)$} time to construct set $K$.		
-\end{frame}
-
-\begin{frame}{Locality Sensitive Hashing}
-	Use LSH to `approximately construct' set $K$.
-	
-	\vspace{20pt}Generic LSH scheme for input $X$:
-	\begin{itemize}
-		\vspace{10pt}\item Obtain $s$ different partitions of $X$.
-		\vspace{10pt}\item Output $ B := \{P_1, \ldots, P_s\} = \{B_{ij} : 1\le i\le s, 1\le j \le |P_i|\}$
-	\end{itemize}
-	
-	\vspace{20pt} 
-	\begin{block}{Guarentee (informal)} 
-		Most of the similar points ($d(x, y) \le \lambda$) are co-located in atleast one of the blocks $B_{ij}$ with high probability. 
-	\end{block}
-\end{frame}
-
-\begin{frame}{Sampling for LSH-able metrics}
-	\textcolor{blue}{Basic Idea}\\
-	Sample (with two-step rejection) uniformly at random from the blocks $B$.
-	\begin{itemize}
-		\vspace{5pt}\item Reject with probability $= 1 - 1/$ \#blocks in which the pair occur together
-		\vspace{5pt}\item Reject if the oracle says NO
-	\end{itemize} 
-\end{frame}
-
-\begin{frame}{Sampling positive pairs for LSH-able metrics}
-	\begin{block}{Results}
-		The above procedure
-		\begin{itemize}
-			\item Samples a pair according to distribution $T$ which approximates $P^+$ (with high probability).
-			\begin{align*}
-  &\Big|\underset{(x, y) \sim P^+}{\mb P} \big[ C(x, y) = 0 ] -\underset{(x, y) \sim T}{\mb P} \big[ C(x, y) = 0 ] \Big| \le 2\alpha + \zeta  + \nu
-  			\end{align*} 
-			$\zeta$ depends on quality of the hashing and $\nu$ is a term that controls the probability. 
-			\item Makes $O(\frac{1}{\beta})$ queries to the oracle in expectation. 
-		\end{itemize}			
-	\end{block}
-\end{frame}
-
-\begin{frame}{Recap}
-	Procedure to sample $m_+$ positive pairs.\\
-
-	\vspace{20pt}Procedure to sample $m_-$ negative pairs.\\
-	\vspace{20pt}Estimate the loss from this sample.
-\end{frame}
-
-\begin{frame}{Main result}
-	\begin{block}{Sample complexity}
-		If the number of positive and negative samples   
+\begin{frame}{Positive result}
+	\begin{block}{}
+		There exists sampling procedures $\mc P_0$ and $\mc P_1$ such that if an ERM algorithm receives $m_-$ and $m_+$ samples respectively where
 		\vspace{-10pt}\begin{align*}
 		  &m_-, m_+ \enspace \ge a\frac{\vcdim({\mc F}) + \log(\frac{3}{\delta})}{\epsilon^2} 
 		\end{align*}
 		then with probability atleast $1-\delta$, we have that $$L_{C^*}(\hat C) \enspace\le\enspace \min_{\mc C \in \mc F} L_{C^*}(C) + 3\alpha + \epsilon$$
 	\end{block}
-	
+\end{frame}
+
+\begin{frame}{Implication}
+	Computational and query complexity depends on
 	\begin{itemize}
-		\vspace{20pt}\item If we see enough samples then the loss of our clustering is close to the minimizer.\\
-		\vspace{10pt} \item Independent of the size of the set $X$.
+		\vspace{10pt}\item Time (and the number of queries) to  \alert{sample one point}. 
+		\vspace{5pt}\item $m_-$ and $m_+$ (or the \alert{$\vcdim(\mc F)$}). 
+	\end{itemize}		
+
+	\vspace{30pt}Time taken also depends on complexity of ERM.
+	\begin{itemize}
+		\vspace{10pt}\item[{\color{green}\checkmark}] Bottom-up approach for our running example $\mc F = \{T_1, \ldots, T_s\}$.
 	\end{itemize}		
 \end{frame}
 
-\begin{frame}{Positive result: Queries}
-	\begin{block}{Query complexity}
-		With `high probability' the number of same-cluster queries $q$ made is  
-		\vspace{-10pt}$$q \le (1+\nu)\bigg(\frac{m_-}{(1-\gamma)} + \frac{m_+}{\beta}\bigg)$$
+
+
+\begin{frame}{$\mc P_0$: Sampling negative pairs}
+	
+	\vspace{10pt}\textcolor{blue}{Basic Idea}\\
+	Sample (with rejection) uniformly at random from $X^2$. 
+	
+	\vspace{20pt}\begin{block}{Results}
+		\begin{itemize}
+			\vspace{5pt}\item Samples a pair according to $P^-$ in $O(1)$ expected time.
+			\vspace{10pt}\item Makes $\frac{1}{1-\gamma}$ queries to the oracle in expectation. 
+		\end{itemize}			
 	\end{block}
-	\begin{itemize}
-		\vspace{20pt} \item The number of wasted queries is small.
-		\vspace{20pt} \item The number of queries depends only on the complexity of $\mc F$ and is independent of $|X|$.  
-	\end{itemize}
+	
+	
 \end{frame}
 
+\begin{frame}{$\mc P_1$: Sampling positive pairs}
+	
+	\vspace{20pt}\textcolor{blue}{Basic Idea}\\
+	Sample (with rejection) uniformly at random from the set of `close' points. $K = \{(x, y): d(x, y) \le \lambda\}$. 
+
+	\vspace{10pt}\begin{block}{Results}
+		\begin{itemize}
+			\vspace{5pt}\item Samples a pair according to $T$ which $2\alpha$-approximates $P^+$.
+			$$\Big|\underset{(x, y) \sim P^+}{\mb P}\enspace \big[ h(x, y) = 0 ] - \underset{(x, y) \sim T}{\mb P}\enspace \big[ h(x, y) = 0 ]\Big|  \enspace \le \enspace 2\alpha.$$ 
+			\vspace{5pt}\item Makes $\frac{1}{\beta}$ queries to the oracle in expectation. 
+		\end{itemize}			
+	\end{block}
+\end{frame}
+
+\begin{frame}{$\mc P_1$: Faster sampling LSH-able metrics}
+		\vspace{20pt}\alert{$\Theta(n^2)$} time to construct set $K$.	
+
+	\vspace{20pt}Use an LSH scheme to `approximately construct' $K$.
+ 	\begin{itemize}
+		\vspace{5pt}\item Obtain $s$ different partitions of $X$.
+		$$ B := \{P_1, \ldots, P_s\} = \{B_{ij} : 1\le i\le s, 1\le j \le |P_i|\}$$
+	\end{itemize}	
+\end{frame}
+
+
+\begin{frame}{$\mc P_1$ results for LSH-able metrics}
+	\textcolor{blue}{Basic Idea}\\
+	Sample (with three-step rejection) uniformly at random from $B$.
+	\begin{itemize}
+		\vspace{5pt}\item Reject with probability $= 1 - \frac{1}{\text{ \#blocks in which the pair occur together}}$
+		\vspace{5pt}\item Reject based on distance and then the oracle.
+	\end{itemize} 
+	
+	\begin{block}{Results}
+		\begin{itemize}
+			\item $T$ which approximates $P^+$ (with high probability).
+			\begin{align*}
+  &\Big|\underset{(x, y) \sim P^+}{\mb P} \big[ C(x, y) = 0 ] -\underset{(x, y) \sim T}{\mb P} \big[ C(x, y) = 0 ] \Big| \le 2\alpha + \zeta  + \nu
+  			\end{align*} 
+			$\zeta$ depends on hashing and $\nu$ controls the success probability. 
+			\vspace{10pt}\item Makes $O(\frac{1}{\beta})$ queries to the oracle in expectation. 
+		\end{itemize}			
+	\end{block}
+\end{frame}
+
+\begin{frame}{Implication}
+	Computational and query complexity depends on
+	\begin{itemize}
+		\vspace{10pt}\item[{\color{green}\checkmark}] Time (and the number of queries) to  sample one point. 
+		\vspace{5pt}\item $m_-$ and $m_+$ (or the \alert{$\vcdim(\mc F)$}). 
+	\end{itemize}		
+
+	\vspace{30pt}Time taken also depends on complexity of ERM.
+	\begin{itemize}
+		\vspace{10pt}\item[{\color{green}\checkmark}] Bottom-up approach for our running example $\mc F = \{T_1, \ldots, T_s\}$.
+	\end{itemize}		
+\end{frame}
+
+
 \begin{frame}{VC-Dimension of common classes}
-	\begin{block}{Theorem}
+	\begin{block}{}
 		Let $\mc F = \{T_1, \ldots, T_s\}$ be a class of hierarchical clustering trees. Then 
-		$$\vcdim({\mc F}) \le g(s)$$ where $g(s)$ is the smallest integer $n$ such that $\frac{\sqrt n!}{\lfloor \sqrt n/2 \rfloor! \enspace 2^{\lfloor \sqrt n/2 \rfloor}} \ge s $
+		$$\vcdim({\mc F}) \in o(\log^2 s) $$
 	\end{block}
 	
 	\begin{itemize}
-		\vspace{30pt}\item $\vcdim(T)$ is upper bounded by a constant.
+		\vspace{20pt}\item $\vcdim(T)$ is upper bounded by a constant.
 		\vspace{10pt}\item Using standard theorems that would imply $\vcdim(\mc F) \le O(s)$
-		\vspace{10pt}\item This result shows $o(\log^2 s)$ upper bound.
 	\end{itemize}
 \end{frame}
 
 \begin{frame}{Key takeaways}
 	For common classes of clusterings, 
 	\begin{itemize}
-		\vspace{30pt}\item ERM-based approach can solve the RCC problem efficiently. 
-		\vspace{15pt}\item Query complexity of RCC depends on the complexity of $\mc F$.
+		\vspace{20pt}\item ERM-based approach can solve the RCC problem efficiently. 
+		\vspace{15pt}\item Time and query complexity of RCC depend on the richness of $\mc F$.
 	\end{itemize}
+\end{frame}
+
+\begin{frame}{Experiments}
+	\begin{figure}
+	\includegraphics[trim=0 0 0 0,scale=0.35]{figures/deDuplication/experiments.png}
+	\caption{Evaluation of different algorithms on different datasets using our framework.}
+	\end{figure}
 \end{frame}
 
 \begin{frame}{Challenges in clustering}	
