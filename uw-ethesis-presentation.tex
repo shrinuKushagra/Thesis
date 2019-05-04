@@ -352,11 +352,10 @@ University of Waterloo
 \begin{frame}{De-duplication}
 	\onslide<1->
     Given a database $X$. \\
-    \vspace{10pt}Detect records which correspond to the same real-world entity.
+    \vspace{10pt}\alert{Detect} records which correspond to the same real-world entity.
     
     \vspace{30pt}Output a clustering of $X$.
-    $$C = \{C_1, \ldots, C_k \}$$
-    where $C_i \cap C_j = \phi$ and $\cup C_i = X$.
+    
 \end{frame}
 
 \begin{frame}{Clustering for de-duplication}
@@ -369,7 +368,7 @@ University of Waterloo
 
 \begin{frame}{Correlation clustering (CC) for de-duplication}
 	Input: $X$\\
-	Metric: $d$ over $X^2$\\
+	Distance   : $d$ over $X^2$\\
 	\begin{itemize}
 		\item User designed (prior knowledge of domain) 
 		\item Learned from labelled data.

@@ -74,7 +74,10 @@ Incorporating domain knowledge into clustering.
 \subsection*{Slide 22}
 The proof of positive result relies on two lemmas. The first lemma says that if $d(\mu, \mu') \le \epsilon$ and $\gamma > 1 + 2\epsilon$, then $d(x, \mu') < d(y, \mu')$. Hence, there is a separation even w.r.t to the center $\mu'$.
 
-The second lemma uses a concentration inequality in high dimensions. Namely, $\|\mu - \frac{1}{n}\sum X_i\| \le R^2 \epsilon$ 
-\subsection*{Slide 24}
+The second lemma uses a concentration inequality in high dimensions. Namely, if $n > c\frac{\log (1/\delta)}{\epsilon^2}$ then $\|\mu - \frac{1}{n}\sum X_i\|^2 \le R^2 \epsilon$ 
 
+\subsection*{Slide 24}
+The point of the proof is the following. Any clustering of $X$ which costs $\le L$ has the following property. Atleast $m$ of rows $R_i$ are be grouped in a $A$-type clustering and the rest are grouped in $B$-type clustering. The rows of $G_i$ are singletons. And the points in $Z_i$ are added to clusters which are good for it (increase the cost by $\frac{2}{\sqrt{3}}h$. Other clusterings have cost atleast $L + \frac{w}{3}$. 
+
+If $S_i = (s_{i1}, s_{i2}, s_{i3})$ is included in the exact cover then the row $R_i$ should be grouped in a $A$-type clustering. Then $x'_{ij}$ location will force all other dash locations to be in $B$-type clusterings (as the up ones will have to go `up' and the down ones will have to go down). Since there are $3m$ variables they will have exactly $m$ rows in $A$-type clustering. 
 \end{document}
