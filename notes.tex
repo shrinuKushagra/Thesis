@@ -82,11 +82,26 @@ The point of the proof is the following. Any clustering of $X$ which costs $\le 
 If $S_i = (s_{i1}, s_{i2}, s_{i3})$ is included in the exact cover then the row $R_i$ should be grouped in a $A$-type clustering. Then $x'_{ij}$ location will force all other dash locations to be in $B$-type clusterings (as the up ones will have to go `up' and the down ones will have to go down). Since there are $3m$ variables they will have exactly $m$ rows in $A$-type clustering. 
 
 \subsection*{Slide 29}
-References about learning and designing metric.
+Designing a distance metric.
+\begin{itemize}
+	\item Character-based: Edit distance and its many variants.
+	\item Token-based: Word (or token) representations. Word2vec or tf-idf measures.
+	\item Phonetic-based: Soundex, NYSIIS. Replace similar sounding constants with numbers or letters.
+	\item Numerical
+\end{itemize}
+Learning a distance metric.
+\begin{itemize}
+	\item Learning the weights of (distance functions across) different fields.
+	\item Learning a classifier over pairs. (Can view as a $\{0, 1\}$ distance function.)
+\end{itemize}
 
 \subsection*{Slide 30}
-References about hardness results.
-
+\begin{itemize}
+	\item $[$Bansal et al., 2004$]$\\
+	Introduce the problem of correlation clustering (or min-disagree). Give a constant factor approximation to the problem. But the constant is huge. 
+	\item $[$Demaine et al., 2006$]$\\
+	Gave a $4\log_2 n$ approximation to the minimization problem. Gave a $O(\log_2 n)$ approximation to the weighted correlation clustering problem. 
+\end{itemize}
 \subsection*{Slide 31}
 Four definitions and thoughts.
 
