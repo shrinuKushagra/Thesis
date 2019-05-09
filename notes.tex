@@ -1,6 +1,34 @@
 \documentclass[12pt]{article}
+\usepackage{amsmath}
 
 \begin{document}
+
+\section{Concepts}
+\subsection{Spectral clustering}
+Let $L = D^{-1/2} A D^{-1/2}$ (where $A$ is adjacency matrix). The graph can be constructed in various ways ($\epsilon$-neighbourhood, $k$-nearest neighbour, weighted fully connected graph). Find top $k$ eigenvalues of this matrix and cluster using $k$-means.\\
+	There are relations between these and kernel PCA.
+\subsection{Hardness}
+\begin{itemize}
+	\item \textbf{P}: Class of problems solvable in polynomial time.
+	\item \textbf{NP}: Class of decision problems verifiable in polynomial time.
+	\item \textbf{NP-Complete}: Class of problems in $NP$ such that every problem in NP reduces to it in polynomial time. 
+	\item \textbf{NP-Hard}: Class of problems such that every problem in NP reduces to it in polynomial time. 
+	\item \textbf{Strong NP-Complete (or NP-Hard)}: If it remains NP-Complete (or NP-Hard) so even when all of its numerical parameters are bounded by a polynomial in the length of the input.
+	\item \textbf{PTAS}: Polynomial time approximation scheme. A problem admits a PTAS if there exists an algorithm which finds a $(1+\epsilon)$ approximation in run-time which is polynomial in $n$ for a fixed $\epsilon$. 
+	\item \textbf{FPTAS}: Fully Polynomial time approximation scheme. Admits a PTAS with run-time polynomial in both $n$ and $\frac{1}{\epsilon}$. 
+	\item \textbf{APX}: Polynomial time approximation (constant-factor) algorithm.
+	\item \textbf{APX-Hard}: There is a PTAS reduction from every problem in APX to that problem.
+	\item \textbf{Approximation preserving or PTAS-reduction}: A reduction from problem $A$ to $B$ such that an approximate solution (or a ptas solution) to $B$ can be used to extract an approximate (or ptas) solution for $A$.
+\end{itemize}
+If $P \neq NP$ then
+\begin{itemize}
+	\item \textbf{FPTAS} $\not\subseteq$ \textbf{PTAS} $\not\subseteq$ \textbf{APX}.
+	\item \textbf{APX-Hard} problems do not have PTAS. 
+	\item \textbf{NP-Hard} problems do not have polynomial algorithms. 
+\end{itemize}
+
+\subsection{Convex program}
+Linear program can be solved in $O(n^{2.5})$.
 
 \section{Introduction}
 \subsection*{Slide 2}
@@ -100,26 +128,73 @@ Learning a distance metric.
 	\item $[$Bansal et al., 2004$]$\\
 	Introduce the problem of correlation clustering (or min-disagree). Give a constant factor approximation to the problem. But the constant is huge. 
 	\item $[$Demaine et al., 2006$]$\\
-	Gave a $4\log_2 n$ approximation to the minimization problem. Gave a $O(\log_2 n)$ approximation to the weighted correlation clustering problem. 
+	Gave a $4\log_2 n$ approximation to the minimization problem. Gave a $O(\log_2 n)$ approximation to the weighted correlation clustering problem. The problem is APX-Hard for general (where not all edge labels are known) weighted or unweighted graphs.
+	\item $[$Charikar et al., 2005$]$\\
+	Gave a factor $4$ approximation to the minimization problem. Algorithm based on convex relaxation. Also, proved that the problem is APX-Hard. 
+	\item $[$Claire Mathieu and Warren Schudy, 2010$]$ and $[$Makarychev et. al' 2015$]$
+	Correlation clustering under a semi-random model. \\
+	A planted clustering with each of the edges flipped independently by a probability $p$. Makarychev et. al (general graphs) finds a clustering of cost $(1 +\epsilon) OPT +O((1-2p)-4\delta-3n\log^3n)$. Mathieu et. al (complete graphs) finds a clustering of cost $1+O(n^{-\frac{1}{6}})$ times the optimal. 
+	\item $[$Giotis and Guruswami, 2006$]$\\
+	Give a PTAS when the number of clusters is known. Running time is $n^{O(\frac{9^k}{\epsilon^2})}\log n$.
+	
+	\item $[$Ailon et al., 2018$]$\\
+	Propose an algorithm with makes $O(\frac{k^{14} \log k\log n}{\epsilon^6})$ queries to an oracle and finds a $(1+\epsilon)$-approximation. Prove that there exists an $\epsilon$ such that any $(1+\epsilon)$-approximation makes $\Omega(\frac{k}{ploy(\log k)})$ queries. 
 \end{itemize}
+
 \subsection*{Slide 31}
-Four definitions and thoughts.
+Solving $L_E(C)$ does not help us solve $L_{C^*}(C)$ even under the promise that $E$ is $(\alpha, \beta)$-close to $C^*$. \\
+Consider the case when $\alpha = 0$ and $\beta = \frac{1}{2}$. In this case, all the negative edges are correct and half of the positive edges are correct.\\
+\begin{table}[!ht]
+\centering
+\def\arraystretch{1.5}
+\begin{tabular}{c|c}
+	All possible clusterings & Restricted to $F$\\
+	\hline
+	Find $C^* = \text{argmin } L_{C^*}(C)$ & $\hat C = \text{argmin } L_{C^*}(C)$ \\
+	vaccous equivalent to ``Find $C^*$ & \\
+	\hline 
+	Find $C^* = \text{argmin } L_{E}(C)$ & $\hat C = \text{argmin } L_{E}(C)$\\
+	Understanding that the optimal &\\
+	solution is the desired clustering.\\
+	\hline
+\end{tabular}
+\caption{Different correlation formulations for de-duplication. $C^*$ is the unique deduplication solution. \textbf{Slide 31}}
+\end{table}
+Consider the situation when all the given graph can be decomposed into cycles of length four. And it is known that half of the positive edges are correct. In this case, for every solution to $L_E(C)$ there exists a $C^*$ such that $L_{C^*}(C)$ is `bad'. 
 
 \subsection*{Slide 32}
-Question about precision and recall.
+\begin{table}[!ht]
+\centering
+\def\arraystretch{1.5}
+\begin{tabular}{c|c|c|c}
+	& Condition positive & Condition negative&\\
+	\hline
+	Predicted positive &tp &fp & $precision = \frac{tp}{tp+fp}$\\
+	predicted negative &fn & tn\\
+	\hline
+	& $recall = \frac{tp}{tp+fn}$& $specificity = \frac{fp}{fp+tn}$ &
+\end{tabular}
+\caption{Precision and recall table}
+\end{table}
+\noindent $(\alpha, \beta)$-informative says that the edges $E$ and $C^*$ have high precision and recall w.r.t each other.  
 
 \subsection*{Slide 36}
-Hardness proof details.
+If there exists a clustering such that all clusters have size $C$ and no negative errors then that clustering has lowest error. As it has no negative errors and any other clustering will make more positive errors than this clustering. 
 
 \subsection*{Slide 40}
-Hardness with query proof details.
+The clause edges say the following statements. The first hyper-edge says that the literals can be either true or false. The second hyper-edge says that the literals can be either true or false. The third hyper-edge says that one literal must be true.
+
+The construction forces that in any matching the clause edges must attach to separate literals. 
 
 \subsection*{Slide 55}
-VC proof
+Consider all clusterings of the set where each cluster has size two except maybe one. Any tree can contain atmost one clustering from this list. Hence, any list of trees of size $s$ will contain atmost $s$ such clusterings.
 
 
 \subsection*{Slide 57}
-Weighted clustering
+Weighted clustering is not a linkage based algorithm like min or average linkage. 
+$$d(C_l, C_i \cup C_j) = \frac{n_i}{n_i + n_j} d(C_l, C_i) + \frac{n_j}{n_i+n_j}d(C_l, C_i)$$
+As compared against average linkage which gives
+$$d(C_l, C_i \cup C_j) = \frac{1}{2} \Big(d(C_l, C_i) + d(C_l, C_i) \Big)$$
 
 \end{document}
 
