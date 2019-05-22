@@ -1,0 +1,709 @@
+% Copyright 2004 by Till Tantau <tantau@users.sourceforge.net>.
+%
+% In principle, this file can be redistributed and/or modified under
+% the terms of the GNU Public License, version 2.
+%
+% However, this file is supposed to be a template to be modified
+% for your own needs. For this reason, if you use this file as a
+% template and not specifically distribute it as part of a another
+% package/program, I grant the extra permission to freely copy and
+% modify this file as you see fit and even to delete this copyright
+% notice. 
+\def\ACCOMPLETE{}
+\documentclass{beamer}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{marvosym}
+\usepackage{tikz}
+\setbeamertemplate{items}[circle]
+\setbeamercovered{transparent}
+
+\usetheme{Madrid}
+\newcommand{\mc}{\mathcal}
+\newcommand{\mb}{\mathbf}
+\newcommand{\tr}{\text{Tr}}
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+\let\oldnl\nl
+\newcommand{\nonl}{\renewcommand{\nl}{\let\nl\oldnl}}
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\vcdim}{VC-Dim}
+
+\newcommand\mynum[1]{%
+  \usebeamercolor{enumerate item}%
+  \tikzset{beameritem/.style={circle,inner sep=0,minimum size=2ex,text=enumerate item.bg,fill=enumerate item.fg,font=\footnotesize}}%
+  \tikz[baseline=(n.base)]\node(n)[beameritem]{#1};%
+}
+
+\def\checkmark{\tikz\fill[scale=0.4](0,.35) -- (.25,0) -- (1,.7) -- (.25,.15) -- cycle;} 
+
+
+\title[Efficient Clustering]{Theoretical foundations for efficient clustering}
+
+\author[S. Kushagra]{
+Shrinu Kushagra\\
+\vspace{30pt}Ph.D Thesis Presentation\\
+University of Waterloo
+}
+\date{\today}
+
+\AtBeginSubsection[]
+{
+  \begin{frame}<beamer>
+  \frametitle{Outline}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+% Let's get started
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{What is clustering?}
+	Given: $(X, d)$\\
+	\vspace{10pt}Partition it into $k$ subsets .$$C = \{C_1, \ldots, C_k\}$$
+	\begin{itemize}
+		\item Similar points share a cluster.
+		\item Dis-similar points are separated.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}<1-2>[label=clusteringChallenges]{Challenges in clustering}
+	\begin{enumerate}
+		\onslide<1> \item Computational complexity
+			\begin{itemize}
+				\vspace{10pt}\item Optimization problem 
+				\vspace{10pt}\item NP-Hard for common functions like $k$-means, $k$-median.
+			\end{itemize}
+		\onslide<2> \vspace{20pt}\item  Under-specificity
+		\onslide<3>\vspace{20pt}\item Noise robustness
+	\end{enumerate}
+\end{frame}
+
+
+\begin{frame}{Under-specificity in clustering}
+	
+	Requirements from clustering algorithms\\
+	\vspace{10pt}
+	\begin{block}{}
+		\begin{itemize}
+			\item Similar points together
+			\item Dis-similar points separated
+		\end{itemize}
+	\end{block}
+	
+	\vspace{10pt}\alert{Conflicting}
+	\begin{center}
+	\includegraphics[trim={100 650 30 120},clip,width=0.8\textwidth]{figures/conflictingReq.pdf}
+	\end{center}
+\end{frame}
+
+\begin{frame}{Different algorithms, different considerations}
+	Given $X \in \mb R^2$ and $k = 2$
+	\begin{center}
+	\begin{figure}
+	\includegraphics[trim={0 0 0 20},clip,width=0.4\textwidth]{figures/slX.png}
+	\includegraphics[trim={0 0 0 20},clip,width=0.4\textwidth]{figures/kmeansX.png}
+	\caption{Single-linkage on our example dataset (Left). $k$-means on our example dataset (Right)}
+	\end{figure}
+	\end{center}
+\end{frame}
+
+\begin{frame}{Model selection problem}
+	
+	Single-linkage\\
+	\begin{itemize}
+		\item Similar points together, dis-similar can end up together.
+	\end{itemize}
+	
+	\vspace{10pt}$k$-means\\
+	\begin{itemize}
+		\item Separate dissimilar points, similar can be separated. 
+	\end{itemize}
+	
+	 \vspace{20pt}\alert{How to prefer one choice over the other}?
+\end{frame}
+
+\againframe<3>{clusteringChallenges}
+
+\begin{frame}{Noise-robustness}
+	Real world data
+	\begin{itemize}
+		\vspace{10pt}\item Well-clustered subset
+		\vspace{5pt}\item Unstructured part
+	\end{itemize}
+	
+	\vspace{25pt}Can we develop \alert{efficient algorithms to detect the structure in the presence of noise}?
+\end{frame}
+
+\begin{frame}<1>{Outline}
+	First part
+	\vspace{10pt}\begin{block}{}
+	\mynum{2} Under-specificity \alert{and} \\\vspace{10pt}\mynum{1} Computational complexity
+	\end{block}
+		
+	\onslide<2>\vspace{35pt}Second part
+	\vspace{10pt}\begin{block}{}
+	\mynum{3} Noise-robustness \alert{and} \\\vspace{10pt}\mynum{1} Computational complexity
+	\end{block}		
+\end{frame}
+
+\begin{frame}{Dealing with under-specificity}
+
+	Incorporating domain knowledge into the clustering problem\\	
+	\begin{itemize}
+		\vspace{10pt} \item Must/cannot link constraints \alert{[Wagstaff et. al `01]}\\
+		\vspace{10pt} \item Demonstration-based clustering \alert{[Ashtiani, Ben-David `15]}\\
+		\vspace{10pt} \item Merge/split queries \alert{[Balcan, Blum `08]}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Our approach to tackling under-specificity}
+	
+
+    \vspace{20pt}Ask {\color{blue}same-cluster queries} to a $C^*$-oracle\\
+    $$C^*(x_1, x_2) = \left\{
+	\begin{array}{ll}
+		\mbox{true }  & \mbox{if } x_1 \overset{C^*}{\sim} x_2   \\
+		\mbox{false } & otherwise 
+	\end{array}
+\right. $$
+\end{frame}
+
+\begin{frame}{Center-based clustering with same-cluster queries}
+	\begin{itemize}
+		\item Joint work with Hassan Ashtiani and Shai Ben-David
+		\vspace{20pt} \item In proceedings of \alert{NeurIPS'16}.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Problem Setting}
+	Input: $X \subseteq \mb R^d$ and the number of clusters $k$.
+	\begin{itemize} 
+   		\vspace{10pt}\item Learner can make same-cluster queries to $C^*$-oracle
+		\vspace{10pt}\item Oracle's clustering is ``nice" - satisfies $\gamma$-margin niceness.  
+	\end{itemize}
+	\vspace{30pt} {\color{blue}Goal}: Recover the oracle's clustering $C^* = \{C_1^*, \ldots, C_k^*\}$
+\end{frame}
+
+\begin{frame}{$\gamma$-margin niceness}
+	Cluster-center is closer to its own points than to points outside.
+	\vspace{1cm}\begin{figure}        
+            \centering\includegraphics[trim= 400 470 400 150, scale=0.5]{figures/gammaMargin.pdf}
+    \end{figure} 
+    \begin{block}{}
+		For all $i$, for all $x \in C_i$ and for all $y \not\in C_i$
+		$$\gamma d(x, \mu_i) < d(y, \mu_i)$$	
+	\end{block}  
+\end{frame}
+
+\begin{frame}{Results}
+
+	\begin{block}{Positive result with queries}
+		\vspace{10pt}For $\gamma > 1$, our algorithm finds $C^*$ (with high probability) and 
+		\begin{itemize}
+		\vspace{10pt}\item Runs in $O(kn\log n)$ time.
+        \vspace{10pt}\item Makes $O(k^2\log k + k\log n)$ same-cluster queries.
+		\end{itemize}
+	\end{block}
+	
+	\vspace{20pt}Any target clustering $C^*$ as long the niceness conditions are satisfied. 
+\end{frame}
+
+\begin{frame}{$k$-means revisited}
+	Input: $X \subseteq \mb R^d$ and $k$.
+	\vspace{-10pt}$$C^* = \argmin_{C} \sum_{i=1}^k \sum_{x \in C_i} \|x - \mu_i\|^2$$
+	\vspace{10pt}Find $C^*$ given that it satisfies $\gamma$-margin.
+	
+	\vspace{20pt} {\color{blue}Can efficiently find the optimal using $O(k\log n)$ queries for $\gamma > 1$}
+	\begin{center}
+		\alert{BUT}
+	\end{center}	
+	\begin{block}{Theorem}
+	Euclidean $k$-means is NP-hard even when the optimal solution satisfies the $\gamma$-margin property for $\gamma < 1.84$
+	\end{block}
+	
+\end{frame}
+
+\begin{frame}{Hardness result}
+	\begin{itemize}
+		\item Reduction from exact cover by $3$-sets ($X3C$)
+		\item Hard for $k = \Theta(n^\epsilon)$ and $d = 2$.
+		\item Similar ideas as in \alert{[Vattani'09]}
+	\end{itemize}
+	
+	\begin{figure}
+		\centering
+		\includegraphics[trim=0 0 0 0,scale=0.5]{figures/hardnessFig.png}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{Key Takeaways}
+	
+	\begin{itemize}
+		\item Same-cluster queries tackle under-specificity.
+		\vspace{30pt}\item NP-Hard problem becomes {\color{blue}tractable with few queries}. 
+	\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Data de-duplication with same-cluster queries}
+	\begin{itemize}
+		\item Joint work with Shai Ben-David and Ihab Ilyas.
+		\vspace{20pt}\item Experiments and hashing based algorithms are joint work with Hemant Saxena.		
+		\vspace{20pt} \item In proceedings of \alert{AISTATS'19} and \alert{ICDE'19}.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{De-duplication}
+	\onslide<1->
+    Given a database $X$. \\
+
+    \vspace{10pt}\alert{Detect} records which correspond to the same real-world entity.
+    
+    \vspace{30pt}Output a clustering of $X$.
+\end{frame}
+
+\begin{frame}{Clustering for de-duplication}
+	Differences compared to standard formulations\\
+    \begin{itemize}
+    	\vspace{10pt}\item The number of clusters are given as input. \\
+    	For example: $k$-means, $k$-median etc.\\
+    	\vspace{10pt}\textcolor{blue}{$k$ is unknown.}
+	\end{itemize}    	
+\end{frame}
+
+\begin{frame}{Correlation clustering (CC) for de-duplication}
+	Input: $X$\\
+	Distance   : $d$ over $X^2$\\
+	\begin{itemize}
+		\item User designed (prior knowledge of domain) 
+		\item Learned from labelled data.
+	\end{itemize}
+	 
+	\vspace{20pt}Graph $G = (X, E)$. \\
+    \vspace{10pt}Find a clustering which minimizes
+    
+    \begin{center}
+    \textcolor{blue}{\# zero edges within a cluster + \# one edges\\ across different clusters}
+    \end{center}
+    
+\end{frame}
+
+\begin{frame}{Computational complexity of CC?}
+	NP-Hard \alert{[Bansal et. al' 04]}\\
+	
+	\vspace{30pt}Approximation results \alert{[Charikar et. al' 06]}.
+	\begin{itemize}
+		\vspace{10pt}\item Factor four approximation. 
+		\vspace{10pt}\item APX-Hard. 
+ 	\end{itemize}
+\end{frame}
+
+\begin{frame}{CC framework: Missing pieces}
+	Agnostic to some information ``stored" in the metric $d$ (or the edges $E$)
+    \begin{itemize}
+    	\vspace{10pt}\item If $E$ corresponds to a clustering, then finding that clustering is easy.\\
+    	\vspace{10pt}\item What if the optimal solution is `close to' $E$ ? 
+	\end{itemize}
+	
+	\onslide<2->
+	\vspace{20pt}Applicability of human supervision
+	\begin{itemize}
+    	\vspace{10pt}\item Given two records $r_1$ and $r_2$, do they correspond to the same or different real-world entity?.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Promise Correlation Clustering (PCC)}
+	\begin{block}{Input}
+		$G = (X, E)$
+	\end{block}
+	
+	\begin{block}{Find}
+	\vspace{-15pt}\begin{align*}
+	  &C^* = \argmin_{C \in \mc F} \enspace \text{correlation-loss}_{E}(C) \label{eqn:promiseCorrLoss}
+	\end{align*}
+	
+	\vspace{-10pt}\begin{itemize}
+		\item $\mc F$ is the set of all possible clusterings $C$ such that $m(C) \le M$.
+		\item $E$ is $(\alpha, \beta)$-informative
+	\end{itemize}		
+	\end{block}
+	
+	\begin{block}{$(\alpha, \beta)$-informative}
+		
+		\vspace{-10pt}\begin{align*}
+			&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[ d(x, y) > \lambda \enspace|\enspace C^*(x, y) = 1\big] \enspace \le \enspace \alpha \\
+			&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[C^*(x, y) = 1 \enspace|\enspace d(x, y) \le \lambda \big] \enspace \ge \enspace \beta 
+		\end{align*}
+	\end{block}	
+\end{frame}
+
+\begin{frame}{Informative metric}
+	\begin{block}{$(\alpha, \beta)$-informative for general metrics}		
+		\vspace{-10pt}\begin{align*}
+			&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[ d(x, y) > \lambda \enspace|\enspace C^*(x, y) = 1\big] \enspace \le \enspace \alpha \\
+			&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[C^*(x, y) = 1 \enspace|\enspace d(x, y) \le \lambda \big] \enspace \ge \enspace \beta 
+		\end{align*}
+	\end{block}	
+	
+	\begin{center}$\Downarrow$\end{center}
+	
+	\begin{block}{$(\alpha, \beta)$-informative for edges}		
+		\vspace{-10pt}\begin{align*}
+			&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[ \text{No edge between $x$ and $y$} \enspace|\enspace C^*(x, y) = 1\big] \enspace \le \enspace \alpha \\
+			&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[C^*(x, y) = 1 \enspace|\enspace \text{Edge between $x$ and $y$}  \big] \enspace \ge \enspace \beta 
+		\end{align*}
+	\end{block}	
+
+\end{frame}
+
+\begin{frame}{Goals}
+
+	\begin{itemize}
+		\item Analyse the computation complexity of PCC.
+		\vspace{30pt}\item In the presence of oracle, also analyse the query complexity.
+	\end{itemize}	 
+\end{frame}
+
+\begin{frame}{PCC is NP-Hard}
+	\begin{block}{Theorem}
+		Finding the optimal solution to the Promise Correlation Clustering problem is NP-Hard for all $M \ge 3$ and for $\alpha = 0$ and $\beta = \frac{1}{2}$.  
+	\end{block}
+	
+	\onslide<2->
+	\vspace{20pt}
+	\begin{itemize}
+		\item Reduction from Exact Cover by $3$-sets (X3C).\\
+		\vspace{10pt}\item Similar gadget as reduction of X3C to Partition into Triangles (PIT) problem.
+		\vspace{10pt}\item Using an optimization algorithm to solve the decision problem.  
+
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Hardness of PCC}
+	\begin{columns}
+		\begin{column}{0.48\textwidth}
+			\vspace{-40pt}\begin{figure}
+				\centering
+				\includegraphics[trim = 100 290 100 100, clip, width=6cm, height=4.5cm]{figures/deDuplication/pccHard.pdf}
+			\end{figure}
+		\end{column}
+
+		\begin{column}{0.48\textwidth}
+		    Part of graph $G$ constructed by local replacement for the subset $S_i =  \{x_{i1}, x_{i2}, x_{i3}\}$. Illustration for $M = 4$.
+		\end{column}
+	\end{columns}
+
+	
+	\vspace{20pt}\begin{itemize}
+		\item If $A$ outputs a clustering such that all clusters have size $M$ and no negative erros, then output YES.
+		\vspace{10pt}\item Else NO.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Goals}
+	Analyse the computation complexity of PCC.
+	\begin{itemize}
+		\vspace{10pt}\item NP-Hard.
+	\end{itemize}	 
+	\vspace{30pt}Analyse the computation complexity of PCC in the presence of an oracle.
+	\begin{itemize}
+		\vspace{10pt}\item Easy with $|X|^2$ queries.
+		\vspace{10pt}\item If $\alpha = 0$ then easy with $O(\beta|X|)$ queries.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Hardness of PCC in the presence of an oracle}
+	\begin{block}{Theorem}
+		Given that the Exponential Time Hypothesis (ETH) holds. Any algorithm for PCC that runs in polynomial time makes $\Omega(|X|)$ same-cluster queries for all $M \ge 3$ and for $\alpha = 0$ and $\beta = \frac{1}{2}$. 
+	\end{block}
+	\onslide<2->
+	\vspace{20pt}Strategy: Any algorithm for PCC takes $2^{\Omega(n)}$ time.
+	\begin{itemize}
+		\vspace{10pt}\item Any algorithm for X3C or equivalently 3DM takes $2^{\Omega(m)}$ time.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{3SAT to 3DM}
+	Classical constructions are `inefficient'.\\
+	\begin{itemize}
+	\vspace{10pt}\item \alert{[Johnson and Garey'79]} proof translates to $2^{\Omega(m^{0.25})}$ lower bound for 3DM.
+	\end{itemize}
+	\vspace{20pt}Ideas similar to \alert{[Charikar, Guruswami, Wirth'04]}.\\
+	\vspace{20pt}Linear reduction of independent interest.	
+\end{frame}
+
+\begin{frame}{Hardness: Linear reduction of 3SAT to 3DM}
+	\begin{columns}
+		\begin{column}{0.48\textwidth}
+			\vspace{-40pt}\begin{figure}
+				\centering
+				\includegraphics[trim = 120 500 300 120, clip, width=\linewidth]{figures/deDuplication/pccHardQuery.pdf}
+			\end{figure}
+		\end{column}
+
+		\begin{column}{0.48\textwidth}
+			\begin{itemize}
+				\item Literal $x_1$ is part of four different clauses.
+				\item $(a_i, b_i, c_i)$ capture truth assignment and $(b_i, c_i', a_{i+1})$ captures false assignment.
+				\item Hyper-edges containing $tf_i, tf_i'$ and $t_1, t_1'$ capture truth setting for the clause $C = \{x_1, x_2, x_3\}$.
+				
+			\end{itemize}
+		\end{column}
+	\end{columns}	
+	\begin{itemize}
+		\item $t_1, t_1'$ ensure that atleast one of the literals is true. 
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Goals}
+	Computation complexity of PCC.
+	\begin{itemize}
+		\vspace{10pt}\item NP-Hard.
+	\end{itemize}	 
+	\vspace{10pt}Computation complexity in the presence of an oracle.
+	\begin{itemize}
+		\vspace{10pt}\item Hard for $o(|X|)$ queries.
+	\end{itemize}
+
+    \Huge{
+    \begin{center}
+    	Disappointing !!\\
+    	\Frowny{} 
+   	\end{center}
+    }
+\end{frame}
+
+\begin{frame}{Circumventing the hardness?}
+	Possible approach
+	\begin{itemize}
+		\item Design efficient approximation algorithms.		
+	\end{itemize}
+	
+	\onslide<2->
+	\vspace{30pt}Our approach
+	\begin{itemize}
+		\vspace{5pt}\item Limit the search space of clusterings $\mc F$.
+		\vspace{5pt}\item Choose the best from a class of clusterings (or algorithms).
+		\vspace{5pt}\item Useful tool for practitioners. 
+	\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Restricted Correlation Clustering (RCC)}
+	\begin{block}{Input}
+		$(X, d)$, class of clusterings $\mc F$ and a $C^*$-oracle
+	\end{block}
+	
+	\vspace{10pt}\begin{block}{Find}
+		\vspace{-15pt}\begin{align*}
+		  &\hat C = \argmin_{C \in \mc F} \enspace \text{correlation-loss}_{C^*}(C)
+		\end{align*}	
+	\end{block}
+	
+	\begin{block}{where}
+		\vspace{-20pt}\begin{align*}
+			d \text{ is }(\alpha, \beta)\text{-informative}&\\
+			\text{correlation-loss}_{C^*}(C) &= \enspace  \mu \enspace \underset{(x, y) \sim P^+}{\mb P} \big[ C(x, y) = 0 ] \\
+			&+\enspace (1-\mu) \enspace \underset{(x, y) \sim P^-}{\mb P} \big[ C(x, y) = 1] 
+		\end{align*}
+	\end{block}	
+	$P^+$ is the uniform distribution over pairs where $C^*(x, y) = 1$
+\end{frame}
+
+\begin{frame}{Goal}
+Analyse
+	\begin{itemize}
+		\vspace{15pt}\item Computational complexity
+		\vspace{15pt}\item Query complexity
+		\vspace{20pt}\item $\mc F = \{T_1, \ldots, T_s\}$ as a running example.\\
+		\vspace{10pt}$T_i$ is a clustering tree.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Positive result}
+	\begin{block}{}
+		There exists sampling procedures $\mc P_0$ and $\mc P_1$ such that if an ERM algorithm receives $m_-$ and $m_+$ samples respectively where
+		\vspace{-10pt}\begin{align*}
+		  &m_-, m_+ \enspace \ge a\frac{\vcdim({\mc F}) + \log(\frac{3}{\delta})}{\epsilon^2} 
+		\end{align*}
+		then with probability atleast $1-\delta$, we have that $$L_{C^*}(\hat C) \enspace\le\enspace \min_{\mc C \in \mc F} L_{C^*}(C) + 3\alpha + \epsilon$$
+	\end{block}
+
+	\vspace{10pt}Computational and query complexity depends on
+	\begin{itemize}
+		\vspace{5pt}\item Time (and the number of queries) to  \alert{sample one point}. 
+		\vspace{5pt}\item $m_-$ and $m_+$ (or the \alert{$\vcdim(\mc F)$}). 
+	\end{itemize}		
+\end{frame}
+
+
+
+\begin{frame}{VC-Dimension of common classes}
+	\begin{block}{}
+		Let $\mc F = \{T_1, \ldots, T_s\}$ be a class of hierarchical clustering trees. Then 
+		$$\vcdim({\mc F}) \in o(\log^2 s) $$
+	\end{block}
+	
+	\begin{itemize}
+		\vspace{20pt}\item $\vcdim(T)$ is upper bounded by a constant.
+		\vspace{10pt}\item Using standard theorems that would imply $\vcdim(\mc F) \le O(s)$
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Key takeaways}
+	For common classes of clusterings, 
+	\begin{itemize}
+		\vspace{20pt}\item ERM-based approach can solve the RCC problem efficiently. 
+		\vspace{15pt}\item Time and query complexity of RCC depend on the richness of $\mc F$.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Experiments}
+	\begin{figure}
+	\includegraphics[trim=0 0 0 0,scale=0.35]{figures/deDuplication/experiments.png}
+	\caption{Evaluation of different algorithms on different datasets using our framework.}
+	\end{figure}
+\end{frame}
+
+\begin{frame}<2>{Outline}	
+	\onslide<1>End of first part
+	\vspace{10pt}\begin{block}{}
+	\mynum{2} Under-specificity \alert{and} \\\vspace{10pt}\mynum{1} Computational complexity
+	\end{block}
+		
+	\onslide<2>\vspace{35pt}Second part
+	\vspace{10pt}\begin{block}{}
+	\mynum{3} Noise-robustness \alert{and} \\\vspace{10pt}\mynum{1} Computational complexity
+	\end{block}		
+\end{frame}
+
+
+\begin{frame}{High-level problem definition}
+
+	Input: $(X, d)$
+	\vspace{20pt}
+	
+	Assuming the data consists of 
+	\begin{itemize}
+	\vspace{5pt} \item Structured subset $S$ - Has a ``nice'' clustering.  
+	\vspace{5pt} \item Unstructured complement $N = X \setminus S$
+	\end{itemize}
+
+	\vspace{20pt}
+	{\color{blue} Output} a partition $C=(C_1, \ldots C_k)$ of $X$.
+	\begin{itemize}
+		\vspace{5pt}\item $C|_{S} $ \emph{induces} a ``nice'' clustering of $S$. 
+	\end{itemize}
+
+	\vspace{20pt} Algorithm is robust to noise of type $N$.
+\end{frame}
+
+\begin{frame}{Clustering in the presence of sparse noise}
+	\begin{itemize}
+		\item Joint work with Samira Samadi and Shai Ben-David.
+		\vspace{20pt}\item In proceedings of \alert{ALT'16}. 
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Sparse noise}
+	\begin{itemize}
+		\item Noise doesn't pretend to be a cluster.
+		\vspace{20pt}\item Any ``small'' ball doesn't contain ``many'' noisy points.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Definitions}
+
+	Given $(X, d)$, a set $S \subseteq X$\\
+	\vspace{10pt}A clustering $\mc C = \{S_1, \ldots, S_k\}$ of the set $\mc S$ induced by centers $s_1, \ldots, s_k \in X$.
+
+	\vspace{10pt}\begin{block}{$(\alpha, \eta)$-center proximity}
+	\vspace{0.5cm} {\bf $\alpha$-center proximity}: For all $x \in S_i$ and $i\neq j$, $$\alpha d(x, s_i) < d(x, s_j)$$
+	{\bf $\eta$-sparse noise}: For any ball $B$, 
+	$$r(B)\leq \eta \thinspace r(\mc{C}) \implies |B\cap (\mc X\setminus \mc S)| < \frac{m(\mc C)}{2}$$
+	\end{block}
+\end{frame}
+
+
+\begin{frame}{Positive result}
+	\begin{block}{}
+		We construct in polynomial time a clustering tree $T$ such that for all $k$, for all $S \subseteq X$ and for all $k$-clusterings $C_S$, if 
+	  	\begin{itemize}
+	  		\item $C_S$ satisfies \alert{$(2+\sqrt{7}, 1)$}-center proximity
+	  		\item Runs in time $O(|X|^3)$.
+	  	\end{itemize}
+	  	then $T$ captures $C_S$.
+  	\end{block}
+  	
+	\begin{figure}
+	  \includegraphics[trim = 0 0 0 200, scale=0.4]{figures/clusteringNoise/hier.pdf}
+	\end{figure}	  	
+\end{frame}
+
+\begin{frame}{Negative results}
+	\begin{block}{}
+  \begin{itemize}
+  	\vspace{10pt}\item For \alert{$\alpha < 2 +\sqrt{3}\approx 4.4$} and $\eta \le 1$ there does not exist a tree which can capture all $(\alpha, \eta)$-proximal clusterings. 
+	\vspace{20pt}\item For \alert{$\alpha < 2\sqrt{2} + 3 \approx 5.8$} and adversarial noise there does not exist a tree which can capture all $\alpha$-proximal clusterings if the number of noisy points exceed $\frac{3m(C_S)}{2}$. 
+	\end{itemize}	 
+	\end{block}
+\end{frame}
+
+\begin{frame}{Key Takeaways}
+	\begin{itemize}
+		\item Notion of sparse noise to handle background noise.
+		\vspace{25pt}\item Efficient hierarchical algorithm that captures {\color{blue}all nice} solutions.
+		\vspace{25pt}\item Positive result {\color{blue}independent} of the number of noisy points.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Noise-robust clustering objectives}
+	\begin{itemize}
+		\item Joint work with Yaoliang Yu and Shai Ben-David.
+		\vspace{25pt}\item Available on \alert{arxiv'17}. 
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Summary}
+	\begin{block}{$\lambda$-regularized paradigm}
+		$$\sum_{i =1}^k\enspace\sum_{x \in C_i} \|x - \mu_i\|^2 \enspace+\enspace \textcolor{red}{\lambda |C_{k+1}|}$$
+	\end{block}
+	
+	\begin{center}$\Downarrow$\end{center}
+	
+	\begin{block}{}
+		\begin{center}SDP Relaxation\end{center}
+	\end{block}
+	
+	\begin{center}$\Downarrow$\end{center}
+	
+	\begin{block}{}
+		SDP Relaxation is tight under the \alert{`noisy' stochastic ball} model.
+	\end{block}
+		
+\end{frame}
+
+\begin{frame}
+    \Huge{\centerline{Thank You!}}
+\end{frame}
+
+%----------------------------------------
+%        Figure Samples
+%----------------------------------------
+
+% All of the following is optional and typically not needed. 
+\appendix
+\section<presentation>*{\appendixname}
+\subsection<presentation>*{For Further Reading}
+
+
+
+\end{document}
+
+
+
