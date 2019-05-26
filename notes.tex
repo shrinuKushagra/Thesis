@@ -158,8 +158,7 @@ Definition of structure or clusterability conditions.
 		 
 		 \item $\epsilon$-separatedness\\
 		 $Cost(OPT(k)) \le \epsilon^2 Cost(OPT(k-1))$. Variant of $k$-means finds a $(1+\epsilon)$-approximation with high probability in time $O(nk+k^3)$. \\
-		 For $k=2$, algorithm succeeds with probability $1-\frac{20\epsilon^2}{\sqrt{(1-\epsilon^2)(1-101\epsilon^2)}}$. This implies average radius much smaller than separation.
-		 $r_i < \frac{\epsilon}{\sqrt{1-\epsilon^2}} d(c_i, c_j)$.  
+		 For $k=2$, algorithm succeeds with probability $(1-\rho)(1-\epsilon^2)(1-2\epsilon\sqrt\frac{\rho}{(1-\rho)(1-\epsilon^2)}$ where $\rho = \frac{100\epsilon^2}{1-\epsilon^2}$. Also, $r_i < \frac{\epsilon}{\sqrt{1-\epsilon^2}} d(c_i, c_j)$.  Hence, for reasonable success guarentees we need that $\epsilon^2 < \frac{1}{200}$ or $14 r_i < d(c_i, c_j)$ where $r_i$ is the average radius of a cluster.
 	\end{itemize}
 
 \subsection*{Slide 14}
