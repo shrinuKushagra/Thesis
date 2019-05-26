@@ -15,6 +15,7 @@
 \usepackage{graphicx}
 \usepackage{marvosym}
 \usepackage{tikz}
+\usepackage{multirow}
 \setbeamertemplate{items}[circle]
 \setbeamercovered{transparent}
 
@@ -76,11 +77,12 @@ University of Waterloo
 		\onslide<1> \item Computational complexity
 			\begin{itemize}
 				\vspace{10pt}\item Optimization problem 
-				\vspace{10pt}\item NP-Hard for common functions like $k$-means, $k$-median.
+				\vspace{10pt}\item \hyperlink{notesIntroduction}{NP-Hard for common functions like $k$-means, $k$-median.}
 			\end{itemize}
 		\onslide<2> \vspace{20pt}\item  Under-specificity
 		\onslide<3>\vspace{20pt}\item Noise robustness
 	\end{enumerate}
+
 \end{frame}
 
 
@@ -114,17 +116,13 @@ University of Waterloo
 
 \begin{frame}{Model selection problem}
 	
-	Single-linkage\\
+	 Under-specificity\\
 	\begin{itemize}
-		\item Similar points together, dis-similar can end up together.
+		\vspace{10pt}\item Basic definition \alert{can't} resolve this conflict.
+		\vspace{10pt}\item Other requirements: Balance amongst cluster sizes etc. 
 	\end{itemize}
 	
-	\vspace{10pt}$k$-means\\
-	\begin{itemize}
-		\item Separate dissimilar points, similar can be separated. 
-	\end{itemize}
-	
-	 \vspace{20pt}\alert{How to prefer one choice over the other}?
+	\vspace{20pt}\textcolor{blue}{How to prefer one choice over the other}?
 \end{frame}
 
 \againframe<3>{clusteringChallenges}
@@ -151,9 +149,9 @@ University of Waterloo
 	\end{block}		
 \end{frame}
 
-\begin{frame}{Dealing with under-specificity}
+\begin{frame}[label=underspecificityRelated]{Dealing with under-specificity}
 
-	Incorporating domain knowledge into the clustering problem\\	
+	\hyperlink{notesUnderspecificityRelated}{Incorporating domain knowledge into the clustering problem}\\	
 	\begin{itemize}
 		\vspace{10pt} \item Must/cannot link constraints \alert{[Wagstaff et. al `01]}\\
 		\vspace{10pt} \item Demonstration-based clustering \alert{[Ashtiani, Ben-David `15]}\\
@@ -184,13 +182,13 @@ University of Waterloo
 	Input: $X \subseteq \mb R^d$ and the number of clusters $k$.
 	\begin{itemize} 
    		\vspace{10pt}\item Learner can make same-cluster queries to $C^*$-oracle
-		\vspace{10pt}\item Oracle's clustering is ``nice" - satisfies $\gamma$-margin niceness.  
+		\vspace{10pt}\item Oracle's clustering is ``nice"
 	\end{itemize}
 	\vspace{30pt} {\color{blue}Goal}: Recover the oracle's clustering $C^* = \{C_1^*, \ldots, C_k^*\}$
 \end{frame}
 
-\begin{frame}{$\gamma$-margin niceness}
-	Cluster-center is closer to its own points than to points outside.
+\begin{frame}[label=gammaMargin]{$\gamma$-margin niceness}
+	\hyperlink{resultsGammaMargin}{Cluster-center is closer to its own points than to points outside}.
 	\vspace{1cm}\begin{figure}        
             \centering\includegraphics[trim= 400 470 400 150, scale=0.5]{figures/gammaMargin.pdf}
     \end{figure} 
@@ -200,9 +198,9 @@ University of Waterloo
 	\end{block}  
 \end{frame}
 
-\begin{frame}{Results}
+\begin{frame}[label=queryPositive]{Results}
 
-	\begin{block}{Positive result with queries}
+	\begin{block}{\hyperlink{resultQueryPositive}{Positive} result with queries}
 		\vspace{10pt}For $\gamma > 1$, our algorithm finds $C^*$ (with high probability) and 
 		\begin{itemize}
 		\vspace{10pt}\item Runs in $O(kn\log n)$ time.
@@ -228,9 +226,9 @@ University of Waterloo
 	
 \end{frame}
 
-\begin{frame}{Hardness result}
+\begin{frame}[label=queryNegative]{Hardness result}
 	\begin{itemize}
-		\item Reduction from exact cover by $3$-sets ($X3C$)
+		\item \hyperlink{resultQueryNegative}{Reduction from exact cover by $3$-sets ($X3C$)}
 		\item Hard for $k = \Theta(n^\epsilon)$ and $d = 2$.
 		\item Similar ideas as in \alert{[Vattani'09]}
 	\end{itemize}
@@ -241,10 +239,10 @@ University of Waterloo
 	\end{figure}
 \end{frame}
 
-\begin{frame}{Key Takeaways}
+\begin{frame}[label=queryTakeaways]{Key Takeaways}
 	
 	\begin{itemize}
-		\item Same-cluster queries tackle under-specificity.
+		\item \hyperlink{notesQueryTakeaways}{Same-cluster queries} tackle under-specificity.
 		\vspace{30pt}\item NP-Hard problem becomes {\color{blue}tractable with few queries}. 
 	\end{itemize}
 \end{frame}
@@ -276,11 +274,11 @@ University of Waterloo
 	\end{itemize}    	
 \end{frame}
 
-\begin{frame}{Correlation clustering (CC) for de-duplication}
+\begin{frame}[label=CC]{Correlation clustering (CC) for de-duplication}
 	Input: $X$\\
 	Distance   : $d$ over $X^2$\\
 	\begin{itemize}
-		\item User designed (prior knowledge of domain) 
+		\item \hyperlink{notesCC}{User designed} (prior knowledge of domain) 
 		\item Learned from labelled data.
 	\end{itemize}
 	 
@@ -293,8 +291,8 @@ University of Waterloo
     
 \end{frame}
 
-\begin{frame}{Computational complexity of CC?}
-	NP-Hard \alert{[Bansal et. al' 04]}\\
+\begin{frame}[label=CCHardness]{Computational complexity of CC?}
+	\hyperlink{notesCCHardness}{NP-Hard \alert{[Bansal et. al' 04]}}\\
 	
 	\vspace{30pt}Approximation results \alert{[Charikar et. al' 06]}.
 	\begin{itemize}
@@ -303,8 +301,8 @@ University of Waterloo
  	\end{itemize}
 \end{frame}
 
-\begin{frame}{CC framework: Missing pieces}
-	Agnostic to some information ``stored" in the metric $d$ (or the edges $E$)
+\begin{frame}[label=CCFramework]{CC framework: Missing pieces}
+	\hyperlink{CCThoughts}{Agnostic to some information ``stored" in the metric} $d$ (or the edges $E$)
     \begin{itemize}
     	\vspace{10pt}\item If $E$ corresponds to a clustering, then finding that clustering is easy.\\
     	\vspace{10pt}\item What if the optimal solution is `close to' $E$ ? 
@@ -342,8 +340,8 @@ University of Waterloo
 	\end{block}	
 \end{frame}
 
-\begin{frame}{Informative metric}
-	\begin{block}{$(\alpha, \beta)$-informative for general metrics}		
+\begin{frame}[label=informativeMetric]{Informative metric}
+	\begin{block}{$(\alpha, \beta)$-\hyperlink{notesInformativeMetric}{informative for general} metrics}		
 		\vspace{-10pt}\begin{align*}
 			&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[ d(x, y) > \lambda \enspace|\enspace C^*(x, y) = 1\big] \enspace \le \enspace \alpha \\
 			&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[C^*(x, y) = 1 \enspace|\enspace d(x, y) \le \lambda \big] \enspace \ge \enspace \beta 
@@ -494,9 +492,9 @@ University of Waterloo
 \end{frame}
 
 
-\begin{frame}{Restricted Correlation Clustering (RCC)}
+\begin{frame}[label=RCC]{Restricted Correlation Clustering (RCC)}
 	\begin{block}{Input}
-		$(X, d)$, class of clusterings $\mc F$ and a $C^*$-oracle
+		$(X, d)$, \hyperlink{RCCVariations}{class of clusterings} $\mc F$ and a $C^*$-oracle
 	\end{block}
 	
 	\vspace{10pt}\begin{block}{Find}
@@ -525,9 +523,9 @@ Analyse
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Positive result}
+\begin{frame}[label=RCCPositive]{Positive result}
 	\begin{block}{}
-		There exists sampling procedures $\mc P_0$ and $\mc P_1$ such that if an ERM algorithm receives $m_-$ and $m_+$ samples respectively where
+		There exists sampling procedures \hyperlink{detailsRCCNegative}{$\mc P_0$} and \hyperlink{detailsRCCPositive}{$\mc P_1$} such that if an ERM algorithm receives $m_-$ and $m_+$ samples respectively where
 		\vspace{-10pt}\begin{align*}
 		  &m_-, m_+ \enspace \ge a\frac{\vcdim({\mc F}) + \log(\frac{3}{\delta})}{\epsilon^2} 
 		\end{align*}
@@ -543,9 +541,9 @@ Analyse
 
 
 
-\begin{frame}{VC-Dimension of common classes}
+\begin{frame}[label=RCCVCDim]{VC-Dimension of common classes}
 	\begin{block}{}
-		Let $\mc F = \{T_1, \ldots, T_s\}$ be a class of hierarchical clustering trees. Then 
+		Let \hyperlink{detailsRCCVCDim}{$\mc F = \{T_1, \ldots, T_s\}$} be a class of hierarchical clustering trees. Then 
 		$$\vcdim({\mc F}) \in o(\log^2 s) $$
 	\end{block}
 	
@@ -555,18 +553,18 @@ Analyse
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Key takeaways}
-	For common classes of clusterings, 
+\begin{frame}[label=CCTakeaways]{Key takeaways}
+	\hyperlink{notesCCTakeaways}{For common classes of} clusterings, 
 	\begin{itemize}
 		\vspace{20pt}\item ERM-based approach can solve the RCC problem efficiently. 
 		\vspace{15pt}\item Time and query complexity of RCC depend on the richness of $\mc F$.
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Experiments}
+\begin{frame}[label=RCCExperiments]{Experiments}
 	\begin{figure}
-	\includegraphics[trim=0 0 0 0,scale=0.35]{figures/deDuplication/experiments.png}
-	\caption{Evaluation of different algorithms on different datasets using our framework.}
+	\includegraphics[trim=0 0 0 0,scale=0.35]{figures/deDuplication/experimentsMain.png}
+	\caption{\hyperlink{detailsRCCExperiments}{Evaluation of different algorithms on different datasets} using our framework.}
 	\end{figure}
 \end{frame}
 
@@ -583,14 +581,14 @@ Analyse
 \end{frame}
 
 
-\begin{frame}{High-level problem definition}
+\begin{frame}[label=noiseFramework]{High-level problem definition}
 
 	Input: $(X, d)$
 	\vspace{20pt}
 	
 	Assuming the data consists of 
 	\begin{itemize}
-	\vspace{5pt} \item Structured subset $S$ - Has a ``nice'' clustering.  
+	\vspace{5pt} \item \hyperlink{notesClusterability}{Structured subset $S$ - Has a ``nice''} clustering.  
 	\vspace{5pt} \item Unstructured complement $N = X \setminus S$
 	\end{itemize}
 
@@ -630,9 +628,9 @@ Analyse
 \end{frame}
 
 
-\begin{frame}{Positive result}
+\begin{frame}[label=positiveSarseNoise]{Positive result}
 	\begin{block}{}
-		We construct in polynomial time a clustering tree $T$ such that for all $k$, for all $S \subseteq X$ and for all $k$-clusterings $C_S$, if 
+		We \hyperlink{detailsPositiveSparseNoise}{construct in polynomial time a clustering} tree $T$ such that for all $k$, for all $S \subseteq X$ and for all $k$-clusterings $C_S$, if 
 	  	\begin{itemize}
 	  		\item $C_S$ satisfies \alert{$(2+\sqrt{7}, 1)$}-center proximity
 	  		\item Runs in time $O(|X|^3)$.
@@ -645,10 +643,10 @@ Analyse
 	\end{figure}	  	
 \end{frame}
 
-\begin{frame}{Negative results}
+\begin{frame}[label=negativeSparseNoise]{Negative results}
 	\begin{block}{}
   \begin{itemize}
-  	\vspace{10pt}\item For \alert{$\alpha < 2 +\sqrt{3}\approx 4.4$} and $\eta \le 1$ there does not exist a tree which can capture all $(\alpha, \eta)$-proximal clusterings. 
+  	\vspace{10pt}\item \hyperlink{detailsNegativeSparseNoise}{For \alert{$\alpha < 2 +\sqrt{3}\approx 4.4$} and $\eta \le 1$ there does not exist a }tree which can capture all $(\alpha, \eta)$-proximal clusterings. 
 	\vspace{20pt}\item For \alert{$\alpha < 2\sqrt{2} + 3 \approx 5.8$} and adversarial noise there does not exist a tree which can capture all $\alpha$-proximal clusterings if the number of noisy points exceed $\frac{3m(C_S)}{2}$. 
 	\end{itemize}	 
 	\end{block}
@@ -669,8 +667,8 @@ Analyse
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Summary}
-	\begin{block}{$\lambda$-regularized paradigm}
+\begin{frame}[label=optimizationNoise]{Summary}
+	\begin{block}{\hyperlink{detailsOptimizationNoise}{$\lambda$-regularized paradigm}}
 		$$\sum_{i =1}^k\enspace\sum_{x \in C_i} \|x - \mu_i\|^2 \enspace+\enspace \textcolor{red}{\lambda |C_{k+1}|}$$
 	\end{block}
 	
@@ -696,12 +694,471 @@ Analyse
 %        Figure Samples
 %----------------------------------------
 
-% All of the following is optional and typically not needed. 
-\appendix
-\section<presentation>*{\appendixname}
-\subsection<presentation>*{For Further Reading}
+
+\begin{frame}[label=notesIntroduction]{Notes: Introduction}
+\hyperlink{clusteringChallenges}{$k$-means}
+\begin{itemize}
+  \item NP-Hard for $k = 2$ and $d = n$. $[$Dasgupta' 08$]$
+  \item NP-Hard for $k = n^{\epsilon}$ and $d = 2$. $[$Vattani' 09$]$
+  \item NP-Hard to approximate within $(1+\epsilon)$
+\end{itemize}
+$k$-median \{centers in metric space (84) and remaining from data.\}
+\begin{itemize}
+	\item NP-Hard for $k=\Omega(n)$ and $d=2$ $[$Megiddot and Supowit '84$]$.
+	\item $(3+\epsilon)$-approximation $[$Arya et. al'01$]$
+	\item $(1+\sqrt3 + \epsilon)$-approximation $[$Li and Svensson '12$]$
+\end{itemize}
+$k$-center (maximum of $l1$ distances)
+\begin{itemize}
+	\item NP-Hard to approximate within constant $[$Megiddot and Supowit '84$]$ for $k=\Omega(n)$ and $d=2$
+\end{itemize}
+\end{frame}
+
+\begin{frame}[label=notesUnderspecificityRelated]{Notes: Under-specificity related work}
+\hyperlink{underspecificityRelated}{Incoporating domain knowledge}
+\begin{itemize}
+  \item $[$Wagstaff et. al '01$]$\\
+  Must/cannot link constraints are provided as input.\\ 
+  Constrained k-means - Each point is assigned to the closest center such that the constraints are satisfied. 
+  \item $[$Ashitiani, Ben-David '15$]$\\
+  Cluster a small subset and learn a consistent model.\\
+  Mapping under which $k$-means is close to the target clustering.\\
+  Sample complexity analysis.
+  \item $[$Balcan, Blum '08$]$\\
+  Merge-split queries.\\
+  Given a class $C$ of clusters, recover the target clustering.\\
+  A generic but inefficient procedure which makes $O(k^3 \log |C|)$ queries.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[label=notesMergeSplitQueryRelated]{Notes: Merge-Split query related work}
+\hyperlink{underspecificityRelated}{[Awasthi, Balcan, Voevodski '17]}
+\begin{itemize}
+  \item Clustering recovery by making  atmost $O(\delta)$ merge-split queries where $\delta$ is the error of initial clustering. 
+  \item Over-clustering and under-clustering errors are upper bounded by $k^2$.
+  \item For CC, if the initial clustering has error $\delta$ (number of incorrect edges $O(n)$) - Recovers by making atmost $\delta$ queries.
+  \end{itemize}
+\hyperlink{underspecificityRelated}{[Balcan et. al '18]}
+\begin{itemize}
+  \item Finite set $P$ of clustering instances and a distribution $D$ over them. Any algorithm $h$ on a clustering instance $X$ incurs a cost given by $cost(h, X)$. The goal is to find algorithm $h'$ such that
+$$E [ cost(h',  X) ]    -   min_{h \in H}   E [cost(h, X)]   < \epsilon$$
+\item If $P$ is just one instance then we should see all the labels. In this case, their `learning' algorithm is actually solving a computational problem of how to approximately (and efficiently) find the best algorithm.  
+\end{itemize}
+\end{frame}
+
+\begin{frame}[label=resultsGammaMargin]{Results: Gamma Margin}
+  \hyperlink{gammaMargin}{Given}: $X$ and $k$\\
+  \vspace{10pt}Optimal solution to the desired objective function satisfies $\gamma$-margin.
+
+	\begin{table}[]
+	\centering
+	%\caption{My caption}
+	\label{my-label}
+	\begin{tabular}{lll|lll|}
+	& $k$-means &  &  &    & \begin{tabular}[c]{@{}l@{}}Poly-time solvable for $\gamma \ge 3$\\ NP-Hard for $\gamma < 3$\end{tabular} \\\\
+	\hline\\
+	& $k$-median &  &  &  & \begin{tabular}[c]{@{}l@{}}Poly-time solvable for $\gamma \ge 2$\\ NP-Hard for $\gamma < 2$\end{tabular}
+	\end{tabular}
+	\end{table}
+	
+	\begin{itemize}
+		\item $\gamma \ge 3$ - Single-linkage
+		\item $\gamma < 3$ - Max-$k$-coverage problem
+		\item $\gamma \ge 2$ - Hierarchical approach where distance between two clusters is radius of smallest ball containing them.
+		\item $\gamma < 2$ - Perfect dominating set promise problem.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[label=resultQueryPositive]{Positive result: Same-cluster query}
+
+	\begin{block}{\hyperlink{queryPositive}{The algorithm}}
+	1. Estimate center
+	\begin{itemize}
+		\item Query uniformly till we have ``enough'' points from one cluster
+    \end{itemize}  
+	2. Compute radius
+	\begin{itemize}
+	  \item Binary search to find the ``radius"
+    \end{itemize}  	
+	3. Delete and repeat
+  \end{block}
+  Proof
+  \begin{itemize}
+	\item If $d(\mu, \mu') \le \epsilon$ and $\gamma > 1 + 2\epsilon$, then $d(x, \mu') < d(y, \mu')$. Hence, there is a separation even w.r.t to the center $\mu'$.
+
+	\item Concentration inequality in high dimensions. Namely, if $n > c\frac{\log (1/\delta)}{\epsilon^2}$ then $\|\mu - \frac{1}{n}\sum X_i\|^2 \le R^2 \epsilon$ 
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[label=resultQueryNegative]{Hardness result: Same-cluster query}
+\hyperlink{queryNegative}{Proof ideas}
+\begin{itemize}
+\item Any clustering of $X$ which costs $\le L$ has the following property. \item Atleast $m$ of rows $R_i$ are be grouped in a $A$-type clustering and the rest are grouped in $B$-type clustering. 
+\item The rows of $G_i$ are singletons. 
+\item And the points in $Z_i$ are added to clusters which are good for it (increase the cost by $\frac{2}{\sqrt{3}}h$. 
+\item Other clusterings have cost atleast $L + \frac{w}{3}$. 
+\item If $S_i = (s_{i1}, s_{i2}, s_{i3})$ is included in the exact cover then the row $R_i$ should be grouped in a $A$-type clustering. 
+\item Then $x'_{ij}$ location will force all other dash locations to be in $B$-type clusterings (as the up ones will have to go `up' and the down ones will have to go down). 
+\item Since there are $3m$ variables they will have exactly $m$ rows in $A$-type clustering.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[label=notesQueryTakeaways]{Notes: Same-cluster queries}
+	\hyperlink{queryTakeaways}{Other avenues}
+	\begin{itemize}
+		\item Approximate $k$-means clustering
+		\item $k$-median and $k$-center clustering under same-cluster queries.
+		\item Clustering with noisy oracles.
+		\item Queries in mixture models.
+		\item Correlation clustering.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Notes: Same-cluster queries}
+	\hyperlink{queryTakeaways}{Semi-supervised learning}
+	\begin{itemize}
+		\item Generative models
+		\item Supervised-SVM
+		\item Mincut
+		\item Harmonic functions
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[label=notesCC]{Notes: Correlation Clustering}
+	\hyperlink{CC}{Designing a distance} metric
+	\begin{itemize}
+		\item Character-based: Edit distance and its many variants.
+		\item Token-based: Word representations. Word2vec or tf-idf measures.
+		\item Phonetic-based: Soundex, NYSIIS. Replace similar sounding constants with numbers or letters.
+		\item Numerical
+	\end{itemize}
+	Learning a distance metric.
+	\begin{itemize}
+		\item Learning the weights of (distance functions across) different fields.
+		\item Learning a classifier over pairs. (Can view as a $\{0, 1\}$ distance function.)
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[label=notesCCHardness]{Notes: Hardness of Correlation Clustering}
+	\begin{itemize}
+	\item $[$Bansal et al., 2004$]$\\
+	\hyperlink{CCHardness}{Constant} factor approximation. Constant is huge. 
+	\item $[$Demaine et al., 2006$]$\\
+	$4\log_2 n$-approximation. $O(\log_2 n)$ approximation to weighted CC.\\
+	APX-Hard for general weighted or unweighted graphs.
+	\item $[$Charikar et al., 2005$]$\\
+	Factor $4$ approximation to the minimization problem.\\
+	Also, proved that the problem is APX-Hard. 
+	\item $[$Giotis and Guruswami, 2006$]$\\
+	PTAS when $k$ is known. Running time is $n^{O(\frac{9^k}{\epsilon^2})}\log n$.	
+	\item $[$Ailon et al., 2018$]$\\
+	Algorithm makes $O(\frac{k^{14} \log k\log n}{\epsilon^6})$ queries  and finds a $(1+\epsilon)$-approx. \\
+	$(1+\epsilon)$-approximation makes $\Omega(\frac{k}{poly(\log k)})$ queries. 
+\end{itemize}
+\end{frame}
+
+\begin{frame}[label=RCCVariations]{RCC Variations}
+	\hyperlink{RCC}{Input}: $X$\\
+	Distance: $d$ over $X^2$.\\
+	A class of clusterings: $\mc F$\\
+	
+	Construct $G = (X, E)$, 
+	
+	\vspace{10pt}Output: 
+	\vspace{-10pt}\begin{align*}
+	  &\hat C = \argmin_{C \in \mc F} \enspace \text{correlation-loss}_{E}(C)
+	\end{align*}
+	Iterate over clusterings in $\mc F$		
+	\begin{itemize}
+		\item Bottom-up traversal when $\mc F = \{T_1, \ldots, T_s\}$.
+	\end{itemize}
+	Choose the one with smallest loss.
+\end{frame}
+
+\begin{frame}[label=CCThoughts]{Thoughts on different variations of CC}
+	\hyperlink{CCFramework}{Solving $L_E(C)$ does not help} us solve $L_{C^*}(C)$\\
+	$\alpha = 0$ and $\beta = \frac{1}{2}$. In this case, all the negative edges are correct and half of the positive edges are correct.\\
+	Graph can be decomposed into cycles of length four.\\
+	For every solution to $L_E(C)$ there exists a $C^*$ such that $L_{C^*}(C)$ is `bad'. 
+\begin{table}[!ht]
+\centering
+\def\arraystretch{1.5}
+\begin{tabular}{c|c}
+	All possible clusterings & Restricted to $F$\\
+	\hline
+	Find $C^* = \text{argmin } L_{C^*}(C)$ & $\hat C = \text{argmin } L_{C^*}(C)$ \\
+	vaccous equivalent to ``Find $C^*$ & \\
+	\hline 
+	Find $C^* = \text{argmin } L_{E}(C)$ & $\hat C = \text{argmin } L_{E}(C)$\\
+	optimal solution is the desired clustering.\\
+	\hline
+\end{tabular}
+\end{table}
+\end{frame}
+
+\begin{frame}[label=notesInformativeMetric]{Notes: Informative metric}
+	\begin{table}[!ht]
+\centering
+\def\arraystretch{1.5}
+\begin{tabular}{c|c|c|c}
+	& \multirow{2}{2cm}{\hyperlink{informativeMetric}{Condition positive}} & \multirow{ 2}{1cm}{Condition negative}&\\
+	&&&\\
+	Predicted positive &tp &fp & \multirow{2}{3cm}{$precision = \frac{tp}{tp+fp}$}\\
+	predicted negative &fn & tn\\
+	\hline
+	& $recall = \frac{tp}{tp+fn}$& $specificity = \frac{fp}{fp+tn}$ &
+\end{tabular}
+\caption{Precision and recall table}
+\end{table}
+\noindent $(\alpha, \beta)$-informative says that the edges $E$ and $C^*$ have high precision and recall w.r.t each other.  
+\end{frame}
+
+\begin{frame}[label=notesCCTakeaways]{Notes: CC Takeaways}
+	\begin{itemize}
+	\item $[$Claire Mathieu and Warren Schudy, 2010$]$ \\
+	Correlation clustering under a semi-random model. \\
+	A planted clustering and edges flipped independently with probability $p$. \\
+	On complete graphs finds a clustering of cost $1+O(n^{-\frac{1}{6}})$ times the optimal. 
+	\item $[$Mazumdar and Saha '17$]$\\
+	Recover all clusters of size $\min\{k, \sqrt n\}\log n$\\
+	Relation to noisy oracles.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[label=detailsRCCNegative]{$\mc P_0$: Sampling negative pairs}
+	
+	\vspace{10pt}\textcolor{blue}{\hyperlink{RCCPositive}{Basic Idea}}\\
+	Sample (with rejection) uniformly at random from $X^2$. 
+	
+	\vspace{20pt}\begin{block}{Results}
+		\begin{itemize}
+			\vspace{5pt}\item Samples a pair according to $P^-$ in $O(1)$ expected time.
+			\vspace{10pt}\item Makes $\frac{1}{1-\gamma}$ queries to the oracle in expectation. 
+		\end{itemize}			
+	\end{block}
+	
+	
+\end{frame}
+
+\begin{frame}[label=detailsRCCPositive]{$\mc P_1$: Sampling positive pairs}
+	
+	\vspace{20pt}\textcolor{blue}{\hyperlink{RCCPositive}{Basic Idea}}\\
+	Sample (with rejection) uniformly at random from the set of `close' points. $K = \{(x, y): d(x, y) \le \lambda\}$. 
+
+	\vspace{10pt}\begin{block}{Results}
+		\begin{itemize}
+			\vspace{5pt}\item Samples a pair according to $T$ which $2\alpha$-approximates $P^+$.
+			$$\Big|\underset{(x, y) \sim P^+}{\mb P}\enspace \big[ h(x, y) = 0 ] - \underset{(x, y) \sim T}{\mb P}\enspace \big[ h(x, y) = 0 ]\Big|  \enspace \le \enspace 2\alpha.$$ 
+			\vspace{5pt}\item Makes $\frac{1}{\beta}$ queries to the oracle in expectation. 
+		\end{itemize}			
+	\end{block}
+\end{frame}
+
+\begin{frame}[label=detailsRCCPositiveLSH]{$\mc P_1$: Faster sampling LSH-able metrics}
+		\vspace{20pt}\alert{$\Theta(n^2)$} time to construct set $K$.	
+
+	\vspace{20pt}Use an \hyperlink{RCCPositive}{LSH scheme to `approximately construct' $K$}.
+ 	\begin{itemize}
+		\vspace{5pt}\item Obtain $s$ different partitions of $X$.
+		$$ B := \{P_1, \ldots, P_s\} = \{B_{ij} : 1\le i\le s, 1\le j \le |P_i|\}$$
+	\end{itemize}	
+\end{frame}
 
 
+\begin{frame}{$\mc P_1$ results for LSH-able metrics}
+	\textcolor{blue}{Basic Idea}\\
+	\hyperlink{RCCPositive}{Sample (with three-step rejection) uniformly} at random from $B$.
+	\begin{itemize}
+		\vspace{5pt}\item Reject with probability $= 1 - \frac{1}{\text{ \#blocks in which the pair occur together}}$
+		\vspace{5pt}\item Reject based on distance and then the oracle.
+	\end{itemize} 
+	
+	\begin{block}{Results}
+		\begin{itemize}
+			\item $T$ which approximates $P^+$ (with high probability).
+			\begin{align*}
+  &\Big|\underset{(x, y) \sim P^+}{\mb P} \big[ C(x, y) = 0 ] -\underset{(x, y) \sim T}{\mb P} \big[ C(x, y) = 0 ] \Big| \le 2\alpha + \zeta  + \nu
+  			\end{align*} 
+			$\zeta$ depends on hashing and $\nu$ controls the success probability. 
+			\vspace{10pt}\item Makes $O(\frac{1}{\beta})$ queries to the oracle in expectation. 
+		\end{itemize}			
+	\end{block}
+\end{frame}
+
+\begin{frame}[label=detailsPositiveSparseNoise]{Clustering under $(\alpha, \eta)$-center proximity}
+	\begin{block}{The algorithm}
+	  \vspace{10pt}\hyperlink{positiveSparseNoise}{Input: $(X, d)$ and a parameter} $t$.\\
+
+	  \vspace{20pt}For all pairs $p, q$ in increasing order of distance.\\
+	  \vspace{10pt}If $B := B(p, d(p, q))$ satisfies the \alert{sparse-distance condition}
+	  \begin{itemize}
+	  	\vspace{5pt}\item Merge all clusters that intersect with $B$ into a single cluster
+	  \end{itemize}
+    \end{block}
+
+\end{frame}
+
+
+\begin{frame}{Sparse-distance condition}
+    \hyperlink{positiveSparseNoise}{All clusters that intersect with $B$ should have a non-sparse intersection}. 
+	\begin{itemize}
+	  \item $|B| \ge t$.
+	  \item For any $X_i \in \mc C$, if $X_i \cap B \neq \emptyset$, then $X_i \subseteq B$ or $|B \cap X_i| \ge t/2$.
+	\end{itemize}
+
+   \begin{figure}
+   	  \centering
+	  \includegraphics[scale=0.3]{figures/clusteringNoise/3.pdf}
+	  \includegraphics[scale=0.3]{figures/clusteringNoise/4.pdf}
+   \end{figure}
+\end{frame}
+
+\begin{frame}[label=detailsNegativeSparseNoise]{Details: Lower bound under sparse noise}
+	\hyperlink{negativeSparseNoise}{If $\alpha < 3 + \sqrt{2}$ and noise is sparse}
+	\begin{itemize}
+		\item No clustering tree can capture all nice solutions.
+	\end{itemize}
+	
+	\vspace{20pt}\begin{figure}[!t]
+	  \begin{center}
+	    \includegraphics[trim={47mm 205mm 12mm 44mm},clip,width=\textwidth]{figures/clusteringNoise/lbdFig2.pdf}
+	  \end{center}
+	\end{figure}
+	\vspace{20pt}Same ideas can be extended to a list output.\\
+	\begin{itemize}
+		\item Any list should have size $> 2^{k/2}$
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[label=detailsOptimizationNoise]{Robustifing clustering objectives}
+	\hyperlink{optimizationNoise}{$\lambda$-regularized paradigm}.
+	\begin{itemize}
+		\vspace{5pt}\item $$\sum_{i =1}^k\enspace\sum_{x \in C_i} \|x - \mu_i\|^2 \enspace+\enspace \textcolor{red}{\lambda |C_{k+1}|}$$
+		\vspace{20pt}\item Discard points into a garbage cluster.
+	\end{itemize}
+	
+	\vspace{20pt}\textcolor{blue}{Can regularization help with noise-robustness?}
+\end{frame}
+
+\begin{frame}{Sidenote: Properties of the regularized $k$-means objective}	
+	\hyperlink{optimizationNoise}{For all $\lambda$}
+	\begin{itemize}
+		\item For all clustering instances 
+		\begin{itemize}
+			\vspace{10pt}\item Easy for $\lambda \le \frac{m(X)}{2}$.
+			\vspace{10pt}\item Reduces to classical $k$-means for $\lambda \ge \frac{M(X)}{2}$.			
+		\end{itemize}
+		\vspace{20pt}\item There exists instance which are NP-Hard for $\textcolor{blue}{k \ge 1}$ if $$\frac{m(X)}{2} < \lambda$$
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Tackling computational hardness}
+	$$\text{Original objective} \longrightarrow \text{Convex relaxation}$$
+	
+	\vspace{20pt}Tightness under the {\color{blue}stochastic ball assumption}.
+	\begin{itemize}
+		\vspace{10pt}\item $k$ unit balls separated by $\delta$
+		\vspace{10pt}\item Generated by isotropic distribution. 
+	\end{itemize}	
+\end{frame}
+
+\begin{frame}{Previous work under the stochastic ball model}
+	\begin{table}
+		\centering
+		\label{table:stochasticBall}
+		\setlength{\tabcolsep}{0.7em} 
+		{\renewcommand{\arraystretch}{1.5}%
+		\begin{tabular}{llc}
+		\\
+		 & Separation condition & Reference\\
+		 \hline
+		$k$-median LP & $\delta > 3.75$ & \alert{[Nellore et. al' 15]}\\
+		 & $\delta > 2$ & \alert{[Awasthi et. al'15]}\\
+		\hline
+		$k$-means LP & $\delta > 4$ & \alert{[Awasthi et. al'15]}\\
+		\hline
+		$k$-means SDP & $\delta > 2\sqrt2 (1 + \frac{1}{\sqrt d})$ & \alert{[Awasthi et. al'15]}\\
+		 & $\delta > 2 + \frac{k^2}{d}cond(\gamma)$ & \alert{[Iguchi et. al'15]}\\
+		 & $\delta > 2 + \frac{k^2}{d}$ & \alert{[Iguchi et. al'17]}\\
+
+		\label{table:alphacenter}
+		\end{tabular}
+		}
+	\end{table}
+\end{frame}
+
+\begin{frame}{SDP-based relaxation}
+	Equivalence of the regularized objective 
+	$$\sum_{i =1}^k\enspace\sum_{x \in C_i} \|x - \mu_i\|^2 \enspace+\enspace \lambda |C_{k+1}|$$ to the following.
+	
+	$$	
+	\text{0-1 SDP}
+	\begin{cases}
+		\min_{Z, y} \enspace &\tr(DZ) + \lambda \langle \mb 1, y\rangle\\
+		\text{s.t. } \enspace &\tr(Z) = k\\
+		& Z\cdot \mb 1 + y = \mb 1\\	
+		&Z\ge 0, Z^2 = Z, Z^T = Z \\
+		& y \in \{0, 1\}^n
+	\end{cases}	
+	$$
+\end{frame}
+
+\begin{frame}{SDP-based relaxation}
+	\hyperlink{optimizationNoise}{Relaxation of the regularized} objective gives
+	$$	
+	\text{Regularized SDP}
+	\begin{cases}
+		\min_{Z, y} \enspace &\tr(DZ) + \lambda \langle \mb 1, y\rangle\\
+        \text{s.t. } \enspace &\tr(Z) = k\\
+		& \Big(\frac{Z+Z^T}{2}\Big)\cdot \mb 1 + y = \mb 1\\		
+		&Z \ge 0, y \ge 0\\
+		& Z \succeq 0
+	\end{cases}
+	$$
+\end{frame}
+
+\begin{frame}{Main result}
+	\begin{theorem}
+	 If  
+	\begin{itemize}
+	  \item $\delta > 2 + \sqrt{ O(\zeta) + \frac{k}{d}}$ 
+	  %\item $\alpha \ge O(\zeta)+ \frac{k}{d}$ 
+	  %\item $\frac{|N_2|}{n} \le \frac{\delta^2-2\delta-O(\zeta)}{\lambda}$	  
+	\end{itemize}
+	\hyperlink{optimizationNoise}{and the noise satisfies certain mildness conditions (relative to the size and} distance to $S$) then the regularized $k$-means SDP outputs the clustering $C$ such that
+	$$C|_{S} = \{B_1, \ldots, B_k\}$$
+	%Let $n = \min_i |B_i|$ and $\zeta = \frac{|N_1|}{n}$. 
+	\end{theorem}
+	
+	\vspace{20pt}{\color{blue}Corollary}\\
+	For the noiseless case, the $k$-means SDP finds the desired clustering for $$\delta > 2 + \sqrt{\frac{k}{d}}$$
+\end{frame}
+
+\begin{frame}[label=detailsRCCExperiments]{Details: Experiments for RCC}
+	\begin{figure}
+	\includegraphics[trim=0 0 0 0,scale=0.4]{figures/deDuplication/experimentsQueries.png}
+	\caption{\hyperlink{RCCExperiments}{Effect of number of queries on estimates} using queries.}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{Details: Experiments for RCC}
+	\begin{figure}
+	\includegraphics[trim=0 0 0 0,scale=0.5]{figures/deDuplication/experimentsNoisyOracle.png}
+	\caption{\hyperlink{RCCExperiments}{Effect of oracle errors } on the results obtained using our framework.}
+	\end{figure}
+\end{frame}
+
+\begin{frame}[label=notesClusterability]{Notes: Clusterability assumptions}
+	\begin{itemize}
+		\item $(\alpha, \epsilon)$-center proximity\\
+		 \hyperlink{noiseFramework}{Efficient} $(1+\frac{8n}{m(C)}\epsilon)$-approximation to the $k$-median objective for $\alpha > 2 + \sqrt{7}$.
+		 
+		 \item $\epsilon$-separatedness\\
+		 $Cost(OPT(k)) \le \epsilon^2 Cost(OPT(k-1))$. Variant of $k$-means finds a $(1+\epsilon)$-approximation with high probability in time $O(nk+k^3)$. \\
+		 For $k=2$, algorithm succeeds with probability $1-\frac{20\epsilon^2}{\sqrt{(1-\epsilon^2)(1-101\epsilon^2)}}$. This implies average radius much smaller than separation.
+		 $r_i < \frac{\epsilon}{\sqrt{1-\epsilon^2}} d(c_i, c_j)$.  
+	\end{itemize}
+\end{frame}
 
 \end{document}
 

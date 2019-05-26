@@ -278,11 +278,23 @@ Non-concentrated distribution: The density at any point is atmost $c$-times the 
 \begin{itemize}
 	\item $[$Dave, 1993$]$\\
 	Considered the definition of a noise prototype which implies the same objective function as ours.
+	\item $[$Ben-David, Haghtalab, 2014$]$\\
+	Generic procedure which transforms any metric to $d' = \min(\lambda, d)$.\\
+	If there exists an algorithm which can solve the optimization problem under the truncated metric then such an algorithm is robust to noise. 		\item $[$Georgogiannis, 2016$]$\\
+	Studies the breakdown properties of this function.
 \end{itemize}
 
 \subsection*{Slide 83}
-Detailed theorem statement.
+All the nosy poiints in $N_1$ have a small margin of $\alpha$ w.r.t the centers. That is,
+$$| \|n-\mu_i\|^2 - \|n-\mu_j\|^2| \ge \alpha$$
+All the noisy points in $N_2$ are far. 
+$$ \|n- x\| \ge \nu \ge \sqrt{(\delta-1)^2+1}$$ Let $n = \min_i |B_i|$ and $\epsilon = \frac{| N_1|}{n}$ and $\rho = \frac{|I|}{nk}$. If  
 
+\begin{itemize}
+  \item $\delta > 2 + \sqrt{ O(\epsilon) + \frac{2\rho k\theta(1+1/\log(|I|))^2}{d}}$ 
+  \item $\alpha \ge O(\epsilon)+ \frac{2\rho k\theta(1+1/\log|I|)^2}{d}$ 
+  \item $\frac{|N_2|}{n} \le \frac{\delta^2-2\delta-O(\epsilon)}{\lambda}$
+\end{itemize}
 \end{document}
 
 
