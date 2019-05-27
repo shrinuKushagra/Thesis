@@ -399,10 +399,10 @@ University of Waterloo
 		Given that the Exponential Time Hypothesis (ETH) holds. Any algorithm for PCC that runs in polynomial time makes $\Omega(|X|)$ same-cluster queries for all $M \ge 3$ and for $\alpha = 0$ and $\beta = \frac{1}{2}$. 
 	\end{block}
 	\onslide<2->
-	\vspace{20pt}Strategy: Any algorithm for PCC takes $2^{\Omega(n)}$ time.
-	\begin{itemize}
-		\vspace{10pt}\item Any algorithm for X3C or equivalently 3DM takes $2^{\Omega(m)}$ time.
-	\end{itemize}
+	\vspace{20pt}Strategy
+	
+	\vspace{5pt}\begin{center}\LARGE {3SAT $\longrightarrow$ 3DM $\longrightarrow$ X3C $\longrightarrow$ Our Problem}\end{center}
+	
 \end{frame}
 
 \begin{frame}{3SAT to 3DM}
@@ -496,32 +496,33 @@ Analyse
 \begin{frame}[label=RCCPositive]{Positive result}
 	\begin{block}{}
 		There exists sampling procedures \hyperlink{detailsRCCNegative}{$\mc P_0$} and \hyperlink{detailsRCCPositive}{$\mc P_1$} such that if an ERM algorithm receives $m_-$ and $m_+$ samples respectively where
-		\vspace{-10pt}\begin{align*}
+		\begin{align*}
 		  &m_-, m_+ \enspace \ge a\frac{\vcdim({\mc F}) + \log(\frac{3}{\delta})}{\epsilon^2} 
 		\end{align*}
 		then with probability atleast $1-\delta$, we have that $$L_{C^*}(\hat C) \enspace\le\enspace \min_{\mc C \in \mc F} L_{C^*}(C) + 3\alpha + \epsilon$$
 	\end{block}
+\end{frame}
 
-	\vspace{10pt}Computational and query complexity depends on
+\begin{frame}[label=RCCVCDim]{Positive result (details)}
+	\begin{block}{Generic description of the sampling procedures}
+		\begin{itemize}
+			\vspace{5pt}\item Sample a pair $(x, y)$ uniformly at random from set $K \subseteq X^2$ 
+			\vspace{5pt}\item If $C^*(x, y) = 1$ (or $0$ for negative pairs)
+			\begin{itemize}
+				\item[] Output $(x, y)$
+			\end{itemize}
+			\item Repeat
+		\end{itemize}
+	\end{block}
+	\vspace{20pt}Prove the following statements
 	\begin{itemize}
-		\vspace{5pt}\item Time (and the number of queries) to  \alert{sample one point}. 
-		\vspace{5pt}\item $m_-$ and $m_+$ (or the \alert{$\vcdim(\mc F)$}). 
+		\vspace{5pt}\item \#queries: $O(m_-) + O(m_+)$
+		\vspace{5pt}\item For \hyperlink{detailsRCCVCDim}{$\mc F = \{T_1, \ldots, T_s\}$}\\
+			\begin{center}$\vcdim({\mc F}) \in o(\log^2 s) $\end{center}
 	\end{itemize}		
 \end{frame}
 
 
-
-\begin{frame}[label=RCCVCDim]{VC-Dimension of common classes}
-	\begin{block}{}
-		Let \hyperlink{detailsRCCVCDim}{$\mc F = \{T_1, \ldots, T_s\}$} be a class of hierarchical clustering trees. Then 
-		$$\vcdim({\mc F}) \in o(\log^2 s) $$
-	\end{block}
-	
-	\begin{itemize}
-		\vspace{20pt}\item $\vcdim(T)$ is upper bounded by a constant.
-		\vspace{10pt}\item Using standard theorems that would imply $\vcdim(\mc F) \le O(s)$
-	\end{itemize}
-\end{frame}
 
 \begin{frame}[label=CCTakeaways]{Key takeaways}
 	\hyperlink{notesCCTakeaways}{For common classes of} clusterings, 
