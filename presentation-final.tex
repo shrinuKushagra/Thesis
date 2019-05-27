@@ -179,7 +179,7 @@ University of Waterloo
 \end{frame}
 
 \begin{frame}{Problem Setting}
-	Input: $X \subseteq \mb R^d$ and the number of clusters $k$.
+	Input: $X \subseteq \mb R^d$, $k$.
 	\begin{itemize} 
    		\vspace{10pt}\item Learner can make same-cluster queries to $C^*$-oracle
 		\vspace{10pt}\item Oracle's clustering is ``nice"
@@ -283,7 +283,7 @@ University of Waterloo
 	\end{itemize}
 	 
 	\vspace{20pt}Graph $G = (X, E)$. \\
-    \vspace{10pt}Find a clustering which minimizes
+    \vspace{10pt}\hyperlink{notesCCHardness}{Find a clustering which minimizes}
     
     \begin{center}
     \textcolor{blue}{\# zero edges within a cluster + \# one edges\\ across different clusters}
@@ -291,28 +291,16 @@ University of Waterloo
     
 \end{frame}
 
-\begin{frame}[label=CCHardness]{Computational complexity of CC?}
-	\hyperlink{notesCCHardness}{NP-Hard \alert{[Bansal et. al' 04]}}\\
-	
-	\vspace{30pt}Approximation results \alert{[Charikar et. al' 06]}.
-	\begin{itemize}
-		\vspace{10pt}\item Factor four approximation. 
-		\vspace{10pt}\item APX-Hard. 
- 	\end{itemize}
-\end{frame}
-
 \begin{frame}[label=CCFramework]{CC framework: Missing pieces}
-	\hyperlink{CCThoughts}{Agnostic to some information ``stored" in the metric} $d$ (or the edges $E$)
+	\hyperlink{CCThoughts}{Extra information}
     \begin{itemize}
-    	\vspace{10pt}\item If $E$ corresponds to a clustering, then finding that clustering is easy.\\
+    	\vspace{10pt}\item Easy if $E$ corresponds to a clustering.\\
     	\vspace{10pt}\item What if the optimal solution is `close to' $E$ ? 
 	\end{itemize}
 	
 	\onslide<2->
-	\vspace{20pt}Applicability of human supervision
-	\begin{itemize}
-    	\vspace{10pt}\item Given two records $r_1$ and $r_2$, do they correspond to the same or different real-world entity?.
-	\end{itemize}
+	\vspace{30pt}Applicability of same-cluster queries.
+	
 \end{frame}
 
 \begin{frame}{Promise Correlation Clustering (PCC)}
@@ -341,29 +329,24 @@ University of Waterloo
 \end{frame}
 
 \begin{frame}[label=informativeMetric]{Informative metric}
-	\begin{block}{$(\alpha, \beta)$-\hyperlink{notesInformativeMetric}{informative for general} metrics}		
-		\vspace{-10pt}\begin{align*}
-			&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[ d(x, y) > \lambda \enspace|\enspace C^*(x, y) = 1\big] \enspace \le \enspace \alpha \\
-			&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[C^*(x, y) = 1 \enspace|\enspace d(x, y) \le \lambda \big] \enspace \ge \enspace \beta 
-		\end{align*}
-	\end{block}	
-	
-	\begin{center}$\Downarrow$\end{center}
-	
 	\begin{block}{$(\alpha, \beta)$-informative for edges}		
 		\vspace{-10pt}\begin{align*}
 			&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[ \text{No edge between $x$ and $y$} \enspace|\enspace C^*(x, y) = 1\big] \enspace \le \enspace \alpha \\
 			&\underset{(x, y) \sim U^2}{\mb P}\enspace \big[C^*(x, y) = 1 \enspace|\enspace \text{Edge between $x$ and $y$}  \big] \enspace \ge \enspace \beta 
 		\end{align*}
 	\end{block}	
-
+	
+	\vspace{30pt}$\alpha = 0$ and $\beta = \frac{1}{2}$
+	\begin{itemize}
+		\vspace{10pt}\item All negative edges are correct.
+		\vspace{10pt}\item Half the positive edges are correct.
+	\end{itemize}
 \end{frame}
 
 \begin{frame}{Goals}
 
 	\begin{itemize}
 		\item Analyse the computation complexity of PCC.
-		\vspace{30pt}\item In the presence of oracle, also analyse the query complexity.
 	\end{itemize}	 
 \end{frame}
 
@@ -408,11 +391,7 @@ University of Waterloo
 	\begin{itemize}
 		\vspace{10pt}\item NP-Hard.
 	\end{itemize}	 
-	\vspace{30pt}Analyse the computation complexity of PCC in the presence of an oracle.
-	\begin{itemize}
-		\vspace{10pt}\item Easy with $|X|^2$ queries.
-		\vspace{10pt}\item If $\alpha = 0$ then easy with $O(\beta|X|)$ queries.
-	\end{itemize}
+	\vspace{30pt}\alert{Can same-cluster queries make the problem easy}?	
 \end{frame}
 
 \begin{frame}{Hardness of PCC in the presence of an oracle}
@@ -429,10 +408,10 @@ University of Waterloo
 \begin{frame}{3SAT to 3DM}
 	Classical constructions are `inefficient'.\\
 	\begin{itemize}
-	\vspace{10pt}\item \alert{[Johnson and Garey'79]} proof translates to $2^{\Omega(m^{0.25})}$ lower bound for 3DM.
+	\vspace{10pt}\item \alert{[Johnson and Garey'79]} implies a query lower bound of $\Omega(|X|^{0.25})$.
 	\end{itemize}
-	\vspace{20pt}Ideas similar to \alert{[Charikar, Guruswami, Wirth'04]}.\\
-	\vspace{20pt}Linear reduction of independent interest.	
+	
+	\vspace{30pt}Linear reduction of independent interest.	
 \end{frame}
 
 \begin{frame}{Hardness: Linear reduction of 3SAT to 3DM}
@@ -459,18 +438,9 @@ University of Waterloo
 \end{frame}
 
 \begin{frame}{Goals}
-	Computation complexity of PCC.
-	\begin{itemize}
-		\vspace{10pt}\item NP-Hard.
-	\end{itemize}	 
-	\vspace{10pt}Computation complexity in the presence of an oracle.
-	\begin{itemize}
-		\vspace{10pt}\item Hard for $o(|X|)$ queries.
-	\end{itemize}
-
-    \Huge{
+	\Huge{
     \begin{center}
-    	Disappointing !!\\
+    	PCC is hard !!\\
     	\Frowny{} 
    	\end{center}
     }
@@ -842,7 +812,7 @@ $$E [ cost(h',  X) ]    -   min_{h \in H}   E [cost(h, X)]   < \epsilon$$
 \begin{frame}[label=notesCCHardness]{Notes: Hardness of Correlation Clustering}
 	\begin{itemize}
 	\item $[$Bansal et al., 2004$]$\\
-	\hyperlink{CCHardness}{Constant} factor approximation. Constant is huge. 
+	\hyperlink{CC}{Constant} factor approximation. Constant is huge. 
 	\item $[$Demaine et al., 2006$]$\\
 	$4\log_2 n$-approximation. $O(\log_2 n)$ approximation to weighted CC.\\
 	APX-Hard for general weighted or unweighted graphs.
