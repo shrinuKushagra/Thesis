@@ -179,7 +179,7 @@ University of Waterloo
 \end{frame}
 
 \begin{frame}{Problem Setting}
-	Input: $X \subseteq \mb R^d$, $k$.
+	Input: $X \subseteq \mb R^p$, $k$.
 	\begin{itemize} 
    		\vspace{10pt}\item Learner can make same-cluster queries to $C^*$-oracle
 		\vspace{10pt}\item Oracle's clustering is ``nice"
@@ -212,7 +212,7 @@ University of Waterloo
 \end{frame}
 
 \begin{frame}{$k$-means revisited}
-	Input: $X \subseteq \mb R^d$ and $k$.
+	Input: $X \subseteq \mb R^p$ and $k$.
 	\vspace{-10pt}$$C^* = \argmin_{C} \sum_{i=1}^k \sum_{x \in C_i} \|x - \mu_i\|^2$$
 	\vspace{10pt}Find $C^*$ given that it satisfies $\gamma$-margin.
 	
@@ -229,7 +229,7 @@ University of Waterloo
 \begin{frame}[label=queryNegative]{Hardness result}
 	\begin{itemize}
 		\item \hyperlink{resultQueryNegative}{Reduction from exact cover by $3$-sets ($X3C$)}
-		\item Hard for $k = \Theta(n^\epsilon)$ and $d = 2$.
+		\item Hard for $k = \Theta(n^\epsilon)$ and $p = 2$.
 		\item Similar ideas as in \alert{[Vattani'09]}
 	\end{itemize}
 	
