@@ -142,7 +142,27 @@ The sampling algorithm is described in Alg. \ref{alg:weightedPosPairs}. In the p
 \label{thm:posDistribution}
 Given set $(X, d)$, a $C^*$-oracle and parameter $\lambda$. Let $d$ be $(\alpha, \beta)$-informative w.r.t $\lambda$ and $C^*$.  Then the sampling procedure $\mc P_{11}$ induces a distribution $T$ over $X^{[2]}$ such that for any labelling function $h$ over $X^{[2]}$ we have that $$\Big|\underset{(x, y) \sim P^+}{\mb P}\enspace \big[ h(x, y) = 0 ] - \underset{(x, y) \sim T}{\mb P}\enspace \big[ h(x, y) = 0 ]\Big|  \enspace \le \enspace 2\alpha.$$ 
 \end{restatable}
-
+\begin{proof}
+Let $K = \{(x, y):d(x, y)\le \lambda\}$ and  $D$ be a distribution over $K$ defined by $D(x, y) := \frac{|S_x|}{\sum_{x'} |S_{x'}|} . \frac{1}{|S_x|} = \frac{U^2(x,y)}{U^2(K)}$. Let $K^+ = \{(x, y) : d(x, y) \le \lambda$ and $C^*(x, y) = 1\}$. Let $T$ be the distribution induced by $\mc P_{11}$. It's easy to see that for $(x, y) \not\in K^+$, $T(x, y) = 0$. For $(x, y) \in K^+$, let $D(x, y) = p$ and $D(K^+) = q$. Then, $T(x, y) = p + (1-q)p + \ldots = \frac{p}{q} = \frac{D(x, y)}{D(K^+)} = \frac{U^2(x, y)}{U^2(K^+)}$. Using Defn. \ref{defn:informativeMetric}, we know that 
+\begin{align*}
+  &1-\alpha \enspace \le \underset{(x, y) \sim U^2}{\mb P} [d(x, y) \le \lambda \enspace|\enspace C^*(x, y) = 1] \\
+  &= \frac{\underset{(x, y) \sim U^2}{\mb P} [ d(x, y) \le \lambda, C^*(x, y) = 1]}{\underset{(x, y) \sim U^2}{\mb P} [C^*(x, y) = 1]} = \frac{U^2(K^+)}{U^2(X^{[2]+})}\numberthis\label{eqn:wtIneq}
+\end{align*}
+Now, we will use the above inequality to prove our result. 
+\begin{flalign*}
+  &\underset{(x, y) \sim T}{\mb P}\enspace \big[ h(x, y) = 0 ] = \underset{(x, y)\in K^+}{\sum} T(x, y) \mb 1_{h(x, y) = 0}\\
+  & =\underset{(x, y) \in K^+}{\sum} \frac{U^2(x, y)}{U^2(K^+)} \mb 1_{h(x, y) = 0} \le\enspace \frac{1}{1-\alpha}\underset{(x, y) \in K^+}{\sum} \frac{U^2(x, y)}{U^2(X^{[2]+})}  \mb 1_{h = 0}\\
+  & \le (1+2\alpha)\underset{(x, y) \in X^2_+}{\sum} P^+(x, y) \mb 1_{h(x, y) = 0} =\enspace (1+2\alpha)\underset{(x, y) \sim P^+}{\mb P}\enspace \big[ h(x, y) = 0 ]&
+\end{flalign*}
+Now, for the other direction, we have that 
+\begin{flalign*}
+  &\underset{(x, y) \sim P^+}{\mb P}\enspace \big[ h(x, y) = 0 ] = \underset{(x, y):X^{[2]+}}{\sum} P^+(x, y) \mb 1_{h(x, y) = 0} &\\
+  &= \underset{ (x, y) \in K^+}{\sum} \frac{U^2(x, y)}{U^2(X^{[2]+})} \mb 1_{h(x, y) = 0} + \underset{(x, y)\in X^2_+ \setminus K^+}{\sum} \frac{U^2(x, y)}{U^2(X^{[2]+})} \mb 1_{h=0}&\\
+  & \le \underset{ (x, y) \in K^+}{\sum} \frac{U^2(x, y)}{U^2(K^+)} \mb 1_{h(x, y) = 0}  + \underset{(x, y) \in X^{[2]+} \setminus K^+}{\sum} \frac{U^2(x, y)}{U^2(X^{[2]+})} \mb 1_{h = 0}&\\
+  & \le \underset{(x, y) \sim T}{\mb P}\enspace \big[ h(x, y) = 0 ] + \underset{(x, y)\in X^{[2]+} \setminus K^+}{\sum} \frac{U^2(x, y)}{U^2(X^{[2]+})} \enspace\le\enspace  \underset{(x, y) \sim T}{\mb P}\enspace \big[ h(x, y) = 0 ] + \alpha&
+\end{flalign*}
+Hence, we have shown that both the directions hold and this completes the proof of the lemma. Note that this shows that our sampling procedure approximates the distribution $P^+$. It is easy to see that pre-computing $S_x$ for all $x$ takes $|X|^2$ time. Once the pre-computation is done, the sampling can be done in constant time.
+\end{proof}
 
 \noindent Note that to sample one positive pair, procedure $\mc P_{11}$ might need to ask more than one same-cluster query. However, since the metric $d$ is $\beta$-informative, we `expect' the number of `extra' queries to be `small'. 
 
@@ -220,6 +240,45 @@ Given $(X, d)$, a $C^*$-oracle and parameter $\lambda$. Let $d$ satisfy $(\alpha
   &\le  (1 + 2\nu)(1+2\alpha) \underset{(x, y) \sim P^+}{\mb P} \big[ C(x, y) = 0 ]
 \end{align*} 
 \end{restatable}
+\begin{proof}
+Let $Q := \{(x, y): b(x, y) = 1\} = \{(x, y) \in B^2: B \in \mc B\}$. Let $K = \{(x, y): d(x, y) \le \lambda\}$, let $K_Q = K\cap Q$, let $K^+ := \{(x, y) \in K: C^*(x, y) = 1\}$ and finally let $K_Q^+ = \{(x, y) \in K_Q : C^*(x, y) = 1\}$. Note that the choice of $Q$ depends upon the hashing algorithm $\mc A$. However, after the pre-compute stage, the set $Q$ is fixed and the sampling procedure samples from the set $Q$. Our procedure works in four steps. 
+\begin{enumerate}[noitemsep,label=\textbf{S.\arabic*}]
+  \item $\mc P_1$ samples a point $(x, y)$ from the set $Q$ and induces a distribution $D_1$ on $Q$. 
+  \begin{align*}
+    &D_1(x, y) = \sum_{B \in a(x, y)} \frac{|B|^2}{\sum_{B' \in \mc B}|B'|^2}\frac{1}{|B|^2} = \frac{|a(x, y)|}{\sum_{B' \in \mc B}|B'|^2}
+  \end{align*}
+  \item Next, we reject the sampled point with some probability thereby inducing another distribution $D_2$ on $Q$. Now, $D_2(x, y)$ satisfies the following recurrence
+  \begin{align*}
+    &D_2(x, y) = D_1(x, y) \frac{1}{|a(x, y)|} + \Big(1-\sum_{(x', y') \in Q} D_1(x', y') \frac{1}{|a(x', y')|}\Big)D_2(x, y)
+  \end{align*}
+  The recurrence basically says that the probability that the pair $(x, y)$ is sampled is equal to the probability that it is sampled during the current round or nothing is sampled during the current round and then $(x, y)$ is sampled. Simplifying the above equation, we get that
+   \begin{align*}
+    &D_2(x, y) = \frac{\frac{1}{\sum_{B' \in \mc B}|B'|^2}}{\sum_{(x', y') \in Q}\frac{1}{\sum_{B' \in \mc B}|B'|^2}} = \frac{1}{|Q|}
+  \end{align*}
+  \item We reject the sampled point if $(x, y) \not\in K_Q$. In this step, we induce a distribution $D_3$ on $K_Q$. It is easy to see that $D_3(x, y) = \frac{1}{|K_Q|}$
+  \item \label{item:D4} Next, we reject the sampled point if $(x, y) \not\in K_Q^+$. After this step, we induce a distribution $D_4$ on $K^+_Q$. $T(x, y) := D_4(x, y) = \frac{1}{|K_Q^+|}$\\
+  Another observation, which will be useful later in the proof is that for any $(x, y) \in K^+$, $\mb P[(x, y) \not\in K_Q^+] < \delta$ (Thm. \ref{thm:similarInSame}). Hence, hoeffding's inequality we get that, $\mb P\big[|K^+\setminus K_Q^+| < (\delta+\nu)|K^+|\big] \ge 1- \exp(-2\nu^2 |K^+|^2)$ 
+\end{enumerate}
+Next, we will show that the distribution $T$ is an approximation of $P^+$. First, observe that $\mc X$ satisfies $\mu$-nazdeek property. Hence, we get that 
+\begin{align*}
+  &1 - \alpha \le \mb P[d(x, y) \le \lambda| C^*(x, y) = 1] = \frac{|K^+|}{|X^2_+|} \numberthis\label{eqn:KplusX2plus}
+\end{align*}
+Now, let $h$ be any labelling function over $\mc X^2$.
+\begin{align*}
+  &\underset{(x, y) \sim T}{\mb P} [C(x, y) = 0] = \frac{1}{|K_Q^+|}\sum_{(x, y) \in K^+_Q} \mb 1_{[C(x, y) = 0]} \le \frac{1}{|K_Q^+|}\sum_{(x, y) \in X^+_2} \mb 1_{[C(x, y) = 0]}
+\end{align*}
+Now, with probability atleast $1- \exp(-2\nu^2 |K^+|^2) \ge 1- \exp(-2\nu^2 (1-\alpha)^2|X^2_+|^2)$ over the randomness in $\mc A$, we have that $|K_Q^+| > (1-\nu - \delta)|K^+|$. Substituting this in the above equation gives
+\begin{align*}
+  &\underset{(x, y) \sim T}{\mb P} [C(x, y) = 0]  \le \frac{1}{(1-\nu)(1-\delta)|K^+|}\sum_{(x, y) \in X^2_+} \mb 1_{[C(x, y) = 0]} \le \frac{\underset{(x, y) \sim P^+}{\mb P} [C(x, y) = 0]}{(1-\nu -\delta)(1-\alpha)}
+\end{align*}
+Now for the other direction, we have that
+\begin{align*}
+  &\underset{(x, y) \sim P^+}{\mb P} [C(x, y) = 0] = \frac{1}{|X_+^2|}\sum_{(x, y) \in X^2_+} \mb 1_{[C(x, y) = 0]}\\
+  &\le \frac{1}{|K_Q^+|}\sum_{(x, y) \in K^+_Q} \mb 1_{[C(x, y) = 0]} + \frac{|X^2_+ \setminus K^+_Q|}{|X_+^2|} \\
+  &\le \underset{(x, y) \sim T}{\mb P} [C(x, y) = 0] + \frac{|X^2_+ \setminus K^+|}{|X_+^2|} + \frac{|K^+ \setminus K^+_Q|}{|K^+|} \le \underset{(x, y) \sim T}{\mb P} [C(x, y) = 0] + \alpha + \nu + \delta
+\end{align*}
+Now choosing, $\delta = \epsilon$ gives the result of the theorem.
+\end{proof}
 
 To sample one same-cluster pair, we might need to make more than one same-cluster query to the $C^*$-oracle. Lemma \ref{lemma:posQueriesLSH} shows that with high probability, the number of queries made by $\mc P_{12}$ to sample one positive pair is upper bounded by a small constant. 
 
@@ -227,6 +286,13 @@ To sample one same-cluster pair, we might need to make more than one same-cluste
 \label{lemma:posQueriesLSH}
 Given set $X$, a $C^*$-oracle and parameter $\lambda$. Let $d$ be $(\alpha, \beta)$-informative w.r.t $\lambda$ and $C^*$. Let $\mc A$ satisfy $\epsilon$-tightness w.r.t $\lambda$. Let $q$ be the number of same-cluster queries made by $\mc P_{12}$. Then with probability atleast $1-\exp(-\nu^2(1-\alpha)^2|X^2_+|^2)$ (over the randomness in the hashing algorithm) $$\mb E[q] \le \frac{1}{\beta(1-\epsilon-\nu)}$$ 
 \end{restatable}
+\begin{proof}
+Let $K, Q, K^+, K_Q$ and $K_Q^+$ be as defined in the proof of Thm. \ref{thm:posDistribution}. Also, let the distributions $D_1, D_2, D_3$ and $D_4$ be as defined in the same theorem. Also, from the analysis in bullet \ref{item:D4} in Thm. \ref{thm:posDistribution} with probability atleast $1 - \exp(-2\nu^2(1-\alpha)^2|X^2_+|^2)$ we have that $\frac{|K_Q^+|}{|K^+|} \ge (1-\nu-\epsilon)$. Now, we have that $X$ satisfies $\beta$-balanced property. Hence,
+\begin{align*}
+  &\beta \le \mb P[h^*(x, y) = 1 | d(x, y) \le \lambda] = \frac{|K^+|}{|K|} \le \frac{|K^+|}{|K_Q|}
+\end{align*}
+Combining this we get that $\frac{|K_Q^+|}{|K_Q|} \ge \frac{\beta|K_Q^+|}{|K^+|} \ge (1-\nu-\epsilon)\beta$. Thus, given that a same-cluster query is made, the probability $p$ that it succeeds is atleast $(1-\nu-\epsilon)\beta$.
+\end{proof}
 
 The pre-compute stage uses a hashing algorithm to obtain $s$ different partitions. From the discussion in the appendix (Thm. \ref{thm:hashTimeComplexity}), we its easy to see that this runs in $O(n)$ time. Next, we  analyse the time taken to sample one same-cluster pair.  Thm. \ref{thm:posRuntimeLSH} shows that under reasonable assumptions, the time taken is upper bounded by a constant with high probability. 
 
@@ -239,6 +305,27 @@ Define $\lambda' = 2\lambda\log(1+\frac{1}{\epsilon})$ and $\epsilon' = \lceil \
 Let $t$ be the time taken to sample one point by procedure $\mc P_{12}$. Then with probability atleast $1- \exp\Big(\frac{-\nu^2(1-\epsilon)(1-\alpha)|X^2_+|}{2}\Big)- \exp\Big(\frac{-\nu^2\rho_2 |K|}{3}\Big)$ (over the randomness in the hashing algorithm), we have that $$\mb E[t] \le s^2(1+\frac{1}{\eta})$$
 where $\eta := \frac{(1-\nu)(1-\epsilon)\beta}{(1+\nu)(1+\rho_1+\rho_2)}$. 
 \end{restatable}
+\begin{proof}
+Using Thm. \ref{thm:hashTimeComplexity}, we know that one iteration of the pre-compute stage of $\mc P_1$ runs in $O(n r s m(\mc B)) = O(n\log \big(\frac{2}{\epsilon}\big)\frac{-1}{\log(1-\lambda)} m(\mc B)) = O(n)$. Next, we analyse the time taken to sample one point.  
+
+Let $Q, K^+, K_Q^+$ be as defined in the proof of Thm. \ref{thm:posDistribution}. Let $\delta = \frac{\epsilon}{2}$. Using Thm. \ref{thm:similarInSame}, we know that if $(x, y) \in K$ then $\mb P[(x, y) \in Q] > 1-\delta$. Also, if $(x, y) \in K_2$ then $\mb P[(x, y) \in Q] < \delta'$. For the purposes of analysing the time complexity of the sampling procedure, we can think of $\mc P_1$ as consisting of the following two steps. 
+\begin{enumerate}[label=\textbf{T.\arabic*}]
+  \item $\mc P_1$ samples a pair $(x, y)$ uniformly at random from $Q$. Thus, the probability of success at this step is $p_1 = \frac{1}{a(x, y)} \ge \frac{1}{s}$. 
+  \item If the point also lies in $K^+$, that is $(x, y) \in K^+$ then it outputs that point. Thus, probability of success at this step is $p_2 := \frac{|K^+ \cap Q|}{|Q|} = \frac{|K^+_Q|}{|Q|}$. Consider the following four sets, $K^+, K' := K\setminus K^+, K_1$ and $K_2$. 
+
+Using multiplicative chernoff's bounds, we get that $\mb P[|K_Q^+| > (1-\nu)|K^+|(1-\delta) ] \ge 1 - \exp(\frac{-\nu^2 (1-\delta) |K^+|}{2})$. Similarly, we have that $\mb P[|K_2 \cap Q| < (1+\nu)|K| \rho_2] \ge 1 - \exp(\frac{-\nu^2 \rho_2 |K|}{3})$. Also, note that $\mb P[|K' \cap Q| < (1+\nu)|K'|] = 1$ and $\mb P[|K_1 \cap Q| < (1+\nu)|K_1|] = 1$. Using these results, we have that $\mb P[|K_Q^+| > (1-\nu)|K^+|(1-\delta)$ and $|(K^+_Q)^c \cap Q| < (1+\nu)(|K'|+|K_1|+|K|\rho_2)] \ge 1 - \exp(\frac{-\nu^2 (1-\delta) |K^+|}{2}) - \exp(\frac{-\nu^2 \rho_2 |K|}{3})$
+\begin{align*}
+  &\mb P\bigg[\frac{|K^+_Q|}{|(K^+_Q)^c \cap Q|} > \frac{(1-\nu)|K^+|(1-\delta)}{(1+\nu)(|K'|+|K_1|+|K_2|\delta')} \bigg] \\
+  &\ge 1 - \exp\Big(\frac{-\nu^2 (1-\delta) |K^+|}{2}\Big) - \exp\Big(\frac{-\nu^2 \delta' |K_2|}{3}\Big)
+\end{align*}
+From the assumptions in the theorem, we get that $|K_1| \le \rho_1|K|$. Now, $|K'| = |K| - |K^+| \le (1-\beta)|K|$. Hence, $\frac{(1-\nu)|K^+|(1-\delta)}{(1+\nu)(|K'|+|K_1|+|K|\rho_2)} \ge \frac{(1-\nu)(1-\delta)\beta}{(1+\nu)(1-\beta + \rho_1 + \rho_2)}$. Define $\eta := \frac{(1-\nu)(1-\delta)\beta}{(1+\nu)(1 + \rho_1 + \rho_2)}$. Then we get that,
+\begin{align*}
+  \mb P\bigg[\frac{|K^+_Q|}{|Q|} > \frac{\eta}{\eta+1}\bigg] &\ge 1- \exp\Big(\frac{- \delta^2 |K^+|}{(1-\delta)}\Big) - \exp\Big(\frac{-\delta^2\rho_2 |K|}{(1-\delta)^2}\Big) =: \eta'
+\end{align*}
+Hence, we see that with probability atleast $\eta'$ over the randomness in the hashing procedure $p_2 \ge \eta$.   
+\end{enumerate}
+Using all the above, we get that $p \ge \frac{\eta}{(\eta+1)s}$. Recall that, $p$ is the probability that the current iteration terminates. Thus, expected number of iterations to sample one point is $\le \frac{s}{\eta}$. Note that the one iteration takes $\Theta(s)$ time (computing $|a(x, y)|$). The expected time to sample one point is  $\le s^2(1 + \frac{1}{\eta})$ 
+\end{proof}
 
 
 \section{Sample and query complexity of RCC}
@@ -329,6 +416,9 @@ In the previous section, we proved that the sample complexity of learning a clas
 Given a finite set $\mc X$ and a finite class $\mc F = \{C_1, \ldots, C_s\}$ of clusterings of $\mc X$.
 $$\vcdim({\mc F}) \le g(s)$$ where $g(s)$ is the smallest integer $n$ such that $B_{\sqrt n} \ge s$ where $B_i$ is the $i^{th}$ bell number \cite{bell2010number}. 
 \end{restatable}
+\begin{proof}
+Let $n$ be as defined in the statement of the theorem. Let $M^2 \subseteq \mc X^2$ be a set of size $> n$. Define $M := \{x: (x, y) \in M^2 \text{ or } (y, x) \in M^2\}$. We know that $|M| > \sqrt n$. The number of clusterings (partitions) on $n$ elements is given by the $n^{th}$ bell number. Thus, for $s \le B_{\sqrt n}$ there exists a clustering $C' \not\in \mc F$ of the set $\mc X$. Hence, $l_{\mc F}$ can't shatter any set of size $> n$.
+\end{proof}
 
 
 \noindent Note that $B_{\sqrt n} \in o(2^{n})$. Thus, the $\vcdim$ of a list of clusterings is in $o( \log s)$. Next, we discuss another common class of clusterings, namely hierarchical clustering trees. 
@@ -339,10 +429,86 @@ Given a set $X$. A hierarchical clustering tree $T$ is a rooted binary tree with
 
 \noindent Every pruning of a hierarchical clustering tree is a clustering of the set $X$. A clustering tree contains exponentially many (in the size of $\mc X$) clusterings. Given $\mc F = \{T_1, \ldots, T_s\}$ consists of $s$ different hierarchical clustering trees, the following theorem bounds the VC-Dimension of ${\mc F}$.
 
+\begin{lem}
+\label{lemma:treesOnX}
+Let $\mc X$ be a finite set, $S \subseteq \mc X$ be a set of $n$ points and $T$ be any hierarchical clustering tree of $\mc X$. There exists a set $\mc C = \{C_1, \ldots, C_s\}$ where each $C_i$ is a clustering of $S$ with the following properties
+\begin{itemize} 
+	\item $|\mc C| \ge \frac{n!}{\lfloor n/2 \rfloor! \enspace 2^{\lfloor n/2 \rfloor}}$
+	\item $T$ contains atmost one clustering from $\mc C$. 
+\end{itemize}
+\end{lem}
+\begin{proof}
+Consider clusterings $C_i$ of $S$ of the following type. Each cluster in $C_i$ contains exactly two points (except possibly one cluster which contains one point if $n$ is odd). One such clustering along with a tree $T$is shown in Fig. \ref{fig:treeStructure}. Let $\mc C$ be the set of all such clusterings $C_i$. The number of such clusterings $|\mc C|$ is 
+$$ \begin{dcases}
+		\frac{n!}{2^{\frac{n-1}{2}}\frac{n-1}{2}!} \hspace{0.5in} n \text{ is odd}\\
+        \frac{n!}{2^{\frac{n}{2}}\frac{n}{2}!} \hspace{0.78in} n \text{ is even}\\
+	\end{dcases}= \frac{n!}{2^{\lfloor \frac{n}{2} \rfloor} (\lfloor \frac{n}{2} \rfloor)!}$$
+	
+For the sake of contradiction, assume that $T$ is a hierarchical clustering tree $T$ of $\mc X$ which contains $C_i$ and $C_j$. Since $C_i \neq C_j$, there exists points $s_1, s_2$ and $s_3$ such that the following happens. (i) $s_1, s_2$ are in the same cluster in $C_i$. $s_2, s_3$ as well as $s_1, s_3$ are in different clusters in $C_i$. (ii) $s_1, s_3$ are in the same cluster in $C_j$. $s_2, s_3$ as well as $s_1, s_2$ are in different clusters in $C_j$.   
+
+Now, $T$ contains $C_i$. Hence, there exists a node $v$ such that $s_1, s_2 \in C(v)$ but $s_3 \not\in C(v)$. $T$ also contains $C_j$. Hence, there exists a node $u$ such that $s_1, s_3 \in C(u)$ and $s_2 \not\in C(u)$. Both $u$ and $v$ contain the point $s_1$. Hence, either $u$ is a descendant of $v$ or the other way around. Observe that $s_2 \in C(v)$ but $s_2 \not\in C(u)$. Hence, $v$ is not a descendant of $u$. Similarly, $s_3 \in C(u)$ and $s_3 \not\in C(v)$ so $u$ is not a descendant of $v$. This leads to a contradiction. Hence, no such tree $T$ can exist.  
+\begin{figure}
+	\centering
+	\begin{tikzpicture}
+		\node[circle,draw] at (0,0) {};
+		
+		\node[circle,draw] at (1, 0){};
+		\node[circle,draw,fill=black] at (1.5, 1){};
+		\draw (1.5, 1) --(1.95, 0.2);
+		\draw (1.5, 1) --(1.05, 0.2);
+		\node[circle,draw] at (2,0) {};
+		
+		\node[circle,draw,fill=black] at (2.5, 2){};
+		\draw (2.5, 2) --(1.5, 1);
+		\draw (2.5, 2) --(3.5, 1);
+
+		\node[circle,draw] at (3, 0){};
+		\node[circle,draw,fill=black] at (3.5, 1){};
+		\draw (3.5, 1) --(3.95, 0.2);
+		\draw (3.5, 1) --(3.05, 0.2);
+		\node[circle,draw] at (4,0) {};
+		
+		\node[circle,draw,fill=black] at (4.5, 3){};
+		\draw (4.5, 3) --(2.5, 2);
+		\draw (4.5, 3) --(6.5, 2);
+
+		
+		\node[circle,draw,fill=black] at (4.5, 5){};
+		\draw (4.5, 5) --(4.5, 3);
+		\draw (4.5, 5) --(0, 0);
+		
+		
+		\node[circle,draw] at (5, 0){};
+		\node[circle,draw,fill=black] at (5.5, 1){};
+		\draw (5.5, 1) --(5.95, 0.2);
+		\draw (5.5, 1) --(5.05, 0.2);
+		\node[circle,draw] at (6,0) {};
+		
+		\node[circle,draw,fill=black] at (6.5, 2){};
+		\draw (6.5, 2) --(5.5, 1);
+		\draw (6.5, 2) --(7.5, 1);
+		
+		
+		\node[circle,draw] at (7, 0){};
+		\node[circle,draw,fill=black] at (7.5, 1){};
+		\draw (7.5, 1) --(7.95, 0.2);
+		\draw (7.5, 1) --(7.05, 0.2);
+		\node[circle,draw] at (8, 0){};
+		
+		\draw[dotted] (0, 1.5) -- node[above] {$C_i$} (8, 1.5);
+	\end{tikzpicture}
+\caption{A hierarchical clustering tree of $n=9$ points. This tree contains the clustering $C_i$ described in the proof of Lemma \ref{lemma:treesOnX}.}
+\label{fig:treeStructure}
+\end{figure}
+\end{proof}
+
 \begin{restatable}{thrm}{VCDimT}
 Given a finite set $\mc X$ and a finite class $\mc F = \{T_1, \ldots, T_s\}$ where each $T_i$ is a hierarchical clustering over $\mc X$. Then 
 $$\vcdim({\mc F}) \le g(s)$$ where $g(s)$ is the smallest integer $n$ such that $\frac{\sqrt n!}{\lfloor \sqrt n/2 \rfloor! \enspace 2^{\lfloor \sqrt n/2 \rfloor}} \ge s $
 \end{restatable}
+\begin{proof}
+Let $n$ be as defined in the statement of the theorem. Let $M^2 \subseteq \mc X^2$ be a set of size $> n^2$. Define $M := \{x: (x, y) \in M^2 \text{ or } (y, x) \in M^2\}$. We know that $|M| > n$. Using lemma \ref{lemma:treesOnX}, there exists a set of clusterings $\mc C = \{C_1, \ldots, C_{s'}\}$ of size $s' > \frac{n!}{\lfloor n/2 \rfloor! \enspace 2^{\lfloor n/2 \rfloor}} \ge s$ such that each $T_i \in \mc F$ contains atmost one $C_j \in \mc C$. Thus, there exists a clustering $C_j$ which is not captured by any $T_i \in \mc F$. Hence, $l_{\mc F}$ can't shatter any set of size $> n^2$.
+\end{proof}
 
 
 \section{Computation complexity of RCC for common clustering classes}

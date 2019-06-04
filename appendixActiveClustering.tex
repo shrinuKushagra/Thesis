@@ -55,8 +55,8 @@ $$\forall x \in C_i, i\neq j, \alpha d(x, c_i) < d(x, c_j)$$
 \begin{tabular}{lll}
 \cline{2-3}
 \multicolumn{1}{l|}{} & \multicolumn{1}{l|}{Euclidean} & \multicolumn{1}{l|}{General Metric} \\ \hline
-\multicolumn{1}{|l|}{\begin{tabular}[c]{@{}l@{}}Centers \\ from data\end{tabular}} & \multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}Upper bound : $\sqrt{2}+1$  \cite{balcan2012clustering}\\ Lower bound : ?\end{tabular}} & \multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}Upper bound : $\sqrt{2}+1$  \cite{balcan2012clustering}\\ Lower bound : 2 \cite{ben2014data}\end{tabular}} \\ \hline
-\multicolumn{1}{|l|}{\begin{tabular}[c]{@{}l@{}}Unrestricted \\ Centers \end{tabular}} & \multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}Upper bound : $2+\sqrt{3}$ \cite{awasthi2012center}\\ Lower bound : ?\end{tabular}} & \multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}Upper bound : $2+\sqrt{3}$ \cite{awasthi2012center}\\ Lower bound : 3 \cite{awasthi2012center}\end{tabular}} \\ \hline
+\multicolumn{1}{|l|}{\begin{tabular}[c]{@{}l@{}}Centers \\ from data\end{tabular}} & \multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}Upper bound : $\sqrt{2}+1$ \\ \cite{balcan2012clustering}\\ Lower bound : ?\end{tabular}} & \multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}Upper bound : $\sqrt{2}+1$ \\ \cite{balcan2012clustering}\\ Lower bound : 2 \\ \cite{ben2014data}\end{tabular}} \\ \hline
+\multicolumn{1}{|l|}{\begin{tabular}[c]{@{}l@{}}Unrestricted \\ Centers \end{tabular}} & \multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}\\Upper bound : $2+\sqrt{3}$ \\ \cite{awasthi2012center}\\ Lower bound : ?\end{tabular}} & \multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}Upper bound : $2+\sqrt{3}$ \\\cite{awasthi2012center}\\ Lower bound : 3 \\\cite{awasthi2012center}\end{tabular}} \\ \hline
  &  & 
 \label{table:alphacenter}
 \end{tabular}
@@ -136,102 +136,3 @@ Let $(\mc X, d)$ be a clustering instance and $\gamma < 3$. Then, finding a $k$-
 %-----------------------------------------------------------
 %-----------------------------------------------------------
 %-----------------------------------------------------------
-
-\section{Proofs of Lemmas \ref{lemma:kmeansEquivalenceX3C} and \ref{lemma:gammaLower}}
-\label{appendix:lowerBoundProof}
-
-In Section \ref{section:lowerBounds} we proved Theorem \ref{thm:gammaLower} based on two technical results (i.e., lemma \ref{lemma:kmeansEquivalenceX3C} and \ref{lemma:gammaLower}). In this appendix we provide the proofs for these lemmas. In order to start, we first need to establish some properties about the Euclidean embedding of $X$ proposed in Section \ref{section:lowerBounds}.
-
-%$$L_1 = (6m+3)w, L_2 = 6m(l-1), L=L_1 + L_2, \alpha = \frac{d}{w}-\frac{1}{2w^3}$$
-
-\begin{definition}[$A$- and $B$-Clustering of $R_i$]
-\label{defn:abclusteringVattani}
-
-An $A$-Clustering of row $R_i$ is a clustering in the form of $\{\{s_i\}, \{r_{i,1}, r_{i,2}\}, \{r_{i,3}, r_{i,4}\}, \ldots,$ $ \{r_{i,6m-1}, r_{i,6m}\},\{r_{i, 6m+1}, f_i\}\}$. A $B$-Clustering of row $R_i$ is a clustering in the form of $\{\{s_i, r_{i, 1}\}, \{r_{i,2}, r_{i,3}\}, \{r_{i,4}, r_{i,5}\}, \ldots,$ $ \{r_{i,6m}, r_{i,6m+1}\},\{f_i\}\}$. 
-\end{definition}
-
-\begin{definition}[Good point for a cluster]
-\label{defn:goodPointVattani}
-A cluster $C$ is good for a point $z \not\in C$ if adding $z$ to $C$ increases cost by exactly $\frac{2w}{3}h^2$ 
-\end{definition}
-
-Given the above definition, the following simple observations can be made. 
-\begin{itemize}[nolistsep,noitemsep]
-\item The clusters $\{r_{i,2j-1}, r_{i, 2j}\}$, $\{r_{i,2j}, r_{i, 2j+1}\}$ and $\{g_{i,j}\}$ are good for $x_{i,j}$ and $y_{i-1,j}$.
-\item The clusters $\{r_{i,2j}, r_{i, 2j+1}\}$ and $\{g_{i,j}\}$ are good for $x_{i,j}'$ and $y_{i-1,j}'$.
-\end{itemize}
-
-\begin{definition}[Nice Clustering]
-\label{defn:niceClustering}
-A $k$-clusteirng is nice if every $g_{i,j}$ is a singleton cluster, each $R_i$ is grouped in the form of either an $A$-clustering or a $B$-clustering, and each point in $Z_i$ is added to a cluster which is good for it.
-\end{definition}
-
-It is straightforward to see that a row grouped in a $A$-clustering costs $(6m+3)w-\alpha$ while a row in $B$-clustering costs $(6m+3)w$. Hence, a nice clustering of $H_{l,m} \cup Z$ costs at most $L_1 + L_2$. More specifically, if $t$ rows are group in a $A$-clustering, the nice-clustering costs $L_1+L_2-t\alpha$. Also, observe that any nice clustering of $X$ has only the following four different types of clusters. \begin{enumerate}[label=(\arabic*),nolistsep,leftmargin=*]
-\item Type E - $\{r_{i,2j-1}, r_{i,2j+1}\}$ \\
-The cost of this cluster is $2w$ and the contribution of each location to the cost (i.e., $\frac{cost}{\#locations}$) is $ \frac{2w}{2} = w$.
-\item Type F - $\{r_{i,2j-1}, r_{i, 2j}, x_{i, j}\}$ or $\{r_{i,2j-1}, r_{i, 2j}, y_{i-1, j}\}$ or $\{r_{i,2j}, r_{i, 2j+1}, x_{i, j}'\}$ or $\{r_{i,2j}, r_{i, 2j+1}, y_{i-1, j}'\}$\\
-The cost of any cluster of this type is $2w(1+\frac{h^2}{3})$ and the contribution of each location to the cost is at most $\frac{2w}{9}(h^2+3)$. This is equal to $\frac{16}{9}w$ because we had set $h = \sqrt 5$.
-\item Type I - $\{g_{i, j}, x_{i,j}\}$ or $\{g_{i, j}, x_{i,j}'\}$  or $\{g_{i, j}, y_{i,j}\}$  or $\{g_{i, j}, y_{i,j}'\}$\\
-The cost of any cluster of this type is $\frac{2}{3}wh^2$ and the contribution to the cost of each location is $\frac{w}{3}h^2$. For our choice of $h$, the contribution is $\frac{5}{3}w$.
-\item Type J - $\{s_i, r_{i,1}\}$ or $\{r_{i,6m+1}, f_i\}$\\
-The cost of this cluster is $3w$ (or $3w-\alpha$) and the contribution of each location to the cost is at most $1.5w$. 
-\end{enumerate}
-Hence, observe that in a nice-clustering, any location contributes at most $\le \frac{16}{9}w$ to the total clustering cost. This observation will be useful in the proof of the lemma below.
-
-\begin{lemma}
-\label{lemma:costNonNice}
-For large enough $w = poly(l, m)$, any non-nice clustering of $X = H_{l, m} \cup Z$ costs at least $L + \frac{w}{3}$.
-\end{lemma}
-
-\begin{proof}
-We will show that any non-nice clustering $C$ of $X$ costs at least $\frac{w}{3}$ more than any nice clustering. This will prove our result. The following cases are possible.
-
-\begin{itemize}[nolistsep,leftmargin=*]
-\item $C$ contains a cluster $C_i$ of cardinality $t > 6$ (i.e., contains $t$ weighted points)\\
-Observe that any $x \in C_i$ has at least $t-5$ locations at a distance greater than 4 to it, and $4$ locations at a distance at least $2$ to it. Hence, the cost of $C_i$ is at least $\frac{w}{2t}(4^2(t-5)+2^24)t = 8w(t-4)$. $C_i$ allows us to use at most $t-2$ singletons. This is because a nice clustering of these $t+(t-2)$ points uses at most $t-1$ clusters and the clustering $C$ uses  $1 + (t-2)$ clusters for these points. The cost of the nice cluster on these points is $\le \frac{16w}{9}2(t-1)$. While the non-nice clustering costs at least $8w(t-4)$. For $t \ge 6.4 \implies 8(t-4) > \frac{32}{9}(t-1)$ and the claim follows. Note that in this case the difference in cost is at least $\frac{8w}{3}$. 
-
-\item Contains a cluster of cardinality $t = 6$\\
-Simple arguments show that amongst all clusters of cardinality $6$, the following has the minimum cost. $C_i = \{r_{i, 2j-1}, r_{i, 2j}, x_{i,j}, y_{i-1, j}, r_{i, 2j+1}, r_{2j+2}\}$. The cost of this cluster is $\frac{176w}{6}$. Arguing as before, this allows us to use $4$ singletons. Hence, a nice cluster on these $10$ points costs at most $\frac{160w}{9}$. The difference of cost is at least $34w$.  
-
-\item Contains a cluster of cardinality $t = 5$\\
-Simple arguments show that amongst all clusters of cardinality $5$, the following has the minimum cost. $C_i = \{r_{i, 2j-1}, r_{i, 2j}, x_{i,j}, y_{i-1, j}, r_{i, 2j+1}\}$. The cost of this cluster is $16w$. Arguing as before, this allows us to use $3$ singletons. Hence, a nice cluster on these $8$ points costs at most $16w\frac{8}{9}$. The difference of cost is at least $\frac{16w}{9}$.  
-
-\item Contains a cluster of cardinality $t = 4$\\
-It is easy to see that amongst all clusters of cardinality $4$, the following has the minimum cost. $C_i = \{r_{i, 2j-1}, r_{i, 2j}, x_{i,j}, r_{i, 2j+1}\}$. The cost of this cluster is $11w$. Arguing as before, this allows us to use $2$ singletons. Hence, a nice cluster on these $6$ points costs at most $\frac{32w}{3}$. The difference of cost is at least $\frac{w}{3}$.
-
-\item All the clusters have cardinality $\le 3$ \\
-Observe that amongst all non-nice clusters of cardinality $3$, the following has the minimum cost. $C_i = \{r_{i, 2j-1}, r_{i, 2j}, r_{i, 2j+1}\}$. The cost of this cluster is $8w$. Arguing as before, this allows us to use at most $1$ more singleton. Hence, a nice cluster on these $4$ points costs at most $\frac{64w}{9}$. The difference of cost is at least $\frac{8w}{9}$.
-
-It is also simple to see that any non-nice clustering of size $2$ causes an increase in cost of at least $w$.
-
-\end{itemize}
-\end{proof}
-
-%\begin{lemma}
-%\label{lemma:kmeansEquivalenceX3C}
-%The set $X = H_{l,n} \cup Z$ has a $k$-clustering %of cost less or equal to $L$ if and only if there %is an exact cover for the X3C instance.
-%\end{lemma}
-\begin{proof}[Proof of lemma \ref{lemma:kmeansEquivalenceX3C}]
-The proof is identical to the proof of Lemma 11 in \cite{vattani2009hardness}. Note that the parameters that we use are different with those utilized by \cite{vattani2009hardness}; however, this is not an issue, because we can invoke our lemma \ref{lemma:costNonNice} instead of the analogous result in Vattani (i.e., lemma 10 in Vattani's paper). The sketch of the proof is that based on lemma \ref{lemma:costNonNice}, only nice clusterings of $X$ cost $\le L$. On the other hand, a nice clustering corresponds to an exact 3-set cover. Therefore, if there exists a clustering of $X$ of cost $\le L$, then there is an exact 3-set cover. The other way is simpler to proof; assume that there exists an exact 3-set cover. Then, the corresponding construction of $X$ makes sure that it will be clustered \emph{nicely}, and therefore will cost $\le L$.  
-
-
-
- %argue why the only nice clusterings of $X$ cost $\le L$. We use Lemma \ref{lemma:costNonNice} to argue the same. Note that since the parameters are much different that those considered in Vattani's original construction, we need to argue much more carefully to prove Lemma \ref{lemma:costNonNice}. 
-\end{proof}
-
-%\begin{lemma}
-%\label{lemma:gammaLower}
-%Any clustering of $X = H_{l,n} \cup Z$ which has %cost$\le L$ has the $\gamma$-margin property where %$\gamma = \sqrt{\frac{17}{5}} \approx 1.84$.
-%\end{lemma}
-\begin{proof}[Proof of lemma \ref{lemma:gammaLower}]
-As argued before, any nice clustering has four different types of clusters. We will calculate the minimum ratio $a_i = \frac{d(y, \mu)}{d(x, \mu)}$ for each of these clusters $C_i$ (where $x \in C_i$, $y \not\in C_i$ and $\mu$ is mean of all the points in $C_i$.) Then, the minimum $a_i$ will give the desired $\gamma$. 
-\begin{enumerate}[label=(\arabic*),nolistsep,leftmargin=*]
-\item For Type E clusters $a_i = h/1 = \sqrt{5}$. 
-\item For Type F clusters. $a_i = \frac{\frac{\sqrt{4+16(h^2-1)}}{3}}{2h/3} = \sqrt{\frac{17}{5}} \approx 1.84$. 
-\item For Type I clusters, standard calculation show that $a_i > 2$.
-\item For Type J clusters $a_i = \frac{2+\frac{\sqrt{6}}{2}}{\frac{\sqrt{6}}{2}} > 2$.
-\end{enumerate}
-
-\noindent Furthurmore, $|\mc X| = (12lm + 3l -6m)w$ and $k = 6lm + 2l - 3m$. Hence for $w = $poly$(l, m)$ our hardness result holds for $k = |\mc X|^{\epsilon}$ for any $0 < \epsilon < 1$.
-\end{proof}
-\noindent Lemmas \ref{lemma:kmeansEquivalenceX3C} and \ref{lemma:gammaLower} complete the proof of the main result (Thm. \ref{thm:gammaLower}). 

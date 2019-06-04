@@ -73,7 +73,7 @@ Given graph $G = (X, E)$ where $X$ is the set of vertices (the given dataset to 
 \end{align*}
 A weighted version of the loss function places weights of $w_1$ and $w_2$ on the two terms and is defined as 
 \begin{align}
-  &corrL_{E}^{w}(C) = w \thinspace corrN_{E}(C) + (1-w) \thinspace corrP_{E}(C)\label{eqn:weightedCorrelationLoss}
+  &corrL_{E}^{w}(C) = w_1 \thinspace corrN_{E}(C) + w_2 \thinspace corrP_{E}(C)\label{eqn:weightedCorrelationLoss}
 \end{align}
 \end{definition}
 
@@ -81,7 +81,7 @@ The goal of correlation clustering is to find a clustering which minimizes the (
 
 \begin{definition}[Normalized correlation loss]
 \label{defn:normalizedCorrelationLoss}
-Given domain $X$ and a target clustering $C^*$. The loss of a clustering $C$ w.r.t the target $C^*$ is defined as
+Given domain $X$, a target clustering $C^*$ and a parameter $\mu$. The loss of a clustering $C$ w.r.t the target $C^*$ is defined as
 \begin{align*}
   L_{C^*}(C) &= \enspace  \mu \enspace L_{P^+}(C) \enspace+\enspace (1-\mu) \enspace L_{P^-}(C), \text{ where} \\
   &L_{P^+}(C) = \underset{(x, y) \sim P^+}{\mb P} \big[ C(x, y) = 0 ],\\
@@ -272,7 +272,7 @@ When the edges $E$ correspond to a clustering $C$ then $\beta = 1$ and $\alpha =
 	  \draw[red] (4.5, 10) -- (5, 12);
 	  \draw[red] (5, 12) -- (5, 11);
 	  
-	  \node[circle,draw,minimum size=1mm,label=below:$r_{1}$,fill=black] at (8, 0){};
+	  \node[circle,draw,minimum size=1mm,fill=black] at (8, 0){};
 	  \node[circle,draw,fill=black] at (8, 2){};
 	  \node[circle,draw,fill=black] at (7, 1){};
 	  \node[circle,draw,fill=black] at (9, 1){};
@@ -333,16 +333,24 @@ When the edges $E$ correspond to a clustering $C$ then $\beta = 1$ and $\alpha =
 	  
 	  \draw [decorate,decoration={brace,amplitude=10pt},xshift=-4pt,yshift=0pt]
 (-1,0) -- (-1,3) node [black,midway,xshift=-0.6cm] 
-{\footnotesize $B_1$};
+{\footnotesize $B_{11}$};
 	  \draw [decorate,decoration={brace,amplitude=10pt},xshift=-4pt,yshift=0pt]
 (-1,3) -- (-1,6) node [black,midway,xshift=-0.6cm] 
-{\footnotesize $B_2$};
+{\footnotesize $B_{21}$};
 	  \draw [decorate,decoration={brace,amplitude=10pt},xshift=-4pt,yshift=0pt]
 (-1,9) -- (-1,12.5) node [black,midway,xshift=-0.6cm] 
-{\footnotesize $B_t$};
-
+{\footnotesize $B_{t1}$};
+	  \draw [decorate,decoration={brace,amplitude=10pt,mirror},xshift=-4pt,yshift=0pt]
+(9.5,0) -- (9.5,3) node [black,midway,xshift=0.6cm] 
+{\footnotesize $B_{1p}$};
+	  \draw [decorate,decoration={brace,amplitude=10pt,mirror},xshift=-4pt,yshift=0pt]
+(9.5,3) -- (9.5,6) node [black,midway,xshift=0.6cm] 
+{\footnotesize $B_{2p}$};
+	  \draw [decorate,decoration={brace,amplitude=10pt,mirror},xshift=-4pt,yshift=0pt]
+(9.5,9) -- (9.5,12.5) node [black,midway,xshift=0.6cm] 
+{\footnotesize $B_{tp}$};
 	\end{tikzpicture}
-\caption{Part of graph $G$ constructed for the subset $S_i =  \{x_{i1}, x_{i2}, x_{i3}\}$. The graph is constructed by local replacement when for $p = 4$. If $S_i$ is included in the exact cover then the edges colored black and the edges colored blue represent the corresponding clustering of this part of the graph $G$. If $S_i$ is not included in the exact cover then the edges colored red and the edges colored black represent the clustering of this part of the graph.}
+\caption{Part of graph $G$ constructed for the subset $S_i =  \{x_{i1}, x_{i2}, x_{i3}\}$. The graph is constructed by local replacement for $p = 4$. The vertices labeled $x_{ij}$ correspond to the elements in the universe $U$. If $S_i$ is included in the exact cover then the edges colored black and the edges colored blue represent the corresponding clustering of this part of the graph $G$. If $S_i$ is not included in the exact cover then the edges colored red and the edges colored black represent the clustering of this part of the graph.}
 \label{fig:X3CNPHard}
 \end{figure*}
 
@@ -354,11 +362,9 @@ Finding the optimal solution to the Promise Correlation Clustering problem is NP
 
 (X3C) Given a universe of elements $U = \{x_1, \ldots, x_{3q}\}$ and a collections of subsets $S = \{S_1, \ldots, S_m\}$. Each $S_i \subset U$ and contains exactly three elements. Does there exist $S' \subseteq S$ such that each element of $U$ occurs exactly once in $S'$?
 
-This decision problem is known to be NP-Hard. We will now reduce an instance of X3C to the promise correlation clustering problem. For each three set $S_i = \{x_{i1}, x_{i2}, x_{i3}\}$, we construct a replacement gadget as described in Fig. \ref{fig:X3CNPHard}. The gadget is similar to the one used in the proof of partition into triangles problem. However, instead of triangles the graph is `made of' cliques of size $p$. 
+This decision problem is known to be NP-Hard \cite{garey2002computers}. We will now reduce an instance of X3C to the promise correlation clustering problem using local replacement described in Fig. \ref{fig:X3CNPHard}. The details of the construction are as follows. For every element $x \in U$, we add a corresponding vertex $x \in V$. For every three set $S_i = \{x_{i1}, x_{i2}, x_{i3}\}$, we construct $B_{ij}$ for $i \le t$ and $j \le p$. Here, $t$ is a constant which will be specified later. Each $B_{ij}$ is a clique of size $p$. The `connection' between the different blocks are specified in Fig. \ref{fig:X3CNPHard}. Let $A$ be an algorithm which solves the promise problem described in Eqn. \ref{eqn:promiseCorrLoss}. Then, we can use this algorithm to decide exact cover by three sets as follows.
 
-Given an instance of X3C, we construct $G = (V, E)$ using local replacement described in Fig. \ref{fig:X3CNPHard}. Let $A$ be an algorithm which solves the promise problem described in Eqn. \ref{eqn:promiseCorrLoss}. Then, we can use this algorithm to decide exact cover by three sets as follows.
-
-If $A$ outputs a clustering $C$ such that all the clusters have size exactly $p$ and $E_C$ makes no negative errors w.r.t $E$ (that is $\mu(E_C) = 0$) then output YES. Otherwise, output NO. Next, we will prove that this procedure decides X3C. 
+If $A$ outputs a clustering $C$ such that all the clusters have size exactly $p$ and $E_C$ makes no negative errors w.r.t $E$ (that is $\alpha(E_C) = 0$) then output YES. Otherwise, output NO. Next, we will prove that this procedure decides X3C. 
 
 Let there exists an exact cover for the X3C instance. Let $C$ be the clustering corresponding to the exact cover. That is, the edges colored blue and black correspond to this clustering and the corresponding vertices are in the same cluster (Fig. \ref{fig:X3CNPHard}). Note that this clustering makes no negative errors. Furthermore, each point is in a cluster of size exactly $p$. Thus, the positive error corresponding to any vertex is the degree of that vertex minus $p-1$. Since, the size of a cluster is atmost $p$, this is the minimum possible positive error for any vertex. Hence, any other clustering strictly makes more positive errors than $C$. 
 
@@ -371,27 +377,146 @@ In the construction, for each clause, we have $p^2 t + (p - 3)$ vertices and a v
 
 \subsection{Hardness of PCC in the presence of an oracle}
 \label{section:PCCNPHardOracle}
-In the previous sections, we have shown that the PCC problem is NP-Hard without queries. It is trivial to see that by making $\beta |X|$ queries to the same-cluster oracle allows us to solve (in polynomial time) the Promise Correlation Clustering problem for all $p$ and $\alpha = 0$. In this section, we prove that the linear dependence on $n = |X|$ is tight. We prove that if the exponential time hypothesis (ETH) holds then any algorithm that runs in polynomial time makes atleast $\Omega(n)$ same-cluster queries.
+In the previous sections, we have shown that the PCC problem is NP-Hard without queries. It is trivial to see that if $\alpha = 0$ then making $\beta |X|$ queries to the same-cluster oracle allows us to solve (in polynomial time) the Promise Correlation Clustering problem for all $p$. In this section, we prove that the linear dependence on $n = |X|$ is tight if we assume that the exponential time hypothesis (ETH) is correct. 
+
+ETH is an assumption about computational hardness of the 3SAT problem. The non-uniform version of ETH (which we will use in this section) posits that there does not exist an algorithm that can solve 3-SAT in $2^{o(n)}$ time. We prove that if the exponential time hypothesis (ETH) holds then any algorithm that runs in polynomial time makes atleast $\Omega(n)$ same-cluster queries. The main idea is to reduce 3SAT to our problem. We do this by the following sequence of reductions, 3SAT to 3DM to X3C to PCC. These reductions show that (under ETH) the running time of PCC is $2^{o(n)}$. Using a `simulation trick' we then prove that any query-based algorithm for PCC needs to make atleast $\Omega(n)$ queries.
 
 \begin{theorem}
 Given that the Exponential Time Hypothesis (ETH) holds then any algorithm for the Promise Correlation Clustering problem  that runs in polynomial time makes $\Omega(|X|)$ same-cluster queries for all $p \ge 3$ and for $\alpha = 0$ and $\beta = \frac{1}{2}$. 
 \end{theorem}
 
-\noindent Below, we give a proof sketch but a detailed proof is in the supplementary material. The exponential time hypothesis says that any solver for $3$-SAT runs in $2^{o(m)}$ time (where $m$ is the number of clauses in the $3$-SAT formula). We use a reduction from $3$-SAT to 3DM to X3C to show that the exact cover by 3-sets (X3C) problem also can't be solved in $2^{o(m)}$ time (if ETH holds). Then, using the reduction from the previous section implies that PCC also can't be solved in $2^{o(n)}$ time. Thus, any query based algorithm for PCC needs to make atleast $\Omega(n)$ queries where $n = |X|$ is the number of vertices in the graph. 
-
+\noindent We will now prove the above theorem. We state the definition of the different problems used in the reduction.
 \begin{definition}[3-SAT].\\
 Input: A boolean formulae $\phi$ in 3CNF with $n$ literals and $m$ clauses. Each clause has exactly three literals. \\
 Output: YES if $\phi$ is satisfiable, NO otherwise. 
 \end{definition}
 
-\noindent\textbf{Exponential Time Hypothesis}\\
-There does not exist an algorithm which decides 3-SAT  and runs in $2^{o(m)}$ time.
+\begin{definition}[3DM].\\
+Input: Sets $W, X$ and $Y$ and a set of matches $M \subseteq W \times X \times Y$ of size $m$.  \\
+Output: YES if there exists $M' \subseteq M$ such that each element of $W, X, Y$ appears exactly once in $M'$. NO otherwise. 
+\end{definition}
 
-\noindent To prove that (X3C) is NP-Hard, the standard We will reduce 3-SAT to 3-dimensional matching problem. 3DM is already known to be NP-Hard. However, the standard reduction of 3-SAT to 3DM constructs a set with number of matchings in $\Theta(m^2 n^2)$. Hence, using the standard reduction, the exponential time hypothesis would imply there does not exist an algorithm for 3DM which runs in $\Omega(m^\frac{1}{4})$. Our reduction is based on the standard reduction. However, we make some clever optimizations especially in the way we encode the clauses. This improves the lower bound to $\Omega(m)$.
+\noindent To prove that (X3C) is NP-Hard, the standard We will reduce 3-SAT to 3-dimensional matching problem. 3DM is already known to be NP-Hard. However, the standard reduction of 3-SAT to 3DM constructs a set with $|M| \in \Theta(m^2 n^2)$. Hence, using the standard reduction, the exponential time hypothesis would imply there does not exist an algorithm for 3DM which runs in $\Omega(m^\frac{1}{4})$. Our reduction is based on the standard reduction. However, we make some clever optimizations especially in the way we encode the clauses. This helps us improve the lower bound to $\Omega(m)$.
 
-Using the above result, we immediately get an $\Omega(2^m)$ lower bound on the run-time of X3C. Now, using the same reduction of X3C to PCC as in Section \ref{section:PCCNPHard}, gives the same lower bound of $\Omega(n)$ on the running time of PCC. 
+\begin{figure}[!ht]
+	\centering
+	\begin{tikzpicture}
+	  \draw (0,0) node {$\bullet$} -- (1,0) node{$\bullet$} -- (0.5,0.5) node{$\bullet$} -- cycle;
+	  \draw (1,0) node{$\bullet$} -- (2,0) node{$\bullet$}
+  -- (2,-1) node{$\bullet$} -- cycle;
+	  \draw (2,-1) node{$\bullet$} -- (2,-2) node{$\bullet$} -- (2.5,-1.5) node{$\bullet$} -- cycle;
+	  \draw (2,-2) node{$\bullet$} -- (1,-3) node{$\bullet$} -- (2,-3) node{$\bullet$} -- cycle;
+	  \draw (0,-3) node{$\bullet$} -- (1,-3) node{$\bullet$} -- (0.5,-3.5) node{$\bullet$} -- cycle;
+	  \draw (0,-3) node{$\bullet$} -- (-1,-2) node{$\bullet$} -- (-1,-3) node{$\bullet$} -- cycle;
+	  \draw (-1,-2) node{$\bullet$} -- (-1,-1) node{$\bullet$} -- (-1.5,-1.5) node{$\bullet$} -- cycle;
+	  \draw (0,0) node{$\bullet$} -- (-1,-1) node{$\bullet$} -- (-1,0) node{$\bullet$} -- cycle;
+	
+	 \node  at (0.0,-0.3) {$b_4$};
+	 \node  at (1.0,-0.3) {$a_1$};
+	 \node  at (1.0,-0.6) {\scriptsize{(or $a_5$)}};
+	 \node  at (2.0,0.3) {$c_1$};
+	 \node  at (1.8,-1.2) {$b_1$};
+	 \node  at (1.7,-1.9) {$a_2$};
+	 \node  at (2.8,-1.5) {$c_1'$};
+	 \node  at (2.0,-3.3) {$c_2$};
+	 \node  at (1.0,-2.7) {$b_2$};
+	 \node  at (0.0,-2.7) {$a_3$};
+	 \node  at (0.5,-3.8) {$c_2'$};
+	 \node  at (-1.0,-3.3) {$c_3$};
+	 \node  at (-0.7,-2.0) {$b_3$};
+	 \node  at (-0.7,-1.2) {$a_4$};
+	 \node  at (-1.8,-1.6) {$c_3'$};
+	 \node  at (-1.0,0.3) {$c_4$};
+	 \node  at (0.5,0.8) {$c_4'$};
+	 
+	 \node  at (2.5,1.2) {$tf_1$};
+	 \node  at (3.8,0.7) {$tf_1'$};
+	 \node  at (4.3,0.0) {$tf_2$};
+	 \node  at (4.3,-0.8) {$tf_2'$};
+	 \node  at (4.3,-1.8) {$t_1$};
+	 \node  at (3.4,-3.2) {$t_1'$};
 
-For the sake of contradiction, let us assume that there exists an algorithm which solves PCC in polynomial time by making $o(n)$ same-cluster queries ($n$ is the number of vertices). Then by simulating all possible answers for the oracle, we get a non-query algorithm which solves PCC in $2^{o(n)}$. Hence, no such query algorithm exists. 
+	 \draw [line width=1mm] (4,0) -- (4,-1);
+	 %\node  at (4.3,-0.5) {$\gamma_i$};
+	 \draw [line width=1mm] (2.5,1) -- (3.5,0.5);
+	 %\node  at (3.2,0.9) {$\beta_i$};
+	 \draw [line width=1mm] (4,-2) -- (3,-3);
+  	 %\node  at (3.8,-2.6) {$\alpha_i$};
+	 
+  	\draw[dotted](4, 0) -- (2, 0);
+  	\draw[dotted](4, -1) -- (2, 0);
+  	\draw[dotted](4, 0) -- (2.5, -1.5);
+  	\draw[dotted](4, -1) -- (2.5, -1.5);
+  	\draw[dotted](4, 0) -- (5.1, 0.5);
+  	\draw[dotted](4, 0) -- (5.1, 0.3);
+  	\draw[dotted](4, 0) -- (5.1, -0.5);
+  	\draw[dotted](4, 0) -- (5.1, -0.3);
+  	\draw[dotted](4, -1) -- (5.1, 0.1);
+  	\draw[dotted](4, -1) -- (5.1, -0.9);
+  	\draw[dotted](4, -1) -- (5.1, -1.5);
+  	\draw[dotted](4, -1) -- (5.1, -1.3);
+
+  	\draw[dotted](2.5, 1) -- (2, 0);
+  	\draw[dotted](3.5, 0.5) -- (2, 0);
+  	\draw[dotted](2.5, 1) -- (2.5, -1.5);
+  	\draw[dotted](3.5, 0.5) -- (2.5, -1.5);
+  	\draw[dotted](2.5, 1) -- (3.3, 1.5);
+  	\draw[dotted](2.5, 1) -- (3.3, 1.3);
+  	\draw[dotted](2.5, 1) -- (3.5, 0.9);
+  	\draw[dotted](2.5, 1) -- (3.5, 0.8);
+  	\draw[dotted](3.5, 0.5) -- (4.2, 1.1);
+  	\draw[dotted](3.5, 0.5) -- (4.2, 0.9);
+  	\draw[dotted](3.5, 0.5) -- (3.5, 1.5);
+  	\draw[dotted](3.5, 0.5) -- (4.5, 0.5);
+
+  	\draw[dotted](4, -2) -- (2.5, -1.5);
+  	\draw[dotted](3, -3) -- (2.5, -1.5);
+  	\draw[dotted](4, -2) -- (5.1, -2);
+  	\draw[dotted](4, -2) -- (5.1, -2.5);
+  	\draw[dotted](3, -3) -- (4.2, -3);
+  	\draw[dotted](3, -3) -- (4.2, -2.7);
+  	\end{tikzpicture}
+  	\caption{Part of graph $G$ constructed for the literal $x_1$. The figure is an illustration for when $x_1$ is part of four different clauses. The triangles (or hyper-edge) $(a_i, b_i, c_i)$ capture the case when $x_1$ is true and the other triangle $(b_i, c_i', a_{i+1})$ captures the case when $x_1$ is false. Assuming that a clause $C_j = \{x_1, x_2, x_3\}$, the hyper-edges containing $tf_i, tf_i'$ and $t_1, t_1'$ capture different settings. The hyper-edges containing $t_1, t_1'$ ensure that atleast one of the literals in the clause is true. The other two ensure that two variables can take either true or false values.}
+\label{fig:3DMQueries}
+\end{figure}
+
+Our gadget is described in Fig. \ref{fig:3DMQueries}. For each literal $x_i$, let $m_i$ be the number of clauses in which the the literal is present. We construct a ``truth-setting" component containing $2m_i$ hyper-edges (or triangles). We add the following hyper-edges to $M$.
+\begin{align*}
+  &\{(a_k[i], b_k[i], c_k[i]): 1 \le k \le m_i\} \cup \{(a_{k+1}[i], b_k[i], c_k'[i]): 1 \le k \le m_i\}
+\end{align*}
+Note that one of $(a_k, b_k, c_k)$ or $(a_{k+1}, b_k, c_k')$ have to be selected in a matching $M'$. If the former is selected that corresponds to the variable $x_i$ being assigned true, the latter corresponds to false. This part is the same as the standard construction. 
+
+For every clause $C_j = \{x_1, x_2, x_3\}$ we add three types of hyper-edges.  The first type ensures that atleast one of the literals is true. 
+$$\{(c_k[i], t_1[j], t_1'[j]): x_i' \in C_j\} \cup \{(c_k'[i], t_1[j], t_1'[j]): x_i \in C_j\}$$ 
+The other two types of hyper-edges (conected to the $tf_i$'s) say that two of the literals can be either true or false. Hence, we connect them to both $c_k$ and $c_k'$
+\begin{align*}
+  &\{(c_k[i], tf_1[j], tf_1'[j]): x_i' \text{ or }x_i\in C_j\} \cup \{(c_k[i], tf_2[j], tf_2'[j]): x_i \text{ or }x_i' \in C_j\}\\
+  &\cup \{(c_k'[i], tf_1[j], tf_1'[j]): x_i' \text{ or }x_i\in C_j\} \cup \{(c_k'[i], tf_2[j], tf_2'[j]): x_i \text{ or }x_i' \in C_j\}
+\end{align*}
+Note that in the construction $k$ refers to the index of the clause $C_j$ in the truth-setting component corresponding to the literal $x_i$. Using the above construction, we get that
+\begin{align*}
+  & W = \{c_k[i], c_k'[i]\}\\
+  & X = \{a_k[i]\} \cup \{t_1[j], tf_1[j], tf_2[j]\}\\
+  & Y = \{b_k[i]\} \cup \{t_1'[j], tf_1'[j], tf_2'[j]\}
+\end{align*} 
+Hence, we see that $|W| = 2\sum_i m_i = 6m$. Now, $|X| = |Y| = \sum_i m_i + 3m = 6m$. And, we have that $|M| = 2\sum_i m_i + 15m = 21m$. Thus, we see that this construction is linear in the number of clauses. 
+
+Now, if the 3-SAT formula $\phi$ is satisfiable then there exists a matching $M'$ for the 3DM problem. If a variable $x_i = T$ in the assignment then add $(c_k[i], a_k[i], b_k[i])$ to $M'$ else add $(c_k'[i], a_{k+1}[i], b_k[i])$. For every clause $C_j$, let $x_i$ (or $x_i'$) be the variable which is set to true in that clause. Add $(c_k'[i], t_1[j], t_1'[j])$  (or $(c_k[i], t_1[j], t_1'[j])$) to $M'$. For the remaining two clauses, add the hyper-edges containing $tf_1[j]$ and $tf_2[j]$ depending upon their assignments. Clearly, $M'$ is a matching. 
+
+Now, the proof for the other direction is similar. If there exists a matching, then one of $(a_k, b_k, c_k)$ or $(a_{k+1}, b_k, c_k')$ have to be selected in a matching $M'$. This defines a truth assignment of the variables. Now, the construction of the clause hyper-edges ensures that every clause is satisfiable.
+
+\begin{theorem}
+If the exponential time hypothesis holds then there does not exist an algorithm which decides the three dimensional matching problem 3DM and runs in time $2^{o(m)}$.
+\end{theorem}
+
+\begin{corollary}
+\label{cor:X3CLowerBound}
+If the exponential time hypothesis holds then there does not exist an algorithm which decides exact cover by 3-sets problem (X3C) and runs in time $2^{o(m)}$.
+\end{corollary}
+
+Hence, from the discussion in this section, we know that X3C is not only NP-Hard but the running time is lower bounded by $\Omega(2^m)$. Now, using the same reduction of X3C to PCC as before, gives the same lower bound on the running time of PCC. Using this, we can now lower bound the number of queries required by PCC.
+
+For the sake of contradiction, let us assume that there exists an algorithm which solves PCC in polynomial time by making $o(n)$ same-cluster queries ($n$ is the number of vertices). Then by simulating all possible answers for the oracle, we get a non-query algorithm which solves PCC in $2^{o(n)}$. However, combining Cor. \ref{cor:X3CLowerBound} with the reduction of X3C to PCC, we get that any algorithm that solves PCC takes $\Omega(2^n)$. Hence, no such query algorithm exists. 
 
 \ifdefined\COMPLETE
 \else
