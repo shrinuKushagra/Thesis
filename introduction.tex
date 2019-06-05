@@ -101,7 +101,7 @@ $$\bigg|\frac{|h\cap S|}{|S|} - P(h)\bigg| < \epsilon$$
 
 \begin{theorem}[Fundamental theorem of learning \cite{blumer1989learnability}] 
 \label{thm:uniformConvergence}
-Here, we state the theorem as in the book \cite{shalev2014understanding}. Let $H$ be a class of functions $h:\mc X \rightarrow \{0, 1\}$ of finite VC-Dimension, that is $\vcdim(H) = d < \infty$. Let $D$ be a probability distribution over $X$ and $h^*$ be some unknown target function. Given $\epsilon, \delta \in (0, 1)$. Let $err_D$ be the $\{0, 1\}$-loss function $err: H \rightarrow [0, 1]$. That is $err_D(h) = \underset{x \in D}{\mb P}[h(x) \neq h^*(x)]$. Sample a set $S = \{(x_1, y_1), \ldots, (x_m, y_m)\}$ according to the distribution $D$. Define $err_S(h) = \sum_{i=1}^{m} \frac{\mb 1_{[h(x_i) \neq h^*(x_i)]}}{m}$. If $m \ge a\frac{d + \log (1/\delta)}{\epsilon^2}$, then with probability atleast $1-\delta$ over the choice of $S$, we have that for all $h \in H$
+Here, we state the theorem as in the book \cite{shalev2014understanding}. Let $H$ be a class of functions $h:\mc X \rightarrow \{0, 1\}$ of finite VC-Dimension, that is $\vcdim(H) = d < \infty$. Let $D$ be a probability distribution over $X$ and $h^*$ be some unknown target function. Given $\epsilon, \delta \in (0, 1)$. Let $err_D$ be the $\{0, 1\}$-loss function $err: H \rightarrow [0, 1]$. That is $err_D(h) = \underset{x \in D}{\mb P}[h(x) \neq h^*(x)]$. Sample a set $S = \{(x_1, y_1), \ldots, (x_m, y_m)\}$ according to the distribution $D$. Define $err_S(h) = \sum_{i=1}^{m} \frac{\mb 1_{[h(x_i) \neq h^*(x_i)]}}{m}$. If $m \ge a\frac{d + \log (1/\delta)}{\epsilon^2}$, then with probability at least $1-\delta$ over the choice of $S$, we have that for all $h \in H$
 $$|err_D(h) - err_S(h)| \le \epsilon$$
 where $a$ is an absolute global constant. 
 \end{theorem}
@@ -117,7 +117,7 @@ $$\mb P[X > (1+\nu)n\mu] \le \exp\bigg(\frac{-\nu^2\mu n}{2(1+\nu)}\bigg)$$
 
 \begin{theorem}[Generalized Hoeffding's Inequality (e.g., \cite{ashtiani2015dimension})]
 \label{thm:genHoeff}
-Let $X_1, \ldots. X_n$ be i.i.d random vectors in some Hilbert space such that for all $i$, $\|X_i\|_2 \le R$ and $E[X_i] = \mu$. If $n > c\frac{\log(1/\delta)}{\epsilon^2}$, then with probability atleast $1-\delta$, we have that
+Let $X_1, \ldots. X_n$ be i.i.d random vectors in some Hilbert space such that for all $i$, $\|X_i\|_2 \le R$ and $E[X_i] = \mu$. If $n > c\frac{\log(1/\delta)}{\epsilon^2}$, then with probability at least $1-\delta$, we have that
 $$\Big\|\mu - \frac{1}{n}\sum X_i\Big\|_2^2 \le R^2\epsilon$$ 
 \end{theorem}
 

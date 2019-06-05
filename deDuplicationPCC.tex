@@ -28,31 +28,31 @@
 \begin{document}
 \fi
 
-Modern businesses generate a tremendous amount of data which are stored in large databases. These datasets are then used to make many critical decisions. Therefore, ensuring the quality of these datasets becomes extremely important. As the data accumulates from multiple sources over time, many errors creep into the data. For example, many records end up having duplicate entries. Record de-duplication is a central task in managing large scale databases. The goal is to detect records in a database that correspond to the same real word entity. 
+Modern businesses generate a tremendous amount of data. These are stored in large databases which are then used to make many critical decisions. Therefore, ensuring the quality of these datasets becomes extremely important. As the data accumulates from multiple sources over time, many errors creep into the data. For example, many records end up having duplicate entries. Record de-duplication is a central task in managing large scale databases. The goal is to detect records in a database that correspond to the same real word entity. 
 %Some examples of such tasks are: detecting duplicate records in a health-care dataset, duplicate customer records, duplicate publication records (in say Google Scholar) are other common examples of de-duplication tasks.
 
 The problem of data de-duplication can be viewed as a clustering task. Here, the goal is to put records corresponding to the same physical entity in the same cluster while separating the records corresponding to different entities into different clusters. Clustering for de-duplication has many characteristics which are different from standard clustering problems. Many popular clustering algorithms like $k$-means or $k$-median receive as input the value $k$, that is the number of clusters to output. This information is unknown in de-duplication applications. In any dataset, the number of different-cluster pairs (i.e. different entity pairs) is order of magnitude greater than the number of positive or same-cluster pairs (i.e. same entity pairs). Hence, common machine learning tools of classification prediction (learning a binary classifier over the set of pairs of instances) do not automatically transfer to this domain as the dataset is heavily skewed towards the negative pairs. 
 
 The framework of correlation clustering is very natural for modelling the problem of data de-duplication \cite{bansal2004correlation}. Here, de-duplication is viewed as an optimization problem over graphs. More formally, given a dataset $X$ and a complete graph $G$ over the set. The edges of the graph are labelled $0$ or $1$. An edge label of zero indicates that the corresponding vertices have been deemed to be in different cluster while an edge label of one indicates that the corresponding vertices should be in the same cluster. The motivation for edge labelling is the following. Often the practitioner can design a pairwise similarity function over the pairs of points. The pairs whose similarity is above a certain threshold are deemed as positive (or same-cluster) and the remaining pairs are deemed to be negative (or different-cluster). Sometimes, the similarity metric is also learned from training data. 
 
-Given the graph, the goal of correlation clustering is to find a clustering of the dataset which correlates `as much as possible' with the given edges. In other words, find a clustering which minimizes the correlation loss w.r.t the given edges. Correlation loss is defined as the sum of the number of zero edges within a cluster plus the number of one edges across different clusters. However, solving this optimization problem is NP-Hard \cite{bansal2004correlation}. 
+Given the graph, the goal of correlation clustering is to find a clustering of the dataset which correlates `as much as possible' with the given edges. In other words, find a clustering which minimizes the correlation loss w.r.t the given edges. Correlation loss is defined as the sum of the number of zero edges within a cluster plus the number of one edges across different clusters. However, solving this optimization problem is NP-hard \cite{bansal2004correlation}. 
   
-In this chapter, we offer a formal modelling of such record de-duplication tasks. Our framework is the same as correlation clustering but with the added \textit{promise} that the input graph edges $E$ is `close to' the optimal correlation clustering of the given dataset. We analyse the computational complexity of this problem and show that even under strong promise, correlation clustering is NP-Hard. Moreover, the problem remains NP-Hard (assuming the ETH hypothesis) even when we are allowed to make queries to a human expert (or an \textit{oracle}) as long as the number of queries is not too large (sub-linear in the number of points in the dataset). 
+In this chapter, we offer a formal modelling of such record de-duplication tasks. Our framework is the same as correlation clustering but with the added \textit{promise} that the input graph edges $E$ is `close to' the optimal correlation clustering of the given dataset. We analyse the computational complexity of this problem and show that even under strong promise, correlation clustering is NP-hard. Moreover, the problem remains NP-hard (assuming the ETH hypothesis) even when we are allowed to make queries to a human expert (or an \textit{oracle}) as long as the number of queries is not too large (sub-linear in the number of points in the dataset). 
 
 Given these negative results, we introduce the framework of restricted correlation clustering (RCC). This framework has two important differences from the standard (and promise) correlation clustering formulation. Firstly, the optimization problem is restricted over a given class $\mc F$ of clusterings. Secondly, the goal is to find a clustering which correlates as much as possible with the unknown target (or ground truth) clustering $C^*$. That is, $C^*$ is the clustering where only records corresponding to same entity are in the same cluster. We offer an algorithmic approach (which uses the help of an oracle) with success guarantees for the restricted version. The `success guarantee' depends on the complexity of the class $\mc F$ (measured by $\vcdim(\mc F)$) as well as the `closeness' of the distance (or similarity) metric $d$ to the target clustering. We complement our theoretical results by carrying out extensive experimental evaluation of our framework on a diverse class of clustering algorithms and across multiple real world datasets.
 
 \section{Related Work}
-The most relevant work is the framework of correlation clustering developed by \cite{bansal2004correlation} that we discussed in the previous section. Other variations of correlation clustering have been considered. For example \cite{demaine2006correlation}, consider a problem where the edges can be labelled by a real number instead of just $0$ or $1$. Edges with large positive weights encourage those vertices to be in the same cluster while edges with large negative weights encourage those points to be in different clusters. They showed that the problem is NP-Hard and gave a $O(\log n)$ approximation to the weighted correlation clustering problem. \cite{charikar2005clustering} made several contributions to the correlation clustering problem. For the problem of minimizing the correlation clustering loss (for unweighted complete graphs), they gave an algorithm with factor $4$ approximation. They also proved that the minimization problem is APX-Hard. 
+The most relevant work is the framework of correlation clustering that we discussed in the previous section \cite{bansal2004correlation}. Other variations of correlation clustering have been considered. For example \cite{demaine2006correlation}, consider a problem where the edges can be labelled by a real number instead of just $0$ or $1$. Edges with large positive weights encourage those vertices to be in the same cluster while edges with large negative weights encourage those points to be in different clusters. They showed that the problem is NP-hard and gave a $O(\log n)$ approximation to the weighted correlation clustering problem. \cite{charikar2005clustering} made several contributions to the correlation clustering problem. For the problem of minimizing the correlation clustering loss (for unweighted complete graphs), they gave an algorithm with factor $4$ approximation. They also proved that the minimization problem is APX-Hard. 
 
-More recently, \cite{ailon2018approximate} considered the problem of correlation clustering in the presence of an oracle. If the number of clusters $k$ is known, they proposed an algorithm which makes $O(k^{14} \log n)$ queries to the oracle and finds a $(1+\epsilon)$-approximation to the correlation clustering problem. They showed that the problem is NP-Hard to approximate with $o\big(\frac{k}{poly \log k}\big)$ queries to an oracle. In this work, we obtain similar results for the {promise correlation clustering} problem.
+More recently, \cite{ailon2018approximate} considered the problem of correlation clustering in the presence of an oracle. If the number of clusters $k$ is known, they proposed an algorithm which makes $O(k^{14} \log n)$ queries to the oracle and finds a $(1+\epsilon)$-approximation to the correlation clustering problem. They showed that the problem is NP-hard to approximate with $o\big(\frac{k}{poly \log k}\big)$ queries to an oracle. In this work, we obtain similar results for the {promise correlation clustering} problem.
 
-Supervision in clustering has been addressed before. For example, \cite{kulis2009semi,basu2004probabilistic,basu2002semi} considered {\em link/don't-link} constraints. This is a form of non-interactive clustering where the algorithm gets as input a list of pairs which should be in the same cluster and a list pairs which should be in different clusters. \cite{balcan2008clustering} developed a framework of interactive clustering where the supervision is provided in the form of {\em split/merge} queries. The algorithm gives the current clustering to the oracle. The oracle responds by telling the which clusters to merge and which clusters to split. 
+Supervision in clustering has been addressed before. For example, \cite{kulis2009semi,basu2004probabilistic,basu2002semi} considered {\em link/don't-link} constraints. This is a form of non-interactive clustering where the algorithm gets as input a list of pairs which should be in the same cluster and a list pairs which should be in different clusters. The framework of interactive clustering was developed by \cite{balcan2008clustering} where the supervision is provided in the form of {\em split/merge} queries. The algorithm gives the current clustering to the oracle. The oracle responds by telling the which clusters to merge and which clusters to split. 
 
-In this work, we use the framework of same-cluster queries developed by \cite{ashtiani2016clustering}. At any given instant, the clustering algorithm asks the same-cluster oracle about two points in the dataset. The oracle replies by answering either `yes' or `no' depending upon whether the two points lie in the same or different clusters. 
+\cite{ashtiani2016clustering} developed the framework of same-cluster queries which we use in this chapter. At any given instant, the clustering algorithm asks the same-cluster oracle about two points in the dataset. The oracle replies by answering either `yes' or `no' depending upon whether the two points lie in the same or different clusters. 
 
 On de-duplication side, most prevalent are approaches that are based on designing a similarity measure (or distance) over the records, such that records that are highly similar according to that measure are likely to be duplicates and records that measure as significantly dissimilar are likely to represent different entities. For example, to handle duplicate records created due typographical mistakes, many character-based similarity metrics have been considered. Examples of such metrics include the edit or levenshtein distance \cite{levenshtein1966binary}, smith-waterman distance \cite{waterman1981identification} and jaro distance metric \cite{jaro1980unimatch}. Token-based similarity metrics try to handle rearrangement of words, for example \cite{monge1996field} and \cite{cohen1998integration}. Other techniques include phonetic-based metrics and numerical metrics (to handle numeric data). A nice overview of these methods can be found in \cite{elmagarmid2007duplicate}. 
    
-While the above approaches relied on designing a good similarity metric, some works try to `learn' the distance function from a labelled training dataset of pairs of records. Examples of such works include \cite{cochinwala2001efficient} and \cite{bilenko2003adaptive}. Clustering for de-duplication has been mostly addressed in application oriented works. \cite{hernandez1995merge} assumes that the duplicate records are transitive. The clustering problem now reduces to finding the connected components in a graph. \cite{hassanzadeh2009framework} carried out an extensive experimental evaluation of different graph-based clustering algorithms on a simulated dataset of strings.
+While the above approaches relied on designing a good similarity metric, some works try to `learn' the distance function from a labelled training dataset of pairs of records. Examples of such works include \cite{cochinwala2001efficient} and \cite{bilenko2003adaptive}. Clustering for de-duplication has been mostly addressed in application oriented works. One work assumes that the duplicate records are transitive \cite{hernandez1995merge}. The clustering problem now reduces to finding the connected components in a graph. An extensive experimental evaluation of different graph-based clustering algorithms on a simulated dataset of strings was carried out by \cite{hassanzadeh2009framework}.
 
 \section{Preliminaries}
 \label{section:problemFormulation}
@@ -102,7 +102,7 @@ Given a metric space $(X, d)$, a target clustering $C^*$ and a parameter $\lambd
 \end{align}
 Here $U^2$ is the uniform distribution over $X^{[2]}$. 
 \end{definition} 
-In deduplication applications, often the distance function is such that pairs with distance within a certain threshold are likely to be in the same cluster. The definition of an informative metric formalizes this intuition. It says that most of the true positive pairs have a distance of atmost $\lambda$ between them. Also, amongst all pairs with distance $\le \lambda$, atleast a $\beta$ fraction of them belong to the same cluster. 
+In deduplication applications, often the distance function is such that pairs with distance within a certain threshold are likely to be in the same cluster. The definition of an informative metric formalizes this intuition. It says that most of the true positive pairs have a distance of at most $\lambda$ between them. Also, amongst all pairs with distance $\le \lambda$, at least a $\beta$ fraction of them belong to the same cluster. 
 
 \begin{definition}[$\gamma$-skewed] 
 \label{defn:gammaskewed} 
@@ -113,6 +113,11 @@ Given $X$ and a target clustering $C^*$. We say that $X$ is $\gamma$-skewed w.r.
 \end{definition}
 In de-duplication applications, most of the pairs are negative (or belong to different clusters). The above definition states this property formally. In the next section, we introduce our framework of \textit{promise correlation clustering} and discuss the computational complexity of the problem both in the absence and presence of an oracle.   
 
+\begin{definition}[VC-dimension]
+Given a domain $X$ and a hypothesis class $H$. We say that a set $C \subset X$ is shattered by $H$ if $|H_C| = 2^{|C|}$. That is, $H$ restricted to $C$ is the set of all possible functions from $C$ to $\{0, 1\}$. The vc dimension of $H$ denoted by $\vcdim(H)$ is the maximum size of $C \subset X$ which can be shattered by $H$.  
+$$\vcdim(H) = \max_{C \subset X} \text{ H shatters C}$$
+\end{definition}
+
 \section{Promise Correlation Clustering}
 \label{section:PCC}
 
@@ -122,11 +127,11 @@ Given a clustering instance $G = (X, E)$. Let $C^*$ be such that
 \begin{align}
   &C^* = \argmin_{C \in \mc F} \enspace corrL_{E}(C) \label{eqn:promiseCorrLoss}
 \end{align}
-where $\mc F$ is the set of all possible clusterings $C$ such that $m(C) \le p$. Given that $E$ is $(\alpha, \beta)$-informative w.r.t $C^*$. Find the clustering $C^*$. 
+where $\mc F$ is the set of all possible clusterings $C$ such that $M(C) \le p$ (where that $M(C)$ denotes the maximum size of a cluster in the clustering $C$). Given that $E$ is $(\alpha, \beta)$-informative w.r.t $C^*$. Find the clustering $C^*$. 
 \end{definition}
-When the edges $E$ correspond to a clustering $C$ then $\beta = 1$ and $\alpha = 0$. We show in the subsequent sections that even for this `restricted' class of clusterings (when the size of the maximum cluster is atmost a constant $M$) and given the prior knowledge, PCC is still NP-Hard. Furthermore, PCC is NP-Hard even when we are allowed to make $o(|X|)$ queries to a $C^*$-oracle. 
+When the edges $E$ correspond to a clustering $C$ then $\beta = 1$ and $\alpha = 0$. We show in the subsequent sections that even for this `restricted' class of clusterings (when the size of the maximum cluster is at most a constant $M$) and given the prior knowledge, PCC is still NP-hard. Furthermore, PCC is NP-hard even when we are allowed to make $o(|X|)$ queries to a $C^*$-oracle. 
 
-\subsection{PCC is NP-Hard}
+\subsection{PCC is NP-hard}
 \label{section:PCCNPHard}
 \begin{figure*}[!ht]
 	\centering
@@ -355,20 +360,20 @@ When the edges $E$ correspond to a clustering $C$ then $\beta = 1$ and $\alpha =
 \end{figure*}
 
 \begin{theorem}
-Finding the optimal solution to the Promise Correlation Clustering problem is NP-Hard for all $p \ge 3$ and for $\alpha = 0$ and $\beta = \frac{1}{2}$.  
+Finding the optimal solution to the Promise Correlation Clustering problem is NP-hard for all $p \ge 3$ and for $\alpha = 0$ and $\beta = \frac{1}{2}$.  
 \end{theorem}
 
-\noindent To prove the result, we will use a reduction from exact cover by $3$-sets problem which is known to be NP-Hard.
+\noindent To prove the result, we will use a reduction from exact cover by $3$-sets problem which is known to be NP-hard.
 
 (X3C) Given a universe of elements $U = \{x_1, \ldots, x_{3q}\}$ and a collections of subsets $S = \{S_1, \ldots, S_m\}$. Each $S_i \subset U$ and contains exactly three elements. Does there exist $S' \subseteq S$ such that each element of $U$ occurs exactly once in $S'$?
 
-This decision problem is known to be NP-Hard \cite{garey2002computers}. We will now reduce an instance of X3C to the promise correlation clustering problem using local replacement described in Fig. \ref{fig:X3CNPHard}. The details of the construction are as follows. For every element $x \in U$, we add a corresponding vertex $x \in V$. For every three set $S_i = \{x_{i1}, x_{i2}, x_{i3}\}$, we construct $B_{ij}$ for $i \le t$ and $j \le p$. Here, $t$ is a constant which will be specified later. Each $B_{ij}$ is a clique of size $p$. The `connection' between the different blocks are specified in Fig. \ref{fig:X3CNPHard}. Let $A$ be an algorithm which solves the promise problem described in Eqn. \ref{eqn:promiseCorrLoss}. Then, we can use this algorithm to decide exact cover by three sets as follows.
+This decision problem is known to be NP-hard \cite{garey2002computers}. We will now reduce an instance of X3C to the promise correlation clustering problem using local replacement described in Fig. \ref{fig:X3CNPHard}. The details of the construction are as follows. For every element $x \in U$, we add a corresponding vertex $x \in V$. For every three set $S_i = \{x_{i1}, x_{i2}, x_{i3}\}$, we construct $B_{ij}$ for $i \le t$ and $j \le p$. Here, $t$ is a constant which will be specified later. Each $B_{ij}$ is a clique of size $p$. The `connection' between the different blocks are specified in Fig. \ref{fig:X3CNPHard}. Let $A$ be an algorithm which solves the promise problem described in Eqn. \ref{eqn:promiseCorrLoss}. Then, we can use this algorithm to decide exact cover by three sets as follows.
 
 If $A$ outputs a clustering $C$ such that all the clusters have size exactly $p$ and $E_C$ makes no negative errors w.r.t $E$ (that is $\alpha(E_C) = 0$) then output YES. Otherwise, output NO. Next, we will prove that this procedure decides X3C. 
 
-Let there exists an exact cover for the X3C instance. Let $C$ be the clustering corresponding to the exact cover. That is, the edges colored blue and black correspond to this clustering and the corresponding vertices are in the same cluster (Fig. \ref{fig:X3CNPHard}). Note that this clustering makes no negative errors. Furthermore, each point is in a cluster of size exactly $p$. Thus, the positive error corresponding to any vertex is the degree of that vertex minus $p-1$. Since, the size of a cluster is atmost $p$, this is the minimum possible positive error for any vertex. Hence, any other clustering strictly makes more positive errors than $C$. 
+Let there exists an exact cover for the X3C instance. Let $C$ be the clustering corresponding to the exact cover. That is, the edges colored blue and black correspond to this clustering and the corresponding vertices are in the same cluster (Fig. \ref{fig:X3CNPHard}). Note that this clustering makes no negative errors. Furthermore, each point is in a cluster of size exactly $p$. Thus, the positive error corresponding to any vertex is the degree of that vertex minus $p-1$. Since, the size of a cluster is at most $p$, this is the minimum possible positive error for any vertex. Hence, any other clustering strictly makes more positive errors than $C$. 
 
-It is easy to see from the construction that if $A$ finds a clustering which has no negative errors and all the clusters have size $p$, then this corresponds to exact cover of the X3C instance and hence we output YES. If this does not happen then there does not exist any exact cover for $(U, S)$. This is because if there was an exact cover then the corresponding clustering would satisfy our condition. Thus, $A$ decides X3C. Since, X3C is NP-Hard, no polynomial time algorithm $A$ exists unless $P = NP$.
+It is easy to see from the construction that if $A$ finds a clustering which has no negative errors and all the clusters have size $p$, then this corresponds to exact cover of the X3C instance and hence we output YES. If this does not happen then there does not exist any exact cover for $(U, S)$. This is because if there was an exact cover then the corresponding clustering would satisfy our condition. Thus, $A$ decides X3C. Since, X3C is NP-hard, no polynomial time algorithm $A$ exists unless $P = NP$.
 
 In the construction, for each clause, we have $p^2 t + (p - 3)$ vertices and a vertex for each of the variables. Therefore, $|V| = m (p^2 t + (p-3)) + 3q$ and $|E| = pt({p \choose 2}+p-1) + {p \choose 2}$.  Consider a clustering $C$ which places all the $x_i$'s  and $r_i$'s in singleton clusters and places rest of the points in clusters of size $p$. For $t \ge 2$,
 \begin{align*}
@@ -377,26 +382,26 @@ In the construction, for each clause, we have $p^2 t + (p - 3)$ vertices and a v
 
 \subsection{Hardness of PCC in the presence of an oracle}
 \label{section:PCCNPHardOracle}
-In the previous sections, we have shown that the PCC problem is NP-Hard without queries. It is trivial to see that if $\alpha = 0$ then making $\beta |X|$ queries to the same-cluster oracle allows us to solve (in polynomial time) the Promise Correlation Clustering problem for all $p$. In this section, we prove that the linear dependence on $n = |X|$ is tight if we assume that the exponential time hypothesis (ETH) is correct. 
+In the previous sections, we have shown that the PCC problem is NP-hard without queries. It is trivial to see that if $\alpha = 0$ then making $\beta |X|$ queries to the same-cluster oracle allows us to solve (in polynomial time) the Promise Correlation Clustering problem for all $p$. In this section, we prove that the linear dependence on $n = |X|$ is tight if we assume that the exponential time hypothesis (ETH) is correct. 
 
-ETH is an assumption about computational hardness of the 3SAT problem. The non-uniform version of ETH (which we will use in this section) posits that there does not exist an algorithm that can solve 3-SAT in $2^{o(n)}$ time. We prove that if the exponential time hypothesis (ETH) holds then any algorithm that runs in polynomial time makes atleast $\Omega(n)$ same-cluster queries. The main idea is to reduce 3SAT to our problem. We do this by the following sequence of reductions, 3SAT to 3DM to X3C to PCC. These reductions show that (under ETH) the running time of PCC is $2^{o(n)}$. Using a `simulation trick' we then prove that any query-based algorithm for PCC needs to make atleast $\Omega(n)$ queries.
+ETH is an assumption about computational hardness of the 3SAT problem. The non-uniform version of ETH (which we will use in this section) posits that there does not exist an algorithm that can solve 3-SAT in $2^{o(n)}$ time. We prove that if the exponential time hypothesis (ETH) holds then any algorithm that runs in polynomial time makes at least $\Omega(n)$ same-cluster queries. The main idea is to reduce 3SAT to our problem. We do this by the following sequence of reductions, 3SAT to 3DM to X3C to PCC. These reductions show that (under ETH) the running time of PCC is $2^{o(n)}$. Using a `simulation trick' we then prove that any query-based algorithm for PCC needs to make at least $\Omega(n)$ queries.
 
 \begin{theorem}
 Given that the Exponential Time Hypothesis (ETH) holds then any algorithm for the Promise Correlation Clustering problem  that runs in polynomial time makes $\Omega(|X|)$ same-cluster queries for all $p \ge 3$ and for $\alpha = 0$ and $\beta = \frac{1}{2}$. 
 \end{theorem}
 
 \noindent We will now prove the above theorem. We state the definition of the different problems used in the reduction.
-\begin{definition}[3-SAT].\\
+\begin{definition}3-SAT.\\
 Input: A boolean formulae $\phi$ in 3CNF with $n$ literals and $m$ clauses. Each clause has exactly three literals. \\
 Output: YES if $\phi$ is satisfiable, NO otherwise. 
 \end{definition}
 
-\begin{definition}[3DM].\\
+\begin{definition}3 Dimensional Matching (3DM)\\
 Input: Sets $W, X$ and $Y$ and a set of matches $M \subseteq W \times X \times Y$ of size $m$.  \\
 Output: YES if there exists $M' \subseteq M$ such that each element of $W, X, Y$ appears exactly once in $M'$. NO otherwise. 
 \end{definition}
 
-\noindent To prove that (X3C) is NP-Hard, the standard We will reduce 3-SAT to 3-dimensional matching problem. 3DM is already known to be NP-Hard. However, the standard reduction of 3-SAT to 3DM constructs a set with $|M| \in \Theta(m^2 n^2)$. Hence, using the standard reduction, the exponential time hypothesis would imply there does not exist an algorithm for 3DM which runs in $\Omega(m^\frac{1}{4})$. Our reduction is based on the standard reduction. However, we make some clever optimizations especially in the way we encode the clauses. This helps us improve the lower bound to $\Omega(m)$.
+\noindent We first reduce 3-SAT to 3-dimensional matching problem. 3DM is already known to be NP-hard. However, the standard reduction of 3-SAT to 3DM constructs a set with $|M| \in \Theta(m^2 n^2)$. Hence, using the standard reduction, the exponential time hypothesis would imply there does not exist an algorithm for 3DM which runs in $\Omega(m^\frac{1}{4})$. Our reduction is based on the standard reduction. However, we make some clever optimizations especially in the way we encode the clauses. This helps us improve the lower bound to $\Omega(m)$.
 
 \begin{figure}[!ht]
 	\centering
@@ -476,17 +481,17 @@ Output: YES if there exists $M' \subseteq M$ such that each element of $W, X, Y$
   	\draw[dotted](3, -3) -- (4.2, -3);
   	\draw[dotted](3, -3) -- (4.2, -2.7);
   	\end{tikzpicture}
-  	\caption{Part of graph $G$ constructed for the literal $x_1$. The figure is an illustration for when $x_1$ is part of four different clauses. The triangles (or hyper-edge) $(a_i, b_i, c_i)$ capture the case when $x_1$ is true and the other triangle $(b_i, c_i', a_{i+1})$ captures the case when $x_1$ is false. Assuming that a clause $C_j = \{x_1, x_2, x_3\}$, the hyper-edges containing $tf_i, tf_i'$ and $t_1, t_1'$ capture different settings. The hyper-edges containing $t_1, t_1'$ ensure that atleast one of the literals in the clause is true. The other two ensure that two variables can take either true or false values.}
+  	\caption{Part of graph $G$ constructed for the literal $x_1$. The figure is an illustration for when $x_1$ is part of four different clauses. The triangles (or hyper-edge) $(a_i, b_i, c_i)$ capture the case when $x_1$ is true and the other triangle $(b_i, c_i', a_{i+1})$ captures the case when $x_1$ is false. Assuming that a clause $C_j = \{x_1, x_2, x_3\}$, the hyper-edges containing $tf_i, tf_i'$ and $t_1, t_1'$ capture different settings. The hyper-edges containing $t_1, t_1'$ ensure that at least one of the literals in the clause is true. The other two ensure that two variables can take either true or false values.}
 \label{fig:3DMQueries}
 \end{figure}
 
-Our gadget is described in Fig. \ref{fig:3DMQueries}. For each literal $x_i$, let $m_i$ be the number of clauses in which the the literal is present. We construct a ``truth-setting" component containing $2m_i$ hyper-edges (or triangles). We add the following hyper-edges to $M$.
+Our gadget is described in Fig. \ref{fig:3DMQueries}. For each literal $x_i$, let $m_i$ be the number of clauses in which the literal is present. We construct a ``truth-setting" component containing $2m_i$ hyper-edges (or triangles). We add the following hyper-edges to $M$.
 \begin{align*}
   &\{(a_k[i], b_k[i], c_k[i]): 1 \le k \le m_i\} \cup \{(a_{k+1}[i], b_k[i], c_k'[i]): 1 \le k \le m_i\}
 \end{align*}
 Note that one of $(a_k, b_k, c_k)$ or $(a_{k+1}, b_k, c_k')$ have to be selected in a matching $M'$. If the former is selected that corresponds to the variable $x_i$ being assigned true, the latter corresponds to false. This part is the same as the standard construction. 
 
-For every clause $C_j = \{x_1, x_2, x_3\}$ we add three types of hyper-edges.  The first type ensures that atleast one of the literals is true. 
+For every clause $C_j = \{x_1, x_2, x_3\}$ we add three types of hyper-edges.  The first type ensures that at least one of the literals is true. 
 $$\{(c_k[i], t_1[j], t_1'[j]): x_i' \in C_j\} \cup \{(c_k'[i], t_1[j], t_1'[j]): x_i \in C_j\}$$ 
 The other two types of hyper-edges (conected to the $tf_i$'s) say that two of the literals can be either true or false. Hence, we connect them to both $c_k$ and $c_k'$
 \begin{align*}
@@ -514,7 +519,7 @@ If the exponential time hypothesis holds then there does not exist an algorithm 
 If the exponential time hypothesis holds then there does not exist an algorithm which decides exact cover by 3-sets problem (X3C) and runs in time $2^{o(m)}$.
 \end{corollary}
 
-Hence, from the discussion in this section, we know that X3C is not only NP-Hard but the running time is lower bounded by $\Omega(2^m)$. Now, using the same reduction of X3C to PCC as before, gives the same lower bound on the running time of PCC. Using this, we can now lower bound the number of queries required by PCC.
+Hence, from the discussion in this section, we know that X3C is not only NP-hard but the running time is lower bounded by $\Omega(2^m)$. Now, using the same reduction of X3C to PCC as before, gives the same lower bound on the running time of PCC. Using this, we can now lower bound the number of queries required by PCC.
 
 For the sake of contradiction, let us assume that there exists an algorithm which solves PCC in polynomial time by making $o(n)$ same-cluster queries ($n$ is the number of vertices). Then by simulating all possible answers for the oracle, we get a non-query algorithm which solves PCC in $2^{o(n)}$. However, combining Cor. \ref{cor:X3CLowerBound} with the reduction of X3C to PCC, we get that any algorithm that solves PCC takes $\Omega(2^n)$. Hence, no such query algorithm exists. 
 

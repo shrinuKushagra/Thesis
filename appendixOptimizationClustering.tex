@@ -47,9 +47,9 @@
 \label{a-section:hardness}
 \begin{theorem}
 \label{a-theorem:hardFork1Fixed}
-Given a clustering instance $X \subset \mb R^{p}$, define $m( X) := \min_{x \neq y \in  X} \|x-y\|_{2}^2$ and $n := | X|$. Finding the optimal solution to the regularized $1$-means objective is NP-Hard for $\frac{m( X)}{2} < \lambda < \frac{m( X)}{2} + \frac{1}{2n^2(n-1)}$. 
+Given a clustering instance $X \subset \mb R^{p}$, define $m( X) := \min_{x \neq y \in  X} \|x-y\|_{2}^2$ and $n := | X|$. Finding the optimal solution to the regularized $1$-means objective is NP-hard for $\frac{m( X)}{2} < \lambda < \frac{m( X)}{2} + \frac{1}{2n^2(n-1)}$. 
 
-In particular, the optimization problem is NP-Hard for $\lambda = \lambda_0( X) := \frac{m( X)}{2} + \frac{1}{4n^3}$.
+In particular, the optimization problem is NP-hard for $\lambda = \lambda_0( X) := \frac{m( X)}{2} + \frac{1}{4n^3}$.
 \end{theorem}
 
 \begin{proof}
@@ -81,11 +81,16 @@ Case 3: $n' = q$. If atleast one distance is $1 + \Delta$ then the cost of the c
 Hence, the only possibility remains that $|C_1| = q$ and all the distances in $C_1 = 1$. Hence, $G$ has a clique of size $q$.
 \end{proof}
 
+\begin{corollary}[\cite{dasgupta2008hardness} Cor. 7]
+\label{cor:dasguptaEmbed}
+An $N\times N$ symmetric matrix $D$ can be embedded in $\mb R^N$ if and only if $u^T D u \le 0$ for all $u \in R^N$ with $u .\mb 1 = 0$
+\end{corollary}
+
 \begin{lemma}
 Let $d$ be as in Eqn. \ref{a-eqn:dmetric}. Then $d$ can be embedded into $\mb R^{| X|}$.
 \end{lemma}
 \begin{proof}
-The proof of embedding is very similar to Thm. 8 in \cite{dasgupta2008hardness}. Using Cor. 7 in \cite{dasgupta2008hardness}, we know that $D$ can be embedded into $\mb R^{| X|}$ if and only if $u^TDu \le 0$ for all $u^T1 = 0$.
+The proof of embedding is very similar to Thm. 8 in \cite{dasgupta2008hardness}. Using Cor. \ref{cor:dasguptaEmbed}, we know that $D$ can be embedded into $\mb R^{| X|}$ if and only if $u^TDu \le 0$ for all $u^T1 = 0$.
 \begin{align*}
 u^TDu &= \sum_{ij} u_{i}d_{ij}u_{j} = \sum_{ij}u_iu_j \Big(1 - \mb 1(i=j) + \Delta \mb 1(i \not\sim_{E} j) \big)\\
 &\le \Big(\sum_{i}u_i \Big)^2 - \sum_i u_i^2 +\Delta\sum_{ij}|u_i||u_j| \le -\|u\|^2 + | X|\Delta \|u\|^2 \\
@@ -98,14 +103,14 @@ We now use Thm. \ref{a-theorem:hardFork1Fixed} to show that regularized $1$-mean
 
 \begin{restatable}{theorem}{hardForkone}
 \label{a-theorem:hardFork1}
-For all $\lambda$ there exists a clustering instance $ X \subset \mb R^p$ such that $\lambda > \frac{m(X)}{2}$ but finding the optimal solution to the regularized $1$-means objective is NP-Hard.  
+For all $\lambda$ there exists a clustering instance $ X \subset \mb R^p$ such that $\lambda > \frac{m(X)}{2}$ but finding the optimal solution to the regularized $1$-means objective is NP-hard.  
 \end{restatable}
 \begin{proof}
 Let $(X, d)$ be any clustering instance. Thm. \ref{a-theorem:hardFork1Fixed} showed that optimizing the problem  
 \begin{align*}
 \min_{C\subseteq  X} \enspace \sum_{x \in C}d^2(x, c) + \lambda_0( X) \enspace | X\setminus  C| \hspace{0.5in}\text{(FRM)}
 \end{align*}
-is NP-Hard when $\lambda_0( X) := \frac{m( X)}{2} +\frac{1}{4n^3}$. Given $\lambda>0$, we want to show that for all $\lambda > m( X) / 2$, the following is also NP-Hard to optimize: 
+is NP-hard when $\lambda_0( X) := \frac{m( X)}{2} +\frac{1}{4n^3}$. Given $\lambda>0$, we want to show that for all $\lambda > m( X) / 2$, the following is also NP-hard to optimize: 
 \begin{align*}
 \min_{C\subseteq  X} \enspace \sum_{x \in C}d^2(x, c) + \lambda \enspace | X\setminus  C| \hspace{0.5in}\text{(GRM)}
 \end{align*}
@@ -115,7 +120,7 @@ Let $\lambda' = \sqrt{n^3(4\lambda - 2m( X))} > 0$, and define a new Euclidean d
 \sum_{x \in C}d^2(x, c) + \lambda \enspace | X\setminus  C| &= \lambda'^2\Bigg(\sum_C d'^2(x, c) + \frac{| X \setminus  C|}{\lambda'^2} \Big(\frac{m( X)}{2} +\frac{\lambda'^2}{4n^3}\Big)\Bigg)\\
 &= \lambda'^2\Big(\sum_C d'^2(x, c) + | X \setminus  C| \lambda_0( X')\Big).&
 \end{flalign*}
-Hence, we see that GRM is equivalent to FRM which is NP-Hard.
+where $X'$ is the clustering instance $X$ but with distance function $d'$ instead of $d$. Hence, we see that GRM is equivalent to FRM which is NP-hard.
 \end{proof}
 
 \section{The regularized $k$-means algorithm}
@@ -152,7 +157,8 @@ Provided that $C_i\ne\emptyset$, we have the following equality by expanding the
 
 \noindent Combining equations \ref{a-eqn:kmeansobj1} and \ref{a-eqn:kmeansobj2}, we get that 
 \begin{align*}
-  &\sum_{j=1}^k \sum_{x \in C_i} \|x-c_i\|^2 = \sum_{i=1}^n \|x_i\|^2 (1-y_i) - \sum_{j=1}^k \frac{\| \sum_i s_{ij} x_i\|^2}{\sum_i s_{ij}} = \sum_{i=1}^n \|x_i\|^2 (1-y_i) - \sum_{i=1}^n\sum_{j=1}^n \langle x_i, x_j\rangle Z_{ij} \label{a-eqn:halfcost}\numberthis
+  &\sum_{j=1}^k \sum_{x \in C_i} \|x-c_i\|^2 = \sum_{i=1}^n \|x_i\|^2 (1-y_i) - \sum_{j=1}^k \frac{\| \sum_i s_{ij} x_i\|^2}{\sum_i s_{ij}}\\
+  & = \sum_{i=1}^n \|x_i\|^2 (1-y_i) - \sum_{i=1}^n\sum_{j=1}^n \langle x_i, x_j\rangle Z_{ij} \label{a-eqn:halfcost}\numberthis
 \end{align*}
 
 where $Z = S (S^T S)^{-1} S^T$. Observe that if $x_i \not\in C_{k+1}$ then $Z_{ij} = \frac{1}{|S_{c(i)}|} \langle s_i, s_j\rangle$ where $S_{c(i)}$ denotes the size of the $i^{th}$ cluster. If $x_i \in C_{k+1}$ then $Z_{ij}=0$. Thus, 
@@ -193,6 +199,7 @@ Finally, observe that $\lambda |C_{k+1}| = \lambda\langle \mb 1, y\rangle$.
 	\begin{cases}
 		\min_{Z, y} \enspace &\tr(DZ) + \lambda \langle \mb 1, y\rangle\\
         \text{s.t. } \enspace &\tr(Z) = k\\
+        \\
 		& \Big(\frac{Z+Z^T}{2}\Big)\cdot \mb 1 + y = \mb 1\\		
 		&Z \ge 0, y \ge 0, Z \succeq 0 \numberthis\label{a-eqn:regularizedSDP}
 	\end{cases}
@@ -204,7 +211,7 @@ Finding a solution to the 0-1 SDP (\ref{eqn:regularizedSDP}) is equivalent to fi
 \end{restatable}
 
 \begin{proof}
-We will use the same proof ideas as in the proof of Theorem 2.2 in \cite{peng2007approximating}. However, we need to modify the proof slightly according to our formulation. From the discussion in the previous subsection, we can see that any solution for (\ref{eqn:modifiedkmeans}) implies a solution for the 0-1 SDP (\ref{eqn:regularizedSDP}) with same cost. Now, we will prove the other direction. Any solution for the 0-1 SDP implies a solution for for (\ref{eqn:modifiedkmeans}) with same cost.
+We will use the same proof ideas as in the proof of Thm 2.2 in \cite{peng2007approximating}. However, we need to modify the proof slightly according to our formulation. From the discussion in the previous subsection, we can see that any solution for (\ref{eqn:modifiedkmeans}) implies a solution for the 0-1 SDP (\ref{eqn:regularizedSDP}) with same cost. Now, we will prove the other direction. Any solution for the 0-1 SDP implies a solution for for (\ref{eqn:modifiedkmeans}) with same cost.
 
 Let $e_i$ be a vector with all zeros except in the $i^{\text{th}}$ index. Observe that $u_i^T Z u_i \ge 0$. Hence, $Z_{ii} \ge 0$. Similarly, $(e_i-e_j)^T Z (e_i-e_j) = Z_{ii} - 2Z_{ij} + Z_{jj}$. Hence, $Z_{ij} \le \max (Z_{ii}, Z_{jj})$. Let $Z_{i^*i^*} = \max_i Z_{ii}$. Hence, we have that for all $i, j$, $Z_{ij} \le Z_{i^* i^*}$. 
 
@@ -246,17 +253,21 @@ which is the same as the cost of the regularized $k$-means objective. Hence, fro
 \section{Tightness of the SDP based algorithm}
 
 \begin{equation*}
-	\textbf{0-1 SDP} 
+	\begin{split}
+	\textbf{0-1}\\
+	\textbf{SDP}
+  \end{split}
 	\begin{cases}
 		\min_{Z} \enspace &\tr(DZ) \\
-		\text{subject to } \enspace &\tr(Z) = k\\
+		\text{s.t. } \enspace &\tr(Z) = k\\
 		& Z\cdot \mb 1 = \mb 1\\	
 		&Z\ge 0, Z^2 = Z, Z^T = Z 
 	\end{cases}
 	\xrightarrow{\text{relaxed}} \textbf{ SDP } 
 	\begin{cases}
 		\min_{Z} \enspace &\tr(DZ)\\
-        \text{subject to } \enspace &\tr(Z) = k\\
+        \text{s.t. } \enspace &\tr(Z) = k\\
+        \\
 		& \Big(\frac{Z+Z^T}{2}\Big)\cdot \mb 1 = \mb 1\\		
 		&Z \ge 0, Z \succeq 0 \numberthis\label{a-eqn:SDP}
 	\end{cases}
@@ -344,11 +355,12 @@ If Eqn.\ref{a-eqn:zupper} holds, then for all $1 \le p, q \le k$, we have that $
   &v^TQv = \sum_{pq}\sum_{rs}x_{pr}Q^{(p, q)}_{rs}v_{qs} = \sum_{p \neq q}\sum_{rs}v_{pr}Q^{(p, q)}_{rs}v_{qs} + \sum_{p}\sum_{rs}v_{pr}Q^{(p, p)}_{rs}v_{qs}
 \end{align*}
 Now, we analyse the case when $p \neq q$. Then, we have that
-\begin{align*}
-  &\sum_{rs}v_{pr}Q^{pq}_{rs}v_{qs} = \sum_{rs}v_{pr}D^{pq}_{rs}v_{qs} + \frac{1}{2}\sum_{rs}\alpha_{qs}v_{qs}v_{pr} -\frac{1}{n_q}\sum_{rs} \sum_j v_{pr}v_{qs}D^{pq}_{rj} -\frac{1}{2n_q}\sum_{rs}\sum_jv_{pr}v_{qs}\alpha_{qj}\\
-  &= \sum_{rs}v_{pr}v_{qs}D^{pq}_{rs} + \frac{1}{2}\sum_{s}\alpha_{qs}v_{qs}\sum_r v_{pr} -\frac{1}{n_q}\sum_{r}\sum_j D^{pq}_{rj}v_{pr}\sum_sv_{qs} -\frac{1}{2n_q}\sum_{s}\sum_jv_{qs}\alpha_{qj}\sum_{r}v_{pr}\\
-  &= \sum_{rs}v_{pr}v_{qs}D^{pq}_{rs}
-\end{align*}
+\begin{flalign*}
+  &\sum_{rs}v_{pr}Q^{pq}_{rs}v_{qs} = \sum_{rs}v_{pr}D^{pq}_{rs}v_{qs} + \frac{1}{2}\sum_{rs}\alpha_{qs}v_{qs}v_{pr} -\frac{1}{n_q}\sum_{rs} \sum_j v_{pr}v_{qs}D^{pq}_{rj}& \\
+  &-\frac{1}{2n_q}\sum_{rs}\sum_jv_{pr}v_{qs}\alpha_{qj}&\\
+  &= \sum_{rs}v_{pr}v_{qs}D^{pq}_{rs} + \frac{1}{2}\sum_{s}\alpha_{qs}v_{qs}\sum_r v_{pr} -\frac{1}{n_q}\sum_{r}\sum_j D^{pq}_{rj}v_{pr}\sum_sv_{qs}&\\
+  & -\frac{1}{2n_q}\sum_{s}\sum_jv_{qs}\alpha_{qj}\sum_{r}v_{pr} = \sum_{rs}v_{pr}v_{qs}D^{pq}_{rs}&
+\end{flalign*}
 Now for the other case, we have that
 \begin{align*}
   \sum_{rs}v_{pr}Q^{pp}_{rs}v_{ps} &= \sum_{rs}v_{pr}D^{pp}_{rs}v_{ps} + \frac{1}{2}\sum_{rs}\alpha_{pr}v_{pr}v_{ps} + \frac{1}{2}\sum_{rs}\alpha_{ps}v_{pr}v_{ps} + \sum_r zv_{pr}v_{pr}\\
@@ -373,7 +385,7 @@ Eqns. \ref{a-eqn:zlower} and \ref{a-eqn:zupper}, show that as long as
 \begin{align*}
   &\frac{2}{n}\Big(\max_{v\bot V} \frac{v^T XX^Tv}{v^Tv}\Big) = \frac{2}{n}\Big(\max_{v\bot V} \frac{v^T X'X'^Tv}{v^Tv}\Big) \le \frac{2}{n}\sigma_{\max}\big(X'\big)^2\numberthis\label{a-eqn:mainConstrintUpper}
 \end{align*}
-The last inequality follows from the Defn. of $\sigma_{\max}$. (Eqn. 5.3 in \cite{vershynin2010introduction}). In the current setting, $X := \cup_{i=1}^k B_i$ where each $B_i$ is generated as follows. Let $\mc P$ denote the isotropic distribution on the ball centered at origin of radius atmost $r$, that is $B_1(r)\subset \mb R^d$. Let $B_i$ be a set of $n_i$ points drawn according to $P_i$, the measure $\mc P$ translated to $\mu_i$. Also, $\|\mu_i - \mu_j\| > \delta r > 2r$. 
+The last inequality follows from the Defn. of $\sigma_{\max}$. (Eqn. 5.3 in \cite{vershynin2010introduction}). In the current setting, $X := \cup_{i=1}^k B_i$ where each $B_i$ is generated as follows. Let $\mc P$ denote the isotropic distribution on the ball centered at origin of radius at most $r$, that is $B_1(r)\subset \mb R^d$. Let $B_i$ be a set of $n_i$ points drawn according to $P_i$, the measure $\mc P$ translated to $\mu_i$. Also, $\|\mu_i - \mu_j\| > \delta r > 2r$. 
 
 Let $\Theta = E[\|x_{pr}'\|^2]$. Using Thm. \ref{a-thm:spectralNormCOncentration}, we can bound the RHS of Eqn. \ref{a-eqn:mainConstraint} by upper bounding the maximum eigenvalue of $X'$ as 
 \begin{align}
@@ -401,7 +413,7 @@ where $\theta = \mb E[\|x_{pi}-c_p\|^2] < 1$, then there exists a constant $c > 
 	\textbf{0-1 SDP} 
 	\begin{cases}
 		\min_{Z, y} \enspace &\tr(DZ) + \lambda \langle \mb 1, y\rangle\\
-		\text{subject to } \enspace &\tr(Z) = k\\
+		\text{s.t.} \enspace &\tr(Z) = k\\
 		& Z\cdot \mb 1 + y = \mb 1\\	
 		&Z\ge 0\\
 		&Z^2 = Z, Z^T = Z \\
@@ -410,7 +422,7 @@ where $\theta = \mb E[\|x_{pi}-c_p\|^2] < 1$, then there exists a constant $c > 
 	\xrightarrow{\text{relaxed}} \textbf{ SDP } 
 	\begin{cases}
 		\min_{Z} \enspace &\tr(DZ) + \lambda \langle \mb 1, y\rangle\\
-        \text{subject to } \enspace &\tr(Z) = k\\
+        \text{s.t.} \enspace &\tr(Z) = k\\
 		& \Big(\frac{Z+Z^T}{2}\Big)\cdot \mb 1 + y = \mb 1\\		
 		&Z \ge 0, y \ge 0, Z \succeq 0 \numberthis\label{a-eqn:regularizedSDP}
 	\end{cases}
@@ -523,7 +535,7 @@ To show that $Q^{(k+1, k+1)}$ is positive semi-definite, we need to ensure that 
 \end{align*}
 
 \subsubsection*{Putting it all together}
-We are given $X := I \cup N$. Let $I = \cup B_i$ where each $B_i$ is ball of radius atmost one and centered at $\mu_i$ where $\mu_i$ is the average of points in $B_i$. Also, $d(\mu_i, \mu_j) \ge \delta$. Decompose $N = N_1 \cup N_2$ into two sets. Let $N_2 = \{n \in N :$ for all $b \in I, \|n-b\| \ge \nu\}$ and $N_1 = N \setminus N_2$. Let $N_1$ be such that for all $n \in N_1$, $| \|n-\mu_i\|^2 - \|n- \mu_j\|^2| \ge \alpha$. 
+We are given $X := I \cup N$. Let $I = \cup B_i$ where each $B_i$ is ball of radius at most one and centered at $\mu_i$ where $\mu_i$ is the average of points in $B_i$. Also, $d(\mu_i, \mu_j) \ge \delta$. Decompose $N = N_1 \cup N_2$ into two sets. Let $N_2 = \{n \in N :$ for all $b \in I, \|n-b\| \ge \nu\}$ and $N_1 = N \setminus N_2$. Let $N_1$ be such that for all $n \in N_1$, $| \|n-\mu_i\|^2 - \|n- \mu_j\|^2| \ge \alpha$. 
 
 We will show that the regularized SDP outputs the clustering $\mc C = \{C_1, \ldots, C_k, N_2\}$, where each $B_i \subseteq C_i$. Hence, the clusters contain all the points from the balls $B_i$ plus (maybe) points from the set $N_1$.  
 

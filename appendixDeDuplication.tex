@@ -6,7 +6,7 @@ The technique of locality sensitive hashing was introduced by \cite{gionis1999si
 \label{defn:LSH}
 Given a set $X$ and a similarity function $f:X \times X \rightarrow [0, 1]$. Given a class of hash functions $H = \{h_1, h_2, \ldots \}$. An LSH w.r.t $X$ and $f$ is a probability distribution over $H$ such that for each $x, y \in \mc X$, $$\underset{h \in H}{\mb P}\enspace [h(x) = h(y)] = f(x, y)$$
 \end{definition}
-\noindent Some common examples of an LSH schemes are minhash scheme w.r.t jaccard similarity measure \cite{broder2000min, broder1997resemblance}, simhash scheme w.r.t hamming similarity measure \cite{charikar2002similarity}. We describe a generic locality sensitive hashing procedure in Alg. \ref{alg:LSH}. Observe that, Alg. \ref{alg:LSH} outputs $s$ different partitions of $X$. Assume without loss of generality, that a point $x$ lies in the blocks $B_{11} \in P_1, B_{21} \in P_2, \ldots, B_{s1} \in P_s$. Now, to search for points $y$ which are similar to $x$, we only need to search within the blocks $B_{i1}$. We say that these points lie in the same `bucket' as $x$. We say that $b(x, y) = 1$ if and only if $x$ and $y$ lie together in the same block in atleast one of the partitions.
+\noindent Some common examples of an LSH schemes are minhash scheme w.r.t jaccard similarity measure \cite{broder2000min, broder1997resemblance}, simhash scheme w.r.t hamming similarity measure \cite{charikar2002similarity}. We describe a generic locality sensitive hashing procedure in Alg. \ref{alg:LSH}. Observe that, Alg. \ref{alg:LSH} outputs $s$ different partitions of $X$. Assume without loss of generality, that a point $x$ lies in the blocks $B_{11} \in P_1, B_{21} \in P_2, \ldots, B_{s1} \in P_s$. Now, to search for points $y$ which are similar to $x$, we only need to search within the blocks $B_{i1}$. We say that these points lie in the same `bucket' as $x$. We say that $b(x, y) = 1$ if and only if $x$ and $y$ lie together in the same block in at least one of the partitions.
 
 \begin{algorithm}
 \caption{A generic LSH based hashing algorithm \cite{indyk1998approximate,charikar2002similarity}}
@@ -38,7 +38,7 @@ Let $n = |X|$. Sampling $k$ different hash function takes $rs$ time. Computing t
 
 \begin{restatable}{thrm}{similarInSame}
 \label{thm:similarInSame}
-Given a set $X$, a distance function $d: X \times X \rightarrow [0, 1]$, a class of hash functions $H$, threshold parameter $\lambda$ and a parameter $\delta$. Let the similarity function be $f(x, y) := 1 - d(x, y)$ and let $\mc A$ be a generic LSH based algorithm (Alg. \ref{alg:LSH}) which outputs partitions $P_1, \ldots, P_s$. Let $b(x, y) = 1$ iff $x, y$ are together in atleast one of these partitions. 
+Given a set $X$, a distance function $d: X \times X \rightarrow [0, 1]$, a class of hash functions $H$, threshold parameter $\lambda$ and a parameter $\delta$. Let the similarity function be $f(x, y) := 1 - d(x, y)$ and let $\mc A$ be a generic LSH based algorithm (Alg. \ref{alg:LSH}) which outputs partitions $P_1, \ldots, P_s$. Let $b(x, y) = 1$ iff $x, y$ are together in at least one of these partitions. 
 \noindent Choose $r, s$ such that $\frac{1}{2\lambda} < r < \frac{1}{-\ln(1-\lambda)} $ and $s =  \lceil 2.2\ln(\frac{1}{\delta})\rceil$. Define $\delta' := s\ln(1+\delta)$. Then for $(x, y) \in \mc X^2$
 \begin{itemize}
 	\item If $d(x, y) \le \lambda$ then 
@@ -77,22 +77,22 @@ Given metric space $(X, d)$, a class of clusterings $\mc F$ of $X$ and a thresho
 \begin{align}
   &m_-, m_+ \enspace \ge a\frac{\vcdim({\mc F}) + \log(\frac{2}{\delta})}{\epsilon^2} 
 \end{align}
-where $a$ is a global constant then with probability atleast $1-\delta - \exp\big(\frac{-2\nu^2(1-\alpha)^2|X_2^+|^2}{49}\big)$ (over the randomness in $\mc A$), we have that $$L_{C^*}(\hat C) \enspace\le\enspace \min_{\mc C \in \mc F} L_{C^*}(C) + 3\alpha + \zeta + \epsilon + \nu$$
+where $a$ is a global constant then with probability at least $1-\delta - \exp\big(\frac{-2\nu^2(1-\alpha)^2|X_2^+|^2}{49}\big)$ (over the randomness in $\mc A$), we have that $$L_{C^*}(\hat C) \enspace\le\enspace \min_{\mc C \in \mc F} L_{C^*}(C) + 3\alpha + \zeta + \epsilon + \nu$$
 \end{restatable}
 \begin{proof}
-Let $T_0$ be the distribution induced by $\mc P_0$ and $T_1$ be the distribution induced by $\mc P_1$. Using Thm. \ref{thm:uniformConvergence}, we know that if $m_+ > a\frac{\vcdim({\mc F}) + \log(\frac{1}{\delta})}{\epsilon^2}$ then with probability atleast $1-\delta - e^{-2\nu^2(1-\alpha)^2|X_2^+|^2}$, we have that for all $C$
+Let $T_0$ be the distribution induced by $\mc P_0$ and $T_1$ be the distribution induced by $\mc P_1$. Using Thm. \ref{thm:uniformConvergence}, we know that if $m_+ > a\frac{\vcdim({\mc F}) + \log(\frac{1}{\delta})}{\epsilon^2}$ then with probability at least $1-\delta - e^{-2\nu^2(1-\alpha)^2|X_2^+|^2}$, we have that for all $C$
 \begin{align*}
   &|\hat P(C) - \underset{(x,y) \sim T_1}{\mb P}[C(x, y) = 0]| \le \epsilon\\
   \implies &\hat P(C) \le \epsilon + (1+2\nu)(1+2\alpha)L_{P^+}(C) \enspace\text{ and}\\
   &L_{P^+}(C) - \epsilon - \alpha -\zeta - \nu \le \hat P(C) \numberthis \label{eqn:eHatLSH}
 \end{align*}
-Note that we obtain upper and lower bounds for $\underset{(x,y) \sim T_1}{\mb P}[h(x, y) = 0]$ using Thm. \ref{thm:posDistributionLSH}. Similarly, if $m_- > a\frac{\vcdim({\mc F}) + \log(\frac{1}{\delta})}{\epsilon^2}$, then with probability atleast $1-\delta$, we have that for all $h$,
+Note that we obtain upper and lower bounds for $\underset{(x,y) \sim T_1}{\mb P}[h(x, y) = 0]$ using Thm. \ref{thm:posDistributionLSH}. Similarly, if $m_- > a\frac{\vcdim({\mc F}) + \log(\frac{1}{\delta})}{\epsilon^2}$, then with probability at least $1-\delta$, we have that for all $h$,
 \begin{align*}
   &|\hat N(C) - \underset{(x,y) \sim T_0}{\mb P}[C(x, y) = 1]| \le \epsilon\\
   \implies &\hat N(C) \le \epsilon + L_{P^-}(C) \enspace\text{ and } L_{P^-}(C) -\epsilon \le \hat N(C) \numberthis\label{eqn:gHatLSH}
 \end{align*}
 
-\noindent Combining Eqns. \ref{eqn:eHatLSH} and \ref{eqn:gHatLSH}, we get that with probability atleast $1-2\delta-e^{-2\nu^2(1-\alpha)^2|X_2^+|^2}$, we have that for all $C \in {\mc F}$
+\noindent Combining Eqns. \ref{eqn:eHatLSH} and \ref{eqn:gHatLSH}, we get that with probability at least $1-2\delta-e^{-2\nu^2(1-\alpha)^2|X_2^+|^2}$, we have that for all $C \in {\mc F}$
 \begin{align*}
   \hat L(C) &\le \mu [\epsilon + (1+2\nu)(1+2\alpha)L_{P^+}(C)]\\
   &+ (1-\mu)(\epsilon + L_{P^-}(C))\\
@@ -114,10 +114,10 @@ Finally, we analyse the query complexity of our approach. That is the number of 
 
 \begin{restatable}{thrm}{queryComplexityLSH}[Query Complexity]
 \label{thm:queryComplexity}
-Let the framework be as in Thm. \ref{thm:sampleComplexityLSH}. With probability atleast $1-\exp\big(-\frac{\nu^2m_-}{4}) - \exp\big(-\frac{\nu^2m_+}{4}\big) - \exp(-\nu^2(1-\alpha)^2|\mc X_+^2|^2)$ over the randomness in the sampling procedure, the number of same-cluster queries $q$ made by $\mc A$ is  
+Let the framework be as in Thm. \ref{thm:sampleComplexityLSH}. With probability at least $1-\exp\big(-\frac{\nu^2m_-}{4}) - \exp\big(-\frac{\nu^2m_+}{4}\big) - \exp(-\nu^2(1-\alpha)^2|\mc X_+^2|^2)$ over the randomness in the sampling procedure, the number of same-cluster queries $q$ made by $\mc A$ is  
 $$q \le (1+\nu)\bigg(\frac{m_-}{(1-\gamma)} + \frac{m_+}{\beta(1-\zeta-\nu)}\bigg)$$
 \end{restatable}
 
 \begin{proof}
-The number of queries made to sample the set $S_g$ is $q_g = m_g$. Let $q_+$ denote the number queries to sample the set $S_+$. Using Lemma \ref{lemma:posQueriesLSH}, we know that $\mb E[q_+] \le \frac{1}{\beta(1-\zeta-\nu)}$ with probability atleast $1-\exp(-\nu^2(1-\alpha)^2|\mc X_+^2|^2)$ over the randomness in the hashing procedure. Given that the expectation is bounded as above, using Thm. \ref{thm:geometricRV}, we get that $q_+ \le \frac{(1+\nu)m_+}{\beta(1-\zeta-\nu)}$ with probability atleast $1-\exp(\frac{-\nu^2m_+}{4})$. Similarly, combining Lemma \ref{lemma:negQueries} with Thm. \ref{thm:geometricRV}, we get that with probability atleast $1-\exp(\frac{-\nu^2m_-}{4})$, $q_- \le \frac{(1+\nu)m_-}{(1-\gamma)}$.
+The number of queries made to sample the set $S_g$ is $q_g = m_g$. Let $q_+$ denote the number queries to sample the set $S_+$. Using Lemma \ref{lemma:posQueriesLSH}, we know that $\mb E[q_+] \le \frac{1}{\beta(1-\zeta-\nu)}$ with probability at least $1-\exp(-\nu^2(1-\alpha)^2|\mc X_+^2|^2)$ over the randomness in the hashing procedure. Given that the expectation is bounded as above, using Thm. \ref{thm:geometricRV}, we get that $q_+ \le \frac{(1+\nu)m_+}{\beta(1-\zeta-\nu)}$ with probability at least $1-\exp(\frac{-\nu^2m_+}{4})$. Similarly, combining Lemma \ref{lemma:negQueries} with Thm. \ref{thm:geometricRV}, we get that with probability at least $1-\exp(\frac{-\nu^2m_-}{4})$, $q_- \le \frac{(1+\nu)m_-}{(1-\gamma)}$.
 \end{proof}
